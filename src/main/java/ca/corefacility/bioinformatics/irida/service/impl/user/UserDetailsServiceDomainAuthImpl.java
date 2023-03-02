@@ -14,27 +14,27 @@ import javax.persistence.Query;
 @Service
 public class UserDetailsServiceDomainAuthImpl implements UserDetailsService {
 
-    private final EntityManager entityManager;
+	private final EntityManager entityManager;
 
-    @Autowired
-    public UserDetailsServiceDomainAuthImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+	@Autowired
+	public UserDetailsServiceDomainAuthImpl(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Query q = entityManager.createQuery("from User u where u.userType = :usertype and u.username = :username");
-        q.setParameter("username", username);
-        q.setParameter("usertype", UserType.TYPE_DOMAIN);
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Query q = entityManager.createQuery("from User u where u.userType = :usertype and u.username = :username");
+		q.setParameter("username", username);
+		q.setParameter("usertype", UserType.TYPE_DOMAIN);
 
-        try {
-            User u = (User) q.getSingleResult();
-            if (u == null) {
-                throw new UsernameNotFoundException("Could not find username.");
-            }
-            return u;
-        } catch (Exception e) {
-            throw new UsernameNotFoundException("Could not find username.", e);
-        }
-    }
+		try {
+			User u = (User) q.getSingleResult();
+			if (u == null) {
+				throw new UsernameNotFoundException("Could not find username.");
+			}
+			return u;
+		} catch (Exception e) {
+			throw new UsernameNotFoundException("Could not find username.", e);
+		}
+	}
 }

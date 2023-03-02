@@ -85,9 +85,9 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		// Order of auth providers matters.
 		// Default DAO must be first to allow admin/local sign-in if ldap servers are unresponsive.
 		auth.authenticationProvider(defaultAuthenticationProvider);
-		if(authenticationMode.equals("ldap")) {
+		if (authenticationMode.equals("ldap")) {
 			auth.authenticationProvider(ldapAuthenticationProvider);
-		} else if(authenticationMode.equals("adldap")) {
+		} else if (authenticationMode.equals("adldap")) {
 			auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider);
 		}
 		auth.authenticationProvider(anonymousAuthenticationProvider());

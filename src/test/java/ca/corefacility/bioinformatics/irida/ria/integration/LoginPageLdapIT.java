@@ -80,7 +80,7 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
 	}
 
-	// this is no longer a valid test, as we allow signin's from users not in ldap if they are in local DB
+	// TODO this is no longer a valid test, as we allow signin's from users not in ldap if they are in local DB
 //	/**
 //	 * Test signing in with user that does not exist in ldap but does exist in local db
 //	 * @throws Exception
