@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Checkbox, DatePicker, Select, Space, Table, Tag } from "antd";
+import { Button, Checkbox, DatePicker, Select, Space, Table } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import {
@@ -17,10 +17,8 @@ import {
   updateTable,
 } from "../../redux/samplesSlice";
 import SampleQuality from "../../../../components/sample-quality";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
-import { generateColourForItem } from "../../../../utilities/colour-utilities";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import ProjectTag from "../../../search/ProjectTag";
