@@ -49,7 +49,13 @@ export function fromNow({ date }: { date: string | number }) {
  * @param  format defaults to "lll" which is mmm dd, yyyy h:mm AM
  * @return formatted date
  */
-export function formatDate({ date, format }: { date: Date; format?: Intl.DateTimeFormatOptions }) {
+export function formatDate({
+  date,
+  format
+}: {
+  date: Date;
+  format?: Intl.DateTimeFormatOptions
+}) {
   return formatInternationalizedDateTime(date, format);
 }
 
@@ -58,7 +64,8 @@ export function formatDate({ date, format }: { date: Date; format?: Intl.DateTim
  * @param  date
  * @returns true if Date
  */
-export const isDate = (date: number | string | Date) => !isNaN(new Date(date).valueOf());
+export const isDate = (date: number | string | Date) =>
+  !isNaN(new Date(date).valueOf());
 
 // get a readable string of the time from a given number of seconds
 export function getDurationFromSeconds(seconds: number) {
