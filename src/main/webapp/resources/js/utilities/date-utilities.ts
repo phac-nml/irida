@@ -53,8 +53,8 @@ export function formatDate({
   date,
   format,
 }: {
-  date: Date,
-  format?: Intl.DateTimeFormatOptions,
+  date: Date;
+  format?: Intl.DateTimeFormatOptions;
 }) {
   return formatInternationalizedDateTime(date, format);
 }
