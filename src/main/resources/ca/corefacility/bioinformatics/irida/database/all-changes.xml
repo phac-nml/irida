@@ -74,4 +74,5 @@
   <include file="changesets/22.05/all-changes.xml" relativeToChangelogFile="true" />
   <include file="changesets/22.09/all-changes.xml" relativeToChangelogFile="true" />
   <include file="changesets/23.01/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/unreleased/all-changes.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
