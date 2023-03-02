@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Checkbox, DatePicker, Select, Space, Table, Tag } from "antd";
+import { Button, Checkbox, DatePicker, Select, Space, Table } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import {
