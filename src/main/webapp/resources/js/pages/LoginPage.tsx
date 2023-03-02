@@ -26,7 +26,7 @@ declare let window: IridaWindow;
 interface LoginFormProps {
   updateDisplayLoginPage: (value: boolean) => void;
   updatePageType: (value: string) => void;
-};
+}
 
 /**
  * React component to render the login form
@@ -34,7 +34,10 @@ interface LoginFormProps {
  * @param updatePageType Function to update the page type
  * @constructor
  */
-function LoginForm({ updateDisplayLoginPage, updatePageType }: LoginFormProps): JSX.Element {
+function LoginForm({
+  updateDisplayLoginPage,
+  updatePageType,
+}: LoginFormProps): JSX.Element {
   const [form] = Form.useForm();
   const usernameRef = React.useRef<InputRef>(null);
 
@@ -53,7 +56,8 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }: LoginFormProps): 
    * Handler for submitting the login form once all fields are correctly filled out
    * @returns {*}
    */
-  const onFinish = () => (document.getElementById("loginForm") as HTMLFormElement).submit();
+  const onFinish = () =>
+    (document.getElementById("loginForm") as HTMLFormElement).submit();
 
   return (
     <Form
@@ -164,22 +168,22 @@ function LoginPage(): JSX.Element {
     setType(pageType);
   };
 
-  function getLdapError(){
-    switch(urlParams.get("ldap-error")) {
+  function getLdapError() {
+    switch (urlParams.get("ldap-error")) {
       case "1":
-        return <> {i18n("LoginPage.ldap_error.description_1")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_1")} </>;
       case "2":
-        return <> {i18n("LoginPage.ldap_error.description_2")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_2")} </>;
       case "3":
-        return <> {i18n("LoginPage.ldap_error.description_3")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_3")} </>;
       case "4":
-        return <> {i18n("LoginPage.ldap_error.description_4")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_4")} </>;
       case "5":
-        return <> {i18n("LoginPage.ldap_error.description_5")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_5")} </>;
       case "6":
-        return <> {i18n("LoginPage.ldap_error.description_6")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_6")} </>;
       default:
-        return <> {i18n("LoginPage.ldap_error.description_default")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_default")} </>;
     }
   }
 
@@ -204,26 +208,26 @@ function LoginPage(): JSX.Element {
               </span>
             }
             description={
-              urlParams.has("sequencer-login") ?
+              urlParams.has("sequencer-login") ? (
+                <>{i18n("LoginPage.error.sequencer_login_description")} </>
+              ) : (
                 <>
-                  {i18n("LoginPage.error.sequencer_login_description")}{" "}
+                  {i18n("LoginPage.error.description")}{" "}
+                  <Button
+                    onClick={() => {
+                      setDisplayLoginPage(false);
+                      updatePageType("forgot-password");
+                      history.pushState(
+                        "forgot",
+                        "Forgot Password",
+                        setBaseUrl("/forgot_password")
+                      );
+                    }}
+                  >
+                    {i18n("LoginPage.recover")}
+                  </Button>
                 </>
-              : <>
-                {i18n("LoginPage.error.description")}{" "}
-                <Button
-                  onClick={() => {
-                    setDisplayLoginPage(false);
-                    updatePageType("forgot-password");
-                    history.pushState(
-                      "forgot",
-                      "Forgot Password",
-                      setBaseUrl("/forgot_password")
-                    );
-                  }}
-                >
-                  {i18n("LoginPage.recover")}
-                </Button>
-              </>
+              )
             }
             showIcon
           />
@@ -238,7 +242,7 @@ function LoginPage(): JSX.Element {
                 {i18n("LoginPage.ldap_error.message")}
               </span>
             }
-            description={ getLdapError() }
+            description={getLdapError()}
             showIcon
           />
         ) : null}
