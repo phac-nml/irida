@@ -51,10 +51,10 @@ export function fromNow({ date }: { date: string | number }) {
  */
 export function formatDate({
   date,
-  format
+  format,
 }: {
-  date: Date;
-  format?: Intl.DateTimeFormatOptions
+  date: Date,
+  format?: Intl.DateTimeFormatOptions,
 }) {
   return formatInternationalizedDateTime(date, format);
 }
