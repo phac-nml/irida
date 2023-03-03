@@ -35,7 +35,7 @@ def list_sequence_files(host, user, password, database):
 def main():
     parser = argparse.ArgumentParser(description="This program lists the sequence files and folders that have been previously deleted in IRIDA.")
     parser.add_argument('--purge', help="Deletes the sequence files and folders from the filesystem.", action="store_true")
-    parser.add_argument('--baseDirectory', help="The sequence file base directory.", required=True)
+    parser.add_argument('--baseDirectory', default='/tmp/irida/sequence-files', help="The sequence file base directory.", required=False)
     parser.add_argument('--host', default='localhost', help="The database host name.", required=False)
     parser.add_argument('--database', default='irida_test', help="The database name.", required=False)
     parser.add_argument('--user', default='test', help="The database user name.", required=False)
@@ -43,10 +43,9 @@ def main():
 
     args = parser.parse_args()
     rows = list_sequence_files(args.host, args.user, args.password, args.database)
-
     if rows:
         for row in rows:
-            sequence_file_directory = os.path.dirname(os.path.dirname(args.baseDirectory + row[0]))
+            sequence_file_directory = os.path.dirname(os.path.dirname(os.path.join(args.baseDirectory, row[0])))
             for root, dirs, files in os.walk(sequence_file_directory, topdown=False):
                 for name in files:
                     file = os.path.join(root, name)
