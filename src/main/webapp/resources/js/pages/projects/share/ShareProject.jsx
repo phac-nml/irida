@@ -31,7 +31,6 @@ export function ShareProject({ projects }) {
         }))}
         onChange={onChange}
         defaultValue={targetProject?.identifier}
-        className="t-project-select"
       />
     </Space>
   );

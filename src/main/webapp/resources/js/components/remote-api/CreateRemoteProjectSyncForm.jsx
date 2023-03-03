@@ -9,6 +9,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { RemoteApiStatus } from "../../pages/admin/components/remote-connections/RemoteApiStatus";
 import { HelpPopover } from "../popovers";
 import { SyncFrequencySelect } from "./SyncFrequencySelect";
+import { SearchByNameAndIdSelect } from "../selects/SearchByNameAndIdSelect";
 
 /**
  * React form for creating a Synchronized Remote Project
@@ -102,11 +103,15 @@ export function CreateRemoteProjectSyncForm() {
           {connected ? (
             <>
               <Form.Item label={i18n("NewProjectSync.project")} name="project">
-                <Select
-                  className="t-project-select"
-                  onChange={(value) => form.setFieldsValue({ url: value })}
-                  showSearch
-                  options={projects}
+                <SearchByNameAndIdSelect
+                  selectList={projects.map((project) => ({
+                    id: project.id,
+                    name: project.name,
+                  }))}
+                  onChange={(projectId) => {
+                    const project = projects.find((p) => p.id === projectId);
+                    form.setFieldsValue({ url: project.url });
+                  }}
                   placeholder={i18n("NewProjectSync.project.placeholder")}
                 />
               </Form.Item>
