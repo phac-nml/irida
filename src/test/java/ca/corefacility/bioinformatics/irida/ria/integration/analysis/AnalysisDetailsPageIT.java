@@ -382,6 +382,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page.downloadTreeSVG();
 
 		// Compare with existing tree
+		// Removed this check as in headless mode the file was not being written to the correct directly
 		//		assertTrue(FileUtils.contentEquals(DOWNLOADED_TREE_PATH.toFile(), TEST_TREE_PATH.toFile()));
 
 		// Make sure all buttons are working
