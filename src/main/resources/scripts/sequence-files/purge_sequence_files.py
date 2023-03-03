@@ -6,12 +6,13 @@ import os
 def remove(path, purge):
     if purge:
         try:
-            if os.path.isdir(path):
-                os.rmdir(path)
-            elif os.path.isfile(path):
-                os.remove(path)
-            else:
-                print("Unable to delete ", path)
+            if os.path.exists(path):
+                if os.path.isdir(path):
+                    os.rmdir(path)
+                elif os.path.isfile(path):
+                    os.remove(path)
+                else:
+                    print("Unable to delete ", path)
         except OSError as e:
             print(e)
     else:
