@@ -11,8 +11,7 @@ def remove(path, purge):
                     os.rmdir(path)
                 elif os.path.isfile(path):
                     os.remove(path)
-                else:
-                    print("Unable to delete ", path)
+                print("Deleted ", path)
         except OSError as e:
             print(e)
     else:
