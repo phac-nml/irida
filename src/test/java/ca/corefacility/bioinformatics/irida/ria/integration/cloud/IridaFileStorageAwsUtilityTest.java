@@ -183,15 +183,18 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	public void testDeleteFile() {
 		iridaFileStorageUtility.deleteFile(PATH_TO_FASTA_FILE);
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
-		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
+		assertFalse(fileExistsInBlobStorage, "File should not exist in aws s3 bucket");
 	}
 
 	@Test
 	@Override
 	public void testDeleteFolder() {
-		iridaFileStorageUtility.deleteFolder(PATH_TO_FASTA_FILE.getParent());
+		Path folder = PATH_TO_FASTA_FILE.getParent();
+		iridaFileStorageUtility.deleteFolder(folder);
+		boolean folderExistsInBlobStorage = iridaFileStorageUtility.fileExists(folder);
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
-		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
+		assertFalse(folderExistsInBlobStorage, "Folder should not exist in aws s3 bucket");
+		assertFalse(fileExistsInBlobStorage, "File should not exist in aws s3 bucket");
 	}
 
 	@Test

@@ -178,10 +178,10 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		if (entity instanceof SequenceFile) {
 			//remove all sequence file copies from revision folders
 			deletePath = ((SequenceFile) entity).getFile().getParent().getParent();
-		}
-
-		if (deletePath != null) {
-			iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
+			
+			if (deletePath != null) {
+				iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
+			}
 		}
 	}
 
