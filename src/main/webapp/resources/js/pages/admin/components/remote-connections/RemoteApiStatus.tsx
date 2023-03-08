@@ -5,17 +5,22 @@ import { IconLoading } from "../../../../components/icons/Icons";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { authenticateRemoteClient } from "../../../../apis/oauth/oauth";
+import { RemoteApi } from "../../../../types/irida";
+
+interface RemoteApiStatusProps {
+  api: RemoteApi;
+  onConnect: () => void;
+}
 
 /**
  * React component to render the status of a Remote API.
  * If the API is not connected it will present the user a button allowing
  * them to connect.
- * @param {object} api - details about the remote API
- * @param {function} onConnect - what do when the connection is made.
- * @returns {*}
- * @constructor
  */
-export function RemoteApiStatus({ api, onConnect = () => {} }) {
+export function RemoteApiStatus({
+  api,
+  onConnect = () => undefined,
+}: RemoteApiStatusProps): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
   const [expiration, setExpiration] = useState(undefined);
@@ -41,7 +46,7 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
       .finally(() => setLoading(false));
   }
 
-  function updateRemoteApi(event) {
+  function updateRemoteApi(event: MessageEvent) {
     if (
       event.origin === window.location.origin &&
       event.data === "remote_api_connect"

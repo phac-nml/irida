@@ -3,18 +3,23 @@ import React from "react";
 import { SearchByNameAndIdSelect } from "../../../components/selects/SearchByNameAndIdSelect";
 import { setProject } from "./shareSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { Project } from "../../../types/irida";
+import { ShareState } from "./store";
+
+interface ShareProjectProps {
+  projects: Project[];
+}
 
 /**
  * React component for selecting the project to share a sample with.
- * @param {list} projects - list of projects that the user is a manager on
- * @returns {JSX.Element}
- * @constructor
  */
-export function ShareProject({ projects }) {
+export function ShareProject({ projects }: ShareProjectProps): JSX.Element {
   const dispatch = useDispatch();
-  const { targetProject } = useSelector((state) => state.shareReducer);
+  const { targetProject } = useSelector(
+    (state: ShareState) => state.shareReducer
+  );
 
-  function onChange(projectId) {
+  function onChange(projectId: number) {
     const project = projects.find((p) => p.identifier === projectId);
     dispatch(setProject(project));
   }

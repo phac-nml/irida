@@ -131,6 +131,7 @@ declare namespace IRIDA {
     analysisPriority: string;
     users: User[];
     analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
+    url: string;
   }
 
   type ProjectMinimal = Pick<Project, "id" | "name">;
@@ -242,4 +243,6 @@ declare namespace IRIDA {
     type?: string;
     restriction: Restriction;
   }
+
+  type RemoteApi = BaseModel;
 }

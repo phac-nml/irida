@@ -1,5 +1,23 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
 import { compareRestrictionLevels } from "../../../utilities/restriction-utilities";
+import { MetadataField, Project } from "../../../types/irida";
+
+interface Sample {
+  id: number;
+  projectId: string;
+  owner: string;
+}
+
+export interface InitialState {
+  targetProject: Project;
+  samples: Sample[];
+  lockedSamples: Sample[];
+  associated: Sample[];
+  currentProject: Project;
+  locked: boolean;
+  remove: boolean;
+  metadataRestrictions: MetadataField[];
+}
 
 /**
  * Action to set the target project for the samples
@@ -43,7 +61,7 @@ export const setMetadataRestrictions = createAction(
   `share/setMetadataRestrictions`,
   (metadataRestrictions) => ({
     payload: {
-      metadataRestrictions: metadataRestrictions.map((r) => ({
+      metadataRestrictions: metadataRestrictions.map((r: MetadataField) => ({
         ...r,
         initial: true,
       })),
@@ -76,7 +94,7 @@ export const updateMetadataRestriction = createAction(
  * </code>
  * @type {{currentProject, samples}}
  */
-const initialState = (() => {
+const initialState: InitialState = (() => {
   const match = window.location.href.match(/projects\/(\d+)/);
   if (!match) {
     return {};
@@ -90,10 +108,10 @@ const initialState = (() => {
 
   const { samples: allSamples, projectId: currentProject } =
     JSON.parse(stringData);
-  const samples = [],
-    lockedSamples = [],
-    associated = [];
-  allSamples.forEach((sample) => {
+  const samples: Sample[] = [],
+    lockedSamples: Sample[] = [],
+    associated: Sample[] = [];
+  allSamples.forEach((sample: Sample) => {
     if (Number(sample.projectId) === Number(currentProject)) {
       if (sample.owner) {
         samples.push(sample);
@@ -117,6 +135,7 @@ const initialState = (() => {
 })();
 
 const shareSlice = createSlice({
+  reducers: {},
   name: "share",
   initialState,
   extraReducers: (builder) => {

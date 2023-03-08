@@ -5,10 +5,8 @@ const BASE_URL = setBaseUrl(`ajax/remote_api`);
 
 /**
  * Check the status of a specific Remote API.
- * @param {number} id - identifier for the API.
- * @returns {Promise<boolean>}
  */
-export function checkConnectionStatus({ id }) {
+export function checkConnectionStatus({ id }: { id: number }) {
   return axios
     .get(`${BASE_URL}/status/${id}`)
     .then(({ data }) => data)
@@ -17,25 +15,20 @@ export function checkConnectionStatus({ id }) {
 
 /**
  * Get the specific details about a remote api connection
- * @param id - identifier for a remote api
- * @returns {Promise<*>}
  */
-export function getConnectionDetails({ id }) {
+export function getConnectionDetails({ id }: { id: number }) {
   return axios.get(`${BASE_URL}/${id}`).then(({ data }) => data);
 }
 
 /**
  * Delete a specific remote api
- * @param id - identifier for a remote api
- * @returns {Promise<AxiosResponse<any>>}
  */
-export function deleteRemoteApi({ id }) {
+export function deleteRemoteApi({ id }: { id: number }) {
   return axios.delete(`${BASE_URL}/${id}/delete`);
 }
 
 /**
  * Get a list of all remote APIs
- * @returns {Promise<*>}
  */
 export function getListOfRemoteApis() {
   return axios.get(`${BASE_URL}/apis`).then(({ data }) => data);
@@ -43,20 +36,21 @@ export function getListOfRemoteApis() {
 
 /**
  * Get a list of projects for a Remote API
- * @param id - Remote API identifier
- * @returns {Promise<*>}
  */
-export function getProjectsForAPI({ id }) {
+export function getProjectsForAPI({ id }: { id: number }) {
   return axios.get(`${BASE_URL}/${id}/projects`).then(({ data }) => data);
 }
 
 /**
  * Create a new Synchronized Project
- * @param url
- * @param frequency
- * @returns {Promise<*>}
  */
-export function createSynchronizedProject({ url, frequency }) {
+export function createSynchronizedProject({
+  url,
+  frequency,
+}: {
+  url: string;
+  frequency: string;
+}) {
   return axios
     .post(`${BASE_URL}/project`, { url, frequency })
     .then(({ data }) => data)
