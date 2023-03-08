@@ -56,7 +56,7 @@ export function RemoteApiStatus({
     return () => window.removeEventListener("message", updateRemoteApi);
   }, [updateRemoteApi]);
 
-  useEffect(() => checkApiStatus(), [api.id, checkApiStatus]);
+  useEffect(() => checkApiStatus(), [checkApiStatus]);
 
   /**
    * This will open a popup window with the Oauth for the Remote API

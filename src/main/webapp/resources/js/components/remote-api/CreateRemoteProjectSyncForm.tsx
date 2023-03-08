@@ -45,13 +45,13 @@ export function CreateRemoteProjectSyncForm(): JSX.Element {
    */
   const updateApiStatus = (value: number) => setSelectedApi(apis[value]);
 
-  const getApiProjects = () => {
+  const getApiProjects = React.useCallback(() => {
     if (selectedApi?.id) {
       getProjectsForAPI({ id: selectedApi.id })
         .then(setProjects)
         .then(() => setConnected(true));
     }
-  };
+  }, [selectedApi?.id]);
 
   const createRemote = () => {
     form.validateFields().then(({ frequency, url }) => {
