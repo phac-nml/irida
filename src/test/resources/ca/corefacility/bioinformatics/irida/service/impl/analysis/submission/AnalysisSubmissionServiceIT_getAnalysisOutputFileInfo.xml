@@ -28,21 +28,21 @@
           email="admin@nowhere.com" firstName="Ad" lastName="Min"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
-          credentialsNonExpired="true"/>
+          credentialsNonExpired="true" user_type="TYPE_LOCAL"/>
     <user id="2"
           username="thisguy" system_role="ROLE_USER"
           email="this@guy.ca" firstName="This" lastName="Guy"
           createdDate="2018-07-04 10:00:0.0" modifiedDate="2018-07-04 10:00:0.0"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="555-5555"
-          enabled="true" credentialsNonExpired="true"/>
+          enabled="true" credentialsNonExpired="true" user_type="TYPE_LOCAL"/>
     <user id="3"
           username="otherguy" system_role="ROLE_USER"
           email="other@guy.ca" firstName="Other" lastName="Guy"
           createdDate="2018-07-04 10:00:0.0" modifiedDate="2018-07-04 10:00:0.0"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="555-5555"
-          enabled="true" credentialsNonExpired="true"/>
+          enabled="true" credentialsNonExpired="true" user_type="TYPE_LOCAL"/>
 
     <project id="1"
              name="project1"
