@@ -19,7 +19,7 @@ interface RemoteApiStatusProps {
  */
 export function RemoteApiStatus({
   api,
-  onConnect = () => undefined,
+  onConnect,
 }: RemoteApiStatusProps): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
