@@ -68,12 +68,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(6, page.getNumberOfListItemValues(), "There should be only 6 values for these labels");
 
 		String[] expectedAnalysisDetails = new String[] {
-				"My Completed Submission",
-				"4",
-				"SNVPhyl Phylogenomics Pipeline (1.0.1)",
-				"MEDIUM",
-				"Oct 6, 2013, 10:01 AM",
-				"a few seconds" };
+				"My Completed Submission", "4", "SNVPhyl Phylogenomics Pipeline (1.0.1)", "MEDIUM",
+				"Oct 6, 2013, 10:01 AM", "a few seconds" };
 		assertTrue(page.analysisDetailsEqual(expectedAnalysisDetails),
 				"The correct details are displayed for the analysis");
 	}
@@ -401,7 +397,6 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page.openTreeShapeDropdown();
 		assertEquals("Diagonal", page.getCurrentTreeShapeTitleAttr());
 
-
 		page.openMetadataDropdown();
 		assertEquals(4, page.getNumberOfMetadataFields());
 		page.selectedMetadataTemplate("Testing Template 1");
@@ -423,7 +418,6 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		Collections.sort(allSelectedFields);
 		assertEquals(allFields, allSelectedFields);
 
-
 		page.openLegend();
 		assertTrue(page.legendContainsCorrectAmountOfMetadataFields());
 	}
@@ -434,8 +428,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		IridaWorkflow unknownWorkflow;
 
 		// Register an UNKNOWN workflow
-		Path workflowVersion1DirectoryPath = Paths
-				.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0").toURI());
+		Path workflowVersion1DirectoryPath = Paths.get(
+				TestAnalysis.class.getResource("workflows/TestAnalysis/1.0").toURI());
 
 		iridaWorkflowsService = new IridaWorkflowsService(new IridaWorkflowSet(Sets.newHashSet()),
 				new IridaWorkflowIdSet(Sets.newHashSet()));
@@ -473,12 +467,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(6, page.getNumberOfListItemValues(), "There should be only 6 values for these labels");
 
 		String[] expectedAnalysisDetails = new String[] {
-				"My Completed Submission UNKNOWN PIPELINE",
-				"14",
-				"Unknown Pipeline (Unknown Version)",
-				"MEDIUM",
-				"Oct 6, 2013, 10:01 AM",
-				"a few seconds" };
+				"My Completed Submission UNKNOWN PIPELINE", "14", "Unknown Pipeline (Unknown Version)", "MEDIUM",
+				"Oct 6, 2013, 10:01 AM", "a few seconds" };
 		assertTrue(page.analysisDetailsEqual(expectedAnalysisDetails),
 				"The correct details are displayed for the analysis");
 	}

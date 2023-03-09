@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -39,13 +40,14 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
- * 
+ *
  */
 @Service
 public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRun> implements SequencingRunService {
 	private static final Logger logger = LoggerFactory.getLogger(SequencingRunServiceImpl.class);
 
 	private SampleRepository sampleRepository;
+	private SequenceFileRepository sequenceFileRepository;
 	private SequencingObjectRepository objectRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private AnalysisSubmissionRepository submissionRepository;
@@ -58,6 +60,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 			UserRepository userRepository, Validator validator) {
 		super(repository, validator, SequencingRun.class);
 		this.sampleRepository = sampleRepository;
+		this.sequenceFileRepository = sequenceFileRepository;
 		this.objectRepository = objectRepository;
 		this.submissionRepository = submissionRepository;
 		this.ssoRepository = ssoRepository;
@@ -120,32 +123,36 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 		// Get the Files from the SequencingRun to delete
 		SequencingRun read = read(id);
 
-		Set<SequencingObject> findSequencingObjectsForSequencingRun = objectRepository
-				.findSequencingObjectsForSequencingRun(read);
+		Set<SequencingObject> findSequencingObjectsForSequencingRun = objectRepository.findSequencingObjectsForSequencingRun(
+				read);
 
 		// For each file in the run
 		for (SequencingObject sequencingObject : findSequencingObjectsForSequencingRun) {
 
 			// get the sample the file is in. If the sample is empty when this
 			// is complete it will be removed
-			SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository
-					.getSampleForSequencingObject(sequencingObject);
+			SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository.getSampleForSequencingObject(
+					sequencingObject);
 			if (sampleForSequencingObject != null) {
 				logger.trace("Sample " + sampleForSequencingObject.getSubject().getId() + " is used in this run");
 				referencedSamples.add(sampleForSequencingObject.getSubject());
 			}
 
 			//Get the analysis submissions this file is included in
-			Set<AnalysisSubmission> submissions = submissionRepository
-					.findAnalysisSubmissionsForSequencingObject(sequencingObject);
+			Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(
+					sequencingObject);
 
 			// If there are no submissions, we can delete the pair and file
 			if (submissions.isEmpty()) {
-				logger.trace("Deleting file " + sequencingObject.getId());
-
+				for (SequenceFile file : sequencingObject.getFiles()) {
+					logger.trace("Deleting sequence file " + file.getId());
+					sequenceFileRepository.delete(file);
+				}
+				logger.trace("Deleting sequencing object " + sequencingObject.getId());
 				objectRepository.delete(sequencingObject);
 			} else {
-				logger.trace("Keeping file " + sequencingObject.getId() + " because it's used in an analysis");
+				logger.trace(
+						"Keeping sequencing object " + sequencingObject.getId() + " because it's used in an analysis");
 				if (sampleForSequencingObject != null) {
 					// otherwise we'll just remove it from the sample
 					ssoRepository.delete(sampleForSequencingObject);
