@@ -14,10 +14,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
- * Custom implementation of {@link FilesystemSupplementedRepositoryImpl} for
- * {@link AnalysisOutputFile}.
- * 
- *
+ * Custom implementation of {@link FilesystemSupplementedRepositoryImpl} for {@link AnalysisOutputFile}.
  */
 @Repository
 public class AnalysisOutputFileRepositoryImpl extends FilesystemSupplementedRepositoryImpl<AnalysisOutputFile> {
@@ -35,6 +32,15 @@ public class AnalysisOutputFileRepositoryImpl extends FilesystemSupplementedRepo
 	@Transactional
 	public AnalysisOutputFile save(AnalysisOutputFile entity) {
 		return super.saveInternal(entity);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void delete(AnalysisOutputFile entity) {
+		super.deleteInternal(entity);
 	}
 
 }

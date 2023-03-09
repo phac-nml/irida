@@ -19,6 +19,7 @@ import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Custom implementation of a repository that writes the {@link Path} part of an entity to disk.
@@ -167,6 +168,24 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	}
 
 	/**
+	 * Actually delete the entity from disk and the database.
+	 *
+	 * @param entity the entity to delete.
+	 */
+	protected void deleteInternal(final Type entity) {
+		Path deletePath = null;
+
+		if (entity instanceof SequenceFile) {
+			//remove all sequence file copies from revision folders
+			deletePath = ((SequenceFile) entity).getFile().getParent().getParent();
+			
+			if (deletePath != null) {
+				iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
+			}
+		}
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -185,6 +204,14 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * @return the persisted entity.
 	 */
 	public abstract Type save(final Type entity);
+
+	/**
+	 * Delete an entity from disk and database. Implementors of this method are recommended to call
+	 * {@link FilesystemSupplementedRepositoryImpl#deleteInternal} to avoid repeated boilerplate code.
+	 *
+	 * @param entity the entity to delete.
+	 */
+	public abstract void delete(final Type entity);
 
 	/**
 	 * Write any files to disk and update the {@link Path} location. This method works using reflection to automagically
