@@ -1,5 +1,19 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+
 import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -13,23 +27,10 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
-
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -105,14 +106,17 @@ public class SequencingRunServiceImplIT {
 
 		SequencingObject readObject = objectService.read(so.getId());
 
-		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService
-				.getSequencingObjectsForSequencingRun(saved);
+		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService.getSequencingObjectsForSequencingRun(
+				saved);
 		assertTrue(sequencingObjectsForSequencingRun.contains(so), "Saved miseq run should have seqence file");
 
 		int maxWait = 20;
 		int waits = 0;
 
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+		if (SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getAuthorities()
+				.stream()
 				.anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
 			AnalysisFastQC analysis = null;
 			do {
@@ -276,11 +280,25 @@ public class SequencingRunServiceImplIT {
 		assertTrue(sampleService.exists(1L), "This sample should not be removed");
 	}
 
+	@Test
+	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
+	public void testDeleteFilesOnFilesystem() throws IOException {
+		SequencingRun miseqRun = miseqRunService.read(1L);
+		Path sequenceFile = Files.createTempFile(null, null);
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+		SequenceFile sf = new SequenceFile(sequenceFile);
+		SequencingObject so = new SingleEndSequenceFile(sf);
+		so = objectService.create(so);
+		miseqRunService.addSequencingObjectToSequencingRun(miseqRun, so);
+		assertTrue(Files.exists(sf.getFile()), "Sequence file should exist on the file system");
+		miseqRunService.delete(1L);
+		assertFalse(Files.exists(sf.getFile()), "Sequence file should not exist on the file system");
+	}
+
 	/**
-	 * This test simulates a bug that happens from the REST API when uploading
-	 * sequence files to samples, where a new sequence file is created, then
-	 * detached from a transaction.
-	 * 
+	 * This test simulates a bug that happens from the REST API when uploading sequence files to samples, where a new
+	 * sequence file is created, then detached from a transaction.
+	 *
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */

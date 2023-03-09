@@ -12,7 +12,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.annotation.FileSystemIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
@@ -38,8 +41,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @FileSystemIntegrationTest
 public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtility {
@@ -79,8 +80,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 				.withClientConfiguration(new ClientConfiguration().withProtocol(Protocol.HTTP))
 				.withCredentials(new AWSStaticCredentialsProvider(
 						new AnonymousAWSCredentials())) // use any credentials here for mocking
-				.withEndpointConfiguration(
-						new AwsClientBuilder.EndpointConfiguration(ENDPOINT_URL, BUCKET_REGION))
+				.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(ENDPOINT_URL, BUCKET_REGION))
 				.enablePathStyleAccess()
 				.build();
 
@@ -88,17 +88,17 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 			s3Client.createBucket(new CreateBucketRequest(bucketName, BUCKET_REGION));
 		}
 
-		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(bucketName, BUCKET_REGION, AWS_ACCESS_KEY, AWS_SECRET_KEY,
-				Optional.ofNullable(ENDPOINT_URL));
+		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(bucketName, BUCKET_REGION, AWS_ACCESS_KEY,
+				AWS_SECRET_KEY, Optional.ofNullable(ENDPOINT_URL));
 
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+	}
 
+	@BeforeEach
+	public void uploadFiles() {
 		s3Client.putObject(bucketName, AWS_PATH_TO_FASTA_FILE, Paths.get(LOCAL_RESOURCES_FASTA_FILE_PATH).toFile());
-
 		s3Client.putObject(bucketName, AWS_PATH_TO_IMAGE_FILE, Paths.get(LOCAL_RESOURCES_IMAGE_FILE_PATH).toFile());
-
 		s3Client.putObject(bucketName, AWS_PATH_FASTQ_1, Paths.get(LOCAL_RESOURCES_FASTQ_1_PATH).toFile());
-
 		s3Client.putObject(bucketName, AWS_PATH_FASTQ_2, Paths.get(LOCAL_RESOURCES_FASTQ_2_PATH).toFile());
 	}
 
@@ -176,6 +176,25 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 				Files.deleteIfExists(temp);
 			}
 		}
+	}
+
+	@Test
+	@Override
+	public void testDeleteFile() {
+		iridaFileStorageUtility.deleteFile(PATH_TO_FASTA_FILE);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertFalse(fileExistsInBlobStorage, "File should not exist in aws s3 bucket");
+	}
+
+	@Test
+	@Override
+	public void testDeleteFolder() {
+		Path folder = PATH_TO_FASTA_FILE.getParent();
+		iridaFileStorageUtility.deleteFolder(folder);
+		boolean folderExistsInBlobStorage = iridaFileStorageUtility.fileExists(folder);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertFalse(folderExistsInBlobStorage, "Folder should not exist in aws s3 bucket");
+		assertFalse(fileExistsInBlobStorage, "File should not exist in aws s3 bucket");
 	}
 
 	@Test

@@ -16,6 +16,7 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileSystemUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
@@ -61,13 +62,13 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
 		if (iridaTemporaryFile.getFile() != null) {
-			logger.trace("File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile()
-					.toString() + "]");
+			logger.trace(
+					"File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile().toString()
+							+ "]");
 		}
 		if (iridaTemporaryFile.getDirectoryPath() != null) {
 			logger.trace("Directory resides on local filesystem. Not cleaning up directory ["
-					+ iridaTemporaryFile.getDirectoryPath()
-					.toString() + "]");
+					+ iridaTemporaryFile.getDirectoryPath().toString() + "]");
 		}
 	}
 
@@ -103,10 +104,37 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public void deleteFile(Path file) {
+		try {
+			logger.trace("Deleting file: [" + file.toString() + "]");
+			Files.deleteIfExists(file);
+		} catch (IOException e) {
+			logger.error("Unable to delete file", e);
+			throw new StorageException("Unable to delete file", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteFolder(Path folder) {
+		try {
+			logger.trace("Deleting folder: [" + folder.toString() + "]");
+			FileSystemUtils.deleteRecursively(folder);
+		} catch (IOException e) {
+			logger.error("Unable to delete folder", e);
+			throw new StorageException("Unable to delete folder", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getFileName(Path file) {
 		String fileName = "";
-		fileName = file.getFileName()
-				.toString();
+		fileName = file.getFileName().toString();
 		return fileName;
 	}
 
@@ -171,9 +199,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		for (SequencingObject object : sequencingObjects) {
 
 			for (SequenceFile file : object.getFiles()) {
-				String fileName = file.getFile()
-						.toFile()
-						.getName();
+				String fileName = file.getFile().toFile().getName();
 
 				Optional<String> currentExtensionOpt = VALID_CONCATENATION_EXTENSIONS.stream()
 						.filter(e -> fileName.endsWith(e))
@@ -245,7 +271,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 			}
 
 			return new FileChunkResponse(chunkResponse, randomAccessFile.getFilePointer());
-		} catch (IOException e ) {
+		} catch (IOException e) {
 			logger.error("Could not read output file ", e);
 		}
 		return null;
