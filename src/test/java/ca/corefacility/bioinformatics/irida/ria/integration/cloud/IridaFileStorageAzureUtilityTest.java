@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.cloud;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,7 +11,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,21 +92,32 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, storageSharedKeyCredential,
 				containerName);
 
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+	}
+
+	@BeforeEach
+	public void uploadFiles() {
 		// Upload a fasta file
 		BlobClient blobClient = containerClient.getBlobClient(AZURE_PATH_TO_FASTA_FILE);
-		blobClient.uploadFromFile(LOCAL_RESOURCES_FASTA_FILE_PATH);
+		if (!blobClient.exists()) {
+			blobClient.uploadFromFile(LOCAL_RESOURCES_FASTA_FILE_PATH);
+		}
 
 		// Upload an image file
 		blobClient = containerClient.getBlobClient(AZURE_PATH_TO_IMAGE_FILE);
-		blobClient.uploadFromFile(LOCAL_RESOURCES_IMAGE_FILE_PATH);
+		if (!blobClient.exists()) {
+			blobClient.uploadFromFile(LOCAL_RESOURCES_IMAGE_FILE_PATH);
+		}
 
 		// Upload fastq files
 		blobClient = containerClient.getBlobClient(AZURE_PATH_FASTQ_1);
-		blobClient.uploadFromFile(LOCAL_RESOURCES_FASTQ_1_PATH);
+		if (!blobClient.exists()) {
+			blobClient.uploadFromFile(LOCAL_RESOURCES_FASTQ_1_PATH);
+		}
 		blobClient = containerClient.getBlobClient(AZURE_PATH_FASTQ_2);
-		blobClient.uploadFromFile(LOCAL_RESOURCES_FASTQ_2_PATH);
-
-		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		if (!blobClient.exists()) {
+			blobClient.uploadFromFile(LOCAL_RESOURCES_FASTQ_2_PATH);
+		}
 	}
 
 	@AfterAll
@@ -189,6 +205,25 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 				Files.deleteIfExists(temp);
 			}
 		}
+	}
+
+	@Test
+	@Override
+	public void testDeleteFile() {
+		iridaFileStorageUtility.deleteFile(PATH_TO_FASTA_FILE);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
+	}
+
+	@Test
+	@Override
+	public void testDeleteFolder() {
+		Path folder = PATH_TO_FASTA_FILE.getParent();
+		iridaFileStorageUtility.deleteFolder(folder);
+		boolean folderExistsInBlobStorage = iridaFileStorageUtility.fileExists(folder);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertFalse(folderExistsInBlobStorage, "Folder should not exist in azure blob storage");
+		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
 	}
 
 	@Test
