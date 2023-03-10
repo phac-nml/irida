@@ -4,12 +4,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +23,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
-import com.azure.storage.blob.*;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.*;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.common.StorageSharedKeyCredential;
@@ -165,6 +166,39 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (IOException e) {
 			logger.error("Unable to clean up source file", e);
 			throw new StorageException("Unable to clean up source file", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteFile(Path file) {
+		try {
+			logger.trace("Deleting file: [" + file.toString() + "]");
+			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			blobClient.deleteIfExists();
+		} catch (BlobStorageException e) {
+			logger.error("Unable to delete file", e);
+			throw new StorageException("Unable to delete file", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteFolder(Path folder) {
+		try {
+			logger.trace("Deleting folder: [" + folder.toString() + "]");
+			ListBlobsOptions options = new ListBlobsOptions().setPrefix(getAzureFileAbsolutePath(folder));
+			containerClient.listBlobs(options, null).forEach(blob -> {
+				BlobClient blobClient = containerClient.getBlobClient(blob.getName());
+				blobClient.deleteIfExists();
+			});
+		} catch (BlobStorageException e) {
+			logger.error("Unable to delete folder", e);
+			throw new StorageException("Unable to delete folder", e);
 		}
 	}
 

@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.assembly;
 import java.nio.file.Path;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +22,8 @@ public class GenomeAssemblyRepositoryImpl extends FilesystemSupplementedReposito
 
 	@Autowired
 	public GenomeAssemblyRepositoryImpl(EntityManager entityManager,
-			@Qualifier("assemblyFileBaseDirectory") Path baseDirectory, IridaFileStorageUtility iridaFileStorageUtility) {
+			@Qualifier("assemblyFileBaseDirectory") Path baseDirectory,
+			IridaFileStorageUtility iridaFileStorageUtility) {
 		super(entityManager, baseDirectory, iridaFileStorageUtility);
 	}
 
@@ -33,5 +35,14 @@ public class GenomeAssemblyRepositoryImpl extends FilesystemSupplementedReposito
 			return this.save(entity);
 		}
 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void delete(GenomeAssembly entity) {
+		this.deleteInternal(entity);
 	}
 }

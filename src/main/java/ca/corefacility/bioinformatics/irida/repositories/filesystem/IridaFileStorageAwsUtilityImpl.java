@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkR
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -33,6 +37,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 /**
  * Implementation of file utilities for aws storage
@@ -174,6 +179,37 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		} catch (IOException e) {
 			logger.error("Unable to clean up source file", e);
 			throw new StorageException("Unable to clean up source file", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteFile(Path file) {
+		try {
+			logger.trace("Deleting file: [" + file.toString() + "]");
+			s3.deleteObject(bucketName, getAwsFileAbsolutePath(file));
+		} catch (SdkClientException e) {
+			logger.error("Unable to delete file", e);
+			throw new StorageException("Unable to delete file", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteFolder(Path folder) {
+		try {
+			logger.trace("Deleting folder: [" + folder.toString() + "]");
+			for (S3ObjectSummary file : s3.listObjects(bucketName, getAwsFileAbsolutePath(folder))
+					.getObjectSummaries()) {
+				s3.deleteObject(bucketName, file.getKey());
+			}
+		} catch (SdkClientException e) {
+			logger.error("Unable to delete folder", e);
+			throw new StorageException("Unable to delete folder", e);
 		}
 	}
 
@@ -354,7 +390,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			 below uses getBucketAcl. So if bucket permissions aren't set then the else code is used.
 			 */
 			GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName,
-					getAwsFileAbsolutePath(file)).withRange(seek, (chunk+seek) - 1);
+					getAwsFileAbsolutePath(file)).withRange(seek, (chunk + seek) - 1);
 			try (S3Object s3Object = s3.getObject(rangeObjectRequest);
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
 				byte[] bytes = s3ObjectInputStream.readAllBytes();

@@ -14,17 +14,15 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
- * Custom implementation of {@link FilesystemSupplementedRepositoryImpl} for
- * {@link SequenceFile}.
- * 
- *
+ * Custom implementation of {@link FilesystemSupplementedRepositoryImpl} for {@link SequenceFile}.
  */
 @Repository
 public class SequenceFileRepositoryImpl extends FilesystemSupplementedRepositoryImpl<SequenceFile> {
 
 	@Autowired
 	public SequenceFileRepositoryImpl(EntityManager entityManager,
-			@Qualifier("sequenceFileBaseDirectory") Path baseDirectory, IridaFileStorageUtility iridaFileStorageUtility) {
+			@Qualifier("sequenceFileBaseDirectory") Path baseDirectory,
+			IridaFileStorageUtility iridaFileStorageUtility) {
 		super(entityManager, baseDirectory, iridaFileStorageUtility);
 	}
 
@@ -35,6 +33,15 @@ public class SequenceFileRepositoryImpl extends FilesystemSupplementedRepository
 	@Transactional
 	public SequenceFile save(SequenceFile entity) {
 		return super.saveInternal(entity);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void delete(SequenceFile entity) {
+		super.deleteInternal(entity);
 	}
 
 }
