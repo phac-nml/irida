@@ -110,7 +110,7 @@ export function CreateRemoteProjectSyncForm(): JSX.Element {
                   onChange={(projectId) => {
                     const project = projects.find((p) => p.id === projectId);
                     if (project) {
-                      form.setFieldsValue({ url: project.url });
+                      form.setFieldsValue({ url: project.remoteUrl });
                     }
                   }}
                   placeholder={i18n("NewProjectSync.project.placeholder")}

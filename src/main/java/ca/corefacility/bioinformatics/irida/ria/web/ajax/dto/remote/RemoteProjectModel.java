@@ -9,13 +9,13 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 public class RemoteProjectModel {
 	private final Long id;
 	private final String name;
-	private final String url;
+	private final String remoteUrl;
 	private final String key;
 
 	public RemoteProjectModel(Project project) {
 		this.id = project.getId();
 		this.name = project.getName();
-		this.url = project.getRemoteStatus().getURL();
+		this.remoteUrl = project.getRemoteStatus().getURL();
 		this.key = "project-" + project.getId();
 	}
 
@@ -27,10 +27,10 @@ public class RemoteProjectModel {
 		return name;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getRemoteUrl() {
+		return remoteUrl;
 	}
-	
+
 	public String getKey() {
 		return key;
 	}

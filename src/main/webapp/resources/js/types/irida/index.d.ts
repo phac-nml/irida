@@ -131,7 +131,7 @@ declare namespace IRIDA {
     analysisPriority: string;
     users: User[];
     analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
-    url: string;
+    remoteUrl: string;
   }
 
   type ProjectMinimal = Pick<Project, "id" | "name">;
