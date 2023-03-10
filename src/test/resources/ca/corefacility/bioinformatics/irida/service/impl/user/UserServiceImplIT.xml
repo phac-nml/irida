@@ -22,7 +22,7 @@
 			  email="manager@nowhere.com" firstName="Mr." lastName="Manager"
 			  password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
 			  phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_MANAGER"
-			  credentialsNonExpired="true" REV="1" REVTYPE="1"/>
+			  credentialsNonExpired="true" REV="1" REVTYPE="1" user_type="TYPE_LOCAL"/>
 
 	<project name="project" id="1" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0"  />
