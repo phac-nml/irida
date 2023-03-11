@@ -4,26 +4,23 @@ import { HelpPopover } from "../popovers";
 
 /**
  * React component for updating the synchronization frequency of a project.
- * @param {string} [name] - form name value
- * @param {function} [onChange] - called when the component changes value
- * @returns {JSX.Element}
- * @constructor
  */
 export function SyncFrequencySelect({
   name = "frequency",
-  onChange = () => {},
-  labelRequired = true
-}) {
+  onChange = () => undefined,
+  labelRequired = true,
+}): JSX.Element {
   return (
     <Form.Item
-      label={ labelRequired ?
+      label={
+        labelRequired ? (
           <span>
             {i18n("SyncFrequencySelect.frequency")}
             <HelpPopover
               content={<div>{i18n("SyncFrequencySelect.frequency.help")}</div>}
             />
           </span>
-        : null
+        ) : null
       }
       name={name}
     >

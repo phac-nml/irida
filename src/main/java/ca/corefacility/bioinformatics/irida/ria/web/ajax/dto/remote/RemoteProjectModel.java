@@ -3,27 +3,32 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
- * Used to represent a remote project for selecting from available remote projects in the
- * create remote synchronized project form
+ * Used to represent a remote project for selecting from available remote projects in the create remote synchronized
+ * project form
  */
 public class RemoteProjectModel {
-	private final String value; // Should be id for the item
-	private final String label; // Should be the name for the item;
+	private final Long id;
+	private final String name;
+	private final String remoteUrl;
 	private final String key;
 
 	public RemoteProjectModel(Project project) {
-		this.value = project.getRemoteStatus()
-				.getURL();
-		this.label = project.getLabel();
+		this.id = project.getId();
+		this.name = project.getName();
+		this.remoteUrl = project.getRemoteStatus().getURL();
 		this.key = "project-" + project.getId();
 	}
 
-	public String getValue() {
-		return value;
+	public Long getId() {
+		return id;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getName() {
+		return name;
+	}
+
+	public String getRemoteUrl() {
+		return remoteUrl;
 	}
 
 	public String getKey() {

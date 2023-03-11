@@ -5,32 +5,27 @@ import { IconLoading } from "../../../../components/icons/Icons";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { authenticateRemoteClient } from "../../../../apis/oauth/oauth";
+import { RemoteApi } from "../../../../types/irida";
+
+interface RemoteApiStatusProps {
+  api: RemoteApi;
+  onConnect: () => void;
+}
 
 /**
  * React component to render the status of a Remote API.
  * If the API is not connected it will present the user a button allowing
  * them to connect.
- * @param {object} api - details about the remote API
- * @param {function} onConnect - what do when the connection is made.
- * @returns {*}
- * @constructor
  */
-export function RemoteApiStatus({ api, onConnect = () => {} }) {
+export function RemoteApiStatus({
+  api,
+  onConnect,
+}: RemoteApiStatusProps): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
   const [expiration, setExpiration] = useState(undefined);
 
-  useEffect(checkApiStatus, []);
-
-  useEffect(() => {
-    // Listen for a remote api connection
-    window.addEventListener("message", updateRemoteApi, false);
-    return () => window.removeEventListener("message", updateRemoteApi);
-  }, []);
-
-  useEffect(() => checkApiStatus(), [api.id]);
-
-  function checkApiStatus() {
+  const checkApiStatus = React.useCallback(() => {
     setLoading(true);
     checkConnectionStatus({ id: api.id })
       .then((data) => {
@@ -39,16 +34,29 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
         data && onConnect();
       })
       .finally(() => setLoading(false));
-  }
+  }, [api.id, onConnect]);
 
-  function updateRemoteApi(event) {
-    if (
-      event.origin === window.location.origin &&
-      event.data === "remote_api_connect"
-    ) {
-      checkApiStatus();
-    }
-  }
+  const updateRemoteApi = React.useCallback(
+    (event: MessageEvent) => {
+      if (
+        event.origin === window.location.origin &&
+        event.data === "remote_api_connect"
+      ) {
+        checkApiStatus();
+      }
+    },
+    [checkApiStatus]
+  );
+
+  useEffect(checkApiStatus, [checkApiStatus]);
+
+  useEffect(() => {
+    // Listen for a remote api connection
+    window.addEventListener("message", updateRemoteApi, false);
+    return () => window.removeEventListener("message", updateRemoteApi);
+  }, [updateRemoteApi]);
+
+  useEffect(() => checkApiStatus(), [checkApiStatus]);
 
   /**
    * This will open a popup window with the Oauth for the Remote API
