@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
@@ -70,6 +71,7 @@ public class SampleServiceImplTest {
 
 	private GenomeAssemblyRepository genomeAssemblyRepository;
 	private GenomeAssemblyService genomeAssemblyService;
+	private AnalysisSubmissionRepository submissionRepository;
 
 	private Validator validator;
 
@@ -89,10 +91,11 @@ public class SampleServiceImplTest {
 		sampleGenomeAssemblyJoinRepository = mock(SampleGenomeAssemblyJoinRepository.class);
 		metadataEntryRepository = mock(MetadataEntryRepository.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
+		submissionRepository = mock(AnalysisSubmissionRepository.class);
 
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository, ssoRepository,
 				qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository,
-				metadataEntryRepository, sequenceFileRepository, null);
+				metadataEntryRepository, sequenceFileRepository, submissionRepository, null);
 
 		genomeAssemblyRepository = mock(GenomeAssemblyRepository.class);
 		validator = mock(Validator.class);

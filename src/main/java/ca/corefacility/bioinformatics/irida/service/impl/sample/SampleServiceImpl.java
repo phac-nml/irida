@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -104,6 +105,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private final MetadataEntryRepository metadataEntryRepository;
 	private final SequenceFileRepository sequenceFileRepository;
+	private final AnalysisSubmissionRepository submissionRepository;
 
 	/**
 	 * Constructor.
@@ -117,6 +119,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
 	 * @param userRepository                     A {@link UserRepository}
 	 * @param metadataEntryRepository            A {@link MetadataEntryRepository}
+	 * @param sequenceFileRepository             A {@link SequenceFileRepository}
+	 * @param submissionRepository               A {@link AnalysisSubmissionRepository}
 	 * @param validator                          validator.
 	 */
 	@Autowired
@@ -125,7 +129,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
 			MetadataEntryRepository metadataEntryRepository, SequenceFileRepository sequenceFileRepository,
-			Validator validator) {
+			AnalysisSubmissionRepository submissionRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -137,6 +141,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 		this.metadataEntryRepository = metadataEntryRepository;
 		this.sequenceFileRepository = sequenceFileRepository;
+		this.submissionRepository = submissionRepository;
 	}
 
 	/**
@@ -372,8 +377,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				.equals(object.getId())) {
 			sampleRepository.removeDefaultSequencingObject(sample);
 		}
-		for (SequenceFile file : object.getFiles()) {
-			sequenceFileRepository.delete(file);
+		Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(object);
+		if (submissions.isEmpty() && object.getSequencingRun() == null) {
+			for (SequenceFile file : object.getFiles()) {
+				sequenceFileRepository.delete(file);
+			}
+			sequencingObjectRepository.delete(object);
 		}
 	}
 
