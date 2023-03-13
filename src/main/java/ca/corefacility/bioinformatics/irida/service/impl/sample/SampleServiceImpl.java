@@ -367,14 +367,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) {
 		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, object.getId());
 		ssoRepository.delete(readObjectForSample);
-		sequencingObjectRepository.delete(object);
-		for (SequenceFile file : object.getFiles()) {
-			sequenceFileRepository.delete(file);
-		}
 		if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
 				.getId()
 				.equals(object.getId())) {
 			sampleRepository.removeDefaultSequencingObject(sample);
+		}
+		for (SequenceFile file : object.getFiles()) {
+			sequenceFileRepository.delete(file);
 		}
 	}
 
