@@ -55,6 +55,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
@@ -102,6 +103,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private final UserRepository userRepository;
 
 	private final MetadataEntryRepository metadataEntryRepository;
+	private final SequenceFileRepository sequenceFileRepository;
 
 	/**
 	 * Constructor.
@@ -122,7 +124,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
-			MetadataEntryRepository metadataEntryRepository, Validator validator) {
+			MetadataEntryRepository metadataEntryRepository, SequenceFileRepository sequenceFileRepository,
+			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -133,6 +136,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.userRepository = userRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 		this.metadataEntryRepository = metadataEntryRepository;
+		this.sequenceFileRepository = sequenceFileRepository;
 	}
 
 	/**
@@ -363,8 +367,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) {
 		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, object.getId());
 		ssoRepository.delete(readObjectForSample);
-		if (sample.getDefaultSequencingObject() != null
-				&& sample.getDefaultSequencingObject().getId().equals(object.getId())) {
+		sequencingObjectRepository.delete(object);
+		for (SequenceFile file : object.getFiles()) {
+			sequenceFileRepository.delete(file);
+		}
+		if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
+				.getId()
+				.equals(object.getId())) {
 			sampleRepository.removeDefaultSequencingObject(sample);
 		}
 	}
