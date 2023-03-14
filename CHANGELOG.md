@@ -2,6 +2,10 @@
 # Changelog
 
 ## [Unreleased]
+* [Developer]: Added functionality to delete sequence files from file system when a sequence run is removed. [See PR 1468](https://github.com/phac-nml/irida/pull/1468)
+* [Developer]: Added script to do initial cleanup of sequence files from file system. [See PR 1469](https://github.com/phac-nml/irida/pull/1469)
+* [UI]: Add identifier to project drop-down on project synchronization page. See [PR 1474](https://github.com/phac-nml/irida/pull/1474)
+* [Developer]: Added functionality to delete sequence files from file storage when removed from sample. [See PR 1476](https://github.com/phac-nml/irida/pull/1476)
 
 ## [23.01] - 2023/02/28
 * [UI/Developer]: Updated `react-router` to the version 6.4.3. See[PR 1405](https://github.com/phac-nml/irida/pull/1405)
@@ -19,9 +23,6 @@
 * [Developer]: Deprecated "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}" in favour of "/api/projects/{projectId}/samples/bySampleName", which accepts a json property "sampleName"
 * [Developer]: Fixed bug in setting a `default_sequencing_object and default_genome_assembly to `NULL` for a sample when the default sequencing object or genome assembly were removed. [See PR 1466](https://github.com/phac-nml/irida/pull/1466)
 * [Developer]: Fixed bug preventing a `sample` with an analysis submission from being deleted. [See PR 1467](https://github.com/phac-nml/irida/pull/1467)
-* [Developer]: Added functionality to delete sequence files from file system when a sequence run is removed. [See PR 1468](https://github.com/phac-nml/irida/pull/1468)
-* [Developer]: Added script to do initial cleanup of sequence files from file system. [See PR 1469](https://github.com/phac-nml/irida/pull/1469)
-* [UI]: Add identifier to project drop-down on project synchronization page. See [PR 1474](https://github.com/phac-nml/irida/pull/1474)
 
 ## [22.09.7] - 2023/01/24
 * [UI]: Fixed bugs on NCBI Export page preventing the NCBI `submission.xml` file from being properly written. See [PR 1451](https://github.com/phac-nml/irida/pull/1451)
