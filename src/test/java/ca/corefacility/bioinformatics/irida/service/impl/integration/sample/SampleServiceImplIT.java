@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.sample;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +11,11 @@ import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
@@ -52,7 +59,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SampleServiceImplIT {
-
+	private static final byte[] FASTQ_FILE_CONTENTS = "@testread\nACGTACGT\n+\n????????".getBytes();
+	@Autowired
+	@Qualifier("sequenceFileBaseDirectory")
+	private Path sequenceFileBaseDirectory;
 	@Autowired
 	private SampleService sampleService;
 	@Autowired
@@ -75,6 +85,12 @@ public class SampleServiceImplIT {
 	private static final double deltaFloatEquality = 0.000001;
 
 	private List<Long> sampleIds = List.of(1L, 2L);
+
+	@BeforeEach
+	public void setUp() throws IOException {
+		Files.createDirectories(sequenceFileBaseDirectory);
+		FileUtils.cleanDirectory(sequenceFileBaseDirectory.toFile());
+	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
@@ -99,6 +115,28 @@ public class SampleServiceImplIT {
 
 		Sample sampleAfterDelete = sampleService.read(9L);
 		assertNull(sampleAfterDelete.getDefaultSequencingObject());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void removeSequencingObjectFromSampleWithNoAnalysis() throws Exception {
+		Sample sample = sampleService.read(10L);
+		SequencingObject sequencingObject = objectService.read(7L);
+		sequencingObject.getFiles().forEach(file -> {
+			try {
+				Path sequenceFile = Files.createTempFile(sequenceFileBaseDirectory, file.getFileName(), ".fastq");
+				Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+				file.setFile(sequenceFile);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		Set<SequenceFile> files = sequencingObject.getFiles();
+		files.forEach(
+				file -> assertTrue(Files.exists(file.getFile()), "Sequence file should exist on the file system"));
+		sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
+		files.forEach(
+				file -> assertFalse(Files.exists(file.getFile()), "Sequence file should not exist on the file system"));
 	}
 
 	@Test
@@ -128,18 +166,14 @@ public class SampleServiceImplIT {
 		Sample sample3 = sampleService.read(3L);
 		Project p = projectService.read(1L);
 
-		assertEquals(Lists.newArrayList(1L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
-						.stream()
-						.map(t -> t.getObject().getId())
-						.collect(Collectors.toList()),
-				"Sample 1 should only have genome assembly 1");
-		assertEquals(Lists.newArrayList(2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample2)
-						.stream()
-						.map(t -> t.getObject().getId())
-						.collect(Collectors.toList()),
-				"Sample 2 should only have genome assembly 2");
+		assertEquals(Lists.newArrayList(1L), sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+				.stream()
+				.map(t -> t.getObject().getId())
+				.collect(Collectors.toList()), "Sample 1 should only have genome assembly 1");
+		assertEquals(Lists.newArrayList(2L), sampleGenomeAssemblyJoinRepository.findBySample(sample2)
+				.stream()
+				.map(t -> t.getObject().getId())
+				.collect(Collectors.toList()), "Sample 2 should only have genome assembly 2");
 		assertTrue(sampleGenomeAssemblyJoinRepository.findBySample(sample3).isEmpty(),
 				"Sample 3 should have no genome assemblies before");
 
@@ -161,12 +195,10 @@ public class SampleServiceImplIT {
 		assertEquals(3, objectService.getSequencingObjectsForSample(merged).size(),
 				"Merged sample should have 3 sequence files");
 
-		assertEquals(Lists.newArrayList(1L, 2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
-						.stream()
-						.map(t -> t.getObject().getId())
-						.collect(Collectors.toList()),
-				"Sample 1 should only have genome assemblies 1 and 2");
+		assertEquals(Lists.newArrayList(1L, 2L), sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+				.stream()
+				.map(t -> t.getObject().getId())
+				.collect(Collectors.toList()), "Sample 1 should only have genome assemblies 1 and 2");
 	}
 
 	/**
@@ -180,18 +212,14 @@ public class SampleServiceImplIT {
 		Sample sample2 = sampleService.read(2L);
 		Project p = projectService.read(1L);
 
-		assertEquals(Lists.newArrayList(1L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample1)
-						.stream()
-						.map(t -> t.getObject().getId())
-						.collect(Collectors.toList()),
-				"Sample 1 should only have genome assembly 1");
-		assertEquals(Lists.newArrayList(2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample2)
-						.stream()
-						.map(t -> t.getObject().getId())
-						.collect(Collectors.toList()),
-				"Sample 2 should only have genome assembly 2");
+		assertEquals(Lists.newArrayList(1L), sampleGenomeAssemblyJoinRepository.findBySample(sample1)
+				.stream()
+				.map(t -> t.getObject().getId())
+				.collect(Collectors.toList()), "Sample 1 should only have genome assembly 1");
+		assertEquals(Lists.newArrayList(2L), sampleGenomeAssemblyJoinRepository.findBySample(sample2)
+				.stream()
+				.map(t -> t.getObject().getId())
+				.collect(Collectors.toList()), "Sample 2 should only have genome assembly 2");
 		assertTrue(sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).isEmpty(),
 				"Sample 3 should have no genome assemblies before");
 
@@ -217,12 +245,10 @@ public class SampleServiceImplIT {
 		assertEquals(3, objectService.getSequencingObjectsForSample(merged).size(),
 				"Merged sample should have 3 sequence files");
 
-		assertEquals(Lists.newArrayList(1L, 2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
-						.stream()
-						.map(t -> t.getObject().getId())
-						.collect(Collectors.toList()),
-				"Sample 3 should only have genome assemblies 1 and 2");
+		assertEquals(Lists.newArrayList(1L, 2L), sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+				.stream()
+				.map(t -> t.getObject().getId())
+				.collect(Collectors.toList()), "Sample 3 should only have genome assemblies 1 and 2");
 	}
 
 	/**
@@ -531,8 +557,8 @@ public class SampleServiceImplIT {
 	public void testGetPartialMetadataAsUser() {
 		Project project = projectService.read(1L);
 
-		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService
-				.getPermittedFieldsForCurrentUser(project, true);
+		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
+				project, true);
 
 		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProjectSamples(project, sampleIds,
 				permittedFieldsForCurrentUser);
@@ -552,7 +578,8 @@ public class SampleServiceImplIT {
 		Project project = projectService.read(1L);
 
 		MetadataTemplateField field1 = metadataTemplateService.readMetadataField(1L);
-		MetadataTemplateField field2 = metadataTemplateService.readMetadataField(2L); //user shouldn't be able to read this one in the project
+		MetadataTemplateField field2 = metadataTemplateService.readMetadataField(
+				2L); //user shouldn't be able to read this one in the project
 
 		List<MetadataTemplateField> metadataTemplateFields = Lists.newArrayList(field1, field2);
 
