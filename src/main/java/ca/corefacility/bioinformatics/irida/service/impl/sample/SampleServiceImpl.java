@@ -382,7 +382,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			for (SequenceFile file : object.getFiles()) {
 				sequenceFileRepository.delete(file);
 			}
-			sequencingObjectRepository.delete(object);
+			// TOD0: handle errors for removing concatenated files
+			// sequencingObjectRepository.delete(object);
 		}
 	}
 
