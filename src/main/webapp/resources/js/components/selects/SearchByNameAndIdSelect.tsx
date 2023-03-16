@@ -1,9 +1,8 @@
 import React from "react";
 import { Select, SelectProps, Tag, Typography } from "antd";
 import { LabeledValue } from "antd/lib/select";
-import { IridaBase } from "../../types/irida";
 
-export type SelectListItem = Pick<IridaBase, "id" | "name">;
+export type SelectListItem = { id: number; name: string };
 export interface SelectListProps extends SelectProps {
   selectList: SelectListItem[];
 }
@@ -11,15 +10,15 @@ export interface SelectListProps extends SelectProps {
 /**
  * React component for displaying a drop-down menu.
  * @param selectList - list that is to be displayed
- * @param className - class name of the select list
  * @param onChange - function that is called when select option has changed
+ * @param placeholder - placeholder of select
  * @param defaultValue - identifier of the select list item that is to be displayed by default
  * @constructor
  */
 export function SearchByNameAndIdSelect({
   selectList,
   onChange,
-  className,
+  placeholder,
   defaultValue = null,
 }: SelectListProps): JSX.Element {
   const [options, setOptions] = React.useState<LabeledValue[]>(() =>
@@ -68,12 +67,13 @@ export function SearchByNameAndIdSelect({
 
   return (
     <Select
+      className="t-project-select"
       autoFocus
       showSearch
       size="large"
       style={{ width: `100%` }}
       options={options}
-      className={className}
+      placeholder={placeholder}
       filterOption={false}
       onSearch={handleSearch}
       onChange={onChange}
