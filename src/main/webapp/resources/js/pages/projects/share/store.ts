@@ -3,8 +3,9 @@ import { fieldsApi } from "../../../apis/metadata/field";
 import { projectsApi } from "../../../apis/projects/projects";
 import { samplesApi } from "../../../apis/projects/samples";
 import shareReducer from "./shareSlice";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
-export default configureStore({
+const store = configureStore({
   reducer: {
     shareReducer,
     [projectsApi.reducerPath]: projectsApi.reducer,
@@ -18,3 +19,10 @@ export default configureStore({
       fieldsApi.middleware
     ),
 });
+
+export type ShareState = ReturnType<typeof store.getState>;
+export type ShareDispatch = typeof store.dispatch;
+export const useShareDispatch: () => ShareDispatch = useDispatch;
+export const useShareSelector: TypedUseSelectorHook<ShareState> = useSelector;
+
+export default store;

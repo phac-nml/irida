@@ -9,20 +9,20 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { RemoteApiStatus } from "../../pages/admin/components/remote-connections/RemoteApiStatus";
 import { HelpPopover } from "../popovers";
 import { SyncFrequencySelect } from "./SyncFrequencySelect";
+import { SearchByNameAndIdSelect } from "../selects/SearchByNameAndIdSelect";
+import { Project, RemoteApi } from "../../types/irida";
 
 /**
  * React form for creating a Synchronized Remote Project
- * @returns {JSX.Element}
- * @constructor
  */
-export function CreateRemoteProjectSyncForm() {
-  const [apis, setApis] = useState([]);
-  const [selectedApi, setSelectedApi] = useState();
+export function CreateRemoteProjectSyncForm(): JSX.Element {
+  const [apis, setApis] = useState<RemoteApi[]>([]);
+  const [selectedApi, setSelectedApi] = useState<RemoteApi>();
   const [newRemoteProjectUrlError, setNewRemoteProjectUrlError] =
     useState(null);
-  const [projects, setProjects] = useState([]);
-  const [connected, setConnected] = useState();
-  const [manual, setManual] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [connected, setConnected] = useState<boolean>();
+  const [manual, setManual] = useState<boolean>(false);
   const [form] = Form.useForm();
   const apiRef = useRef();
 
@@ -35,7 +35,7 @@ export function CreateRemoteProjectSyncForm() {
         setSelectedApi(list[0]);
       }
       // Set user focus on the api select after at mount time
-      apiRef.current.focus();
+      apiRef.current?.focus();
     });
   }, [form]);
 
@@ -43,15 +43,15 @@ export function CreateRemoteProjectSyncForm() {
    * Update the status of a specific api.
    * @param {number} value - index of the api in the apis list.
    */
-  const updateApiStatus = (value) => setSelectedApi(apis[value]);
+  const updateApiStatus = (value: number) => setSelectedApi(apis[value]);
 
-  const getApiProjects = () => {
-    if (selectedApi.id) {
+  const getApiProjects = React.useCallback(() => {
+    if (selectedApi?.id) {
       getProjectsForAPI({ id: selectedApi.id })
         .then(setProjects)
         .then(() => setConnected(true));
     }
-  };
+  }, [selectedApi?.id]);
 
   const createRemote = () => {
     form.validateFields().then(({ frequency, url }) => {
@@ -102,16 +102,24 @@ export function CreateRemoteProjectSyncForm() {
           {connected ? (
             <>
               <Form.Item label={i18n("NewProjectSync.project")} name="project">
-                <Select
-                  className="t-project-select"
-                  onChange={(value) => form.setFieldsValue({ url: value })}
-                  showSearch
-                  options={projects}
+                <SearchByNameAndIdSelect
+                  selectList={projects.map((project) => ({
+                    id: project.id,
+                    name: project.name,
+                  }))}
+                  onChange={(projectId) => {
+                    const project = projects.find((p) => p.id === projectId);
+                    if (project) {
+                      form.setFieldsValue({ url: project.remoteUrl });
+                    }
+                  }}
                   placeholder={i18n("NewProjectSync.project.placeholder")}
                 />
               </Form.Item>
               <Form.Item
-                validateStatus={newRemoteProjectUrlError !== null && "error"}
+                validateStatus={
+                  newRemoteProjectUrlError !== null ? "error" : undefined
+                }
                 help={
                   newRemoteProjectUrlError !== null && newRemoteProjectUrlError
                 }

@@ -4,6 +4,10 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+Unreleased
+----------
+* This upgrade deletes sequence files from the file system when they are removed from IRIDA. To clean up all previously removed sequence files, a script can be found under the `src/main/resources/scripts/sequence-files` folder in the IRIDA repo.
+
 22.05 to 22.09
 --------------
 * This upgrade switches the OAuth2 implementation from using spring-security-oauth to spring-security-oauth2-authorization-server and spring-security-oauth2-resource-server. Due to the dependency updates we have changed the format of the OAuth2 access tokens, they are now JWT Tokens (https://jwt.io/introduction) and are encrypted/decrypted using a certificate within a java keystore. No default java keystore is provided, so administrators will need to update their deployments to configure an appropriate java keystore. The same java keystore will need to be present on all servers which allow api access, otherwise access tokens generated on one server will not work on any other server.

@@ -6,8 +6,8 @@ import {
 import { Button, Popconfirm, Space, Typography } from "antd";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { isAdmin } from "../../../../utilities/role-utilities";
-import { RemoteApiStatus } from "./RemoteApiStatus";
 import { deleteRemoteApi } from "../../../../apis/remote-api/remote-api";
+import { RemoteApiStatus } from "./RemoteApiStatus";
 
 /**
  * Render a table to display remote API's
@@ -22,6 +22,8 @@ export function RemoteApiTable() {
   };
 
   const admin = isAdmin();
+
+  const getApiProjects = React.useCallback(() => undefined, []);
 
   const columnDefs = [
     {
@@ -48,7 +50,7 @@ export function RemoteApiTable() {
       render(text, item) {
         return (
           <Space>
-            <RemoteApiStatus api={item} updateTable={updateTable} />
+            <RemoteApiStatus api={item} onConnect={getApiProjects} />
             {admin && (
               <Popconfirm
                 title={i18n("RemoteApi.delete-confirm")}
