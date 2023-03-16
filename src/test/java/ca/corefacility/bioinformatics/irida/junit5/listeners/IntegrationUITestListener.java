@@ -94,6 +94,7 @@ public class IntegrationUITestListener implements TestExecutionListener {
 		}
 
 		options.addArguments("--window-size=1920,1080");
+		options.addArguments("--remote-allow-origins=*"); //todo: this change is in another PR
 
 		// Set up default download directory
 		if (!DOWNLOAD_DIRECTORY.exists()) {
