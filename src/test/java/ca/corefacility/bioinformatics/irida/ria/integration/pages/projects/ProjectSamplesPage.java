@@ -400,7 +400,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		int prevTotal = getTableSummary().getTotal();
 		projectsFilterToggle.click();
 		WebElement selection = driver.findElement(
-				By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
+				By.xpath("//div[@class='ant-tree-list-holder-inner']//span[@title='" + projectName + "']"));
 		selection.click();
 		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
 		waitForTableToUpdate(prevTotal);

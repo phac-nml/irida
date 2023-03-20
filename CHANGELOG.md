@@ -1,7 +1,7 @@
 
 # Changelog
 
-## [23.01.1] - 2023/03/15
+## [23.01.1] - 2023/03/21
 * [UI]: Fixed issue where template order was not applied when applying a linelist template. See [PR 1479](https://github.com/phac-nml/irida/pull/1479)
 * [UI]: Added select all to associated projects filter on project > samples page. See [PR 1479](https://github.com/phac-nml/irida/pull/1479)
 
