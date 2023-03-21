@@ -157,7 +157,10 @@ export class TableComponent extends React.Component {
     /*
     Combine back the sample name plus the new ordered state for the table.
      */
-    this.columnApi.applyColumnState({ state: [...defaults, ...final] });
+    this.columnApi.applyColumnState({
+      state: [...defaults, ...final],
+      applyOrder: true,
+    });
   };
 
   /*
