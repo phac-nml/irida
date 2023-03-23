@@ -37,7 +37,8 @@ public class LoginPageLdapNoServerIT extends AbstractIridaUIITChromeDriver {
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(JOHN_USERNAME, JOHN_PASSWORD);
-		assertTrue(driver().getCurrentUrl().contains("login?ldap-error=6"), "Should update the url with '?ldap-error=6'");
+		String expectedUrl = driver().getCurrentUrl().substring(0, 23) + "irida/login?ldap-error=6";
+		assertEquals(expectedUrl, driver().getCurrentUrl());
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
 	}
 

@@ -93,9 +93,8 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(MRTEST_USERNAME, MRTEST_PASSWORD);
-		// THIS SHOULD FAIL, TODO this is no longer a valid test, as we allow signin's from users not in ldap if they are in local DB
-		assertTrue(driver().getCurrentUrl().contains("login?error=true"), "Should update the url with '?error=true'");
-		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
+		assertFalse(driver().getCurrentUrl().contains("login?error=true"), "Url should not contain '?error=true'");
+		assertTrue(driver().getTitle().contains("Dashboard"), "The 'mrtest' user is logged in and redirected.");
 	}
 
 	/**
