@@ -292,6 +292,7 @@ export function SamplesTable() {
         return <ProjectTag project={row.project} />;
       },
       filters: associatedProjects,
+      filterMode: "tree",
     },
     {
       title: i18n("SamplesTable.Column.collectedBy"),
