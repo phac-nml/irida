@@ -118,7 +118,7 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 	public void testCreateAccountLogin() throws Exception {
 		// User should not exist in db
 		UsernameNotFoundException e = assertThrows(UsernameNotFoundException.class,
-				() -> {userRepository.loadUserByUsername(TORONTO_USERNAME);});
+				() -> {userRepository.loadUserByUsername(TORONTO_USERNAME); });
 		LoginPage.login(driver(), TORONTO_USERNAME, TORONTO_PASSWORD);
 		assertTrue(driver().getTitle().contains("Dashboard"), "The 'ttokyo' user is logged in and redirected.");
 		// User should now exist in db
@@ -134,7 +134,7 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 	public void testCreateAccountMissingFields() throws Exception {
 		// User should not exist in db
 		UsernameNotFoundException e = assertThrows(UsernameNotFoundException.class,
-				() -> {userRepository.loadUserByUsername(MIRA_USERNAME);});
+				() -> {userRepository.loadUserByUsername(MIRA_USERNAME); });
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(MIRA_USERNAME, MIRA_PASSWORD);
@@ -167,7 +167,7 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 	public void testCreateAccountInvalidFields() throws Exception {
 		// User should not exist in db
 		UsernameNotFoundException e = assertThrows(UsernameNotFoundException.class,
-				() -> {userRepository.loadUserByUsername(COLLAPSE_USERNAME);});
+				() -> {userRepository.loadUserByUsername(COLLAPSE_USERNAME); });
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(COLLAPSE_USERNAME, COLLAPSE_PASSWORD);
