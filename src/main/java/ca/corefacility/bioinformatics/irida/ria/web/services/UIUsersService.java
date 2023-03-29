@@ -227,9 +227,10 @@ public class UIUsersService {
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean isOwnAccount = isOwnAccount(principalUser, user);
 		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
+		boolean isDomainAccount = isDomainAccount(user);
 
 		return new UserDetailsResponse(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, isOwnAccount,
-				canCreatePasswordReset);
+				canCreatePasswordReset, isDomainAccount);
 	}
 
 	/**
@@ -453,6 +454,16 @@ public class UIUsersService {
 		boolean usersEqual = user.equals(principalUser);
 
 		return !(principalAdmin && usersEqual);
+	}
+
+	/**
+	 * Check if the User viewed is a Domain (LDAP/ADLDAP) User
+	 *
+	 * @param user - the user to edit
+	 * @return boolean if the User is a Domain User
+	 */
+	private boolean isDomainAccount(User user) {
+		return user.getUserType().equals(UserType.TYPE_DOMAIN);
 	}
 
 	/**

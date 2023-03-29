@@ -1,7 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, notification, Typography } from "antd";
-import { useChangeUserPasswordMutation } from "../../../apis/users/users";
+import { Button, Form, Input, notification, Skeleton, Typography } from "antd";
+import {
+  useChangeUserPasswordMutation,
+  useGetUserDetailsQuery,
+} from "../../../apis/users/users";
 import { validatePassword } from "../../../utilities/validation-utilities";
 import { PasswordPolicyAlert } from "../../../components/alerts/PasswordPolicyAlert";
 
@@ -14,6 +17,7 @@ import { PasswordPolicyAlert } from "../../../components/alerts/PasswordPolicyAl
  */
 export function UserChangePasswordForm({ userId, requireOldPassword }) {
   const [changeUserPassword] = useChangeUserPasswordMutation();
+  const { data: userDetails = {}, isLoading } = useGetUserDetailsQuery(userId);
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
@@ -42,16 +46,20 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
   };
 
   return (
-    <>
-      <Typography.Title level={5}>
+    <Skeleton loading={isLoading}>
+      <Typography.Title level={5} hidden={!userDetails.domainAccount}>
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
-      <PasswordPolicyAlert />
+      <Typography.Title level={5} hidden={!userDetails.domainAccount}>
+        {i18n("UserChangePasswordForm.ldapUserInfo")}
+      </Typography.Title>
+      <PasswordPolicyAlert hidden={!userDetails.domainAccount} />
       <Form
         form={form}
         layout="vertical"
         onFinish={onFormFinish}
         autoComplete="off"
+        hidden={userDetails.domainAccount}
       >
         {requireOldPassword && (
           <Form.Item
@@ -86,6 +94,6 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
           </Button>
         </Form.Item>
       </Form>
-    </>
+    </Skeleton>
   );
 }

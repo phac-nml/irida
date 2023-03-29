@@ -76,33 +76,36 @@ export default function UserDetailsPage() {
         initialValues={userDetails.user}
         onFinish={onFormFinish}
       >
+        <Typography.Text type="secondary" hidden={!userDetails.domainAccount}>
+          {i18n("UserDetailsPage.ldapUserInfo")}
+        </Typography.Text>
         <Form.Item
           label={i18n("UserDetailsPage.form.firstName.label")}
           name="firstName"
           rules={firstNameRuleList}
         >
-          <Input />
+          <Input disabled={userDetails.domainAccount} />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.lastName.label")}
           name="lastName"
           rules={lastNameRuleList}
         >
-          <Input />
+          <Input disabled={userDetails.domainAccount} />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.email.label")}
           name="email"
           rules={emailRuleList}
         >
-          <Input />
+          <Input disabled={userDetails.domainAccount} />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.phoneNumber.label")}
           name="phoneNumber"
           rules={phoneNumberRuleList}
         >
-          <Input />
+          <Input disabled={userDetails.domainAccount} />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.locale.label")}
