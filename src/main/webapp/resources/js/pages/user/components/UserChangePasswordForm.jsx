@@ -47,13 +47,13 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
 
   return (
     <Skeleton loading={isLoading}>
-      <Typography.Title level={5} hidden={!userDetails.domainAccount}>
+      <Typography.Title level={5}>
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
-      <Typography.Title level={5} hidden={!userDetails.domainAccount}>
+      <Typography.Text type="secondary" hidden={!userDetails.domainAccount}>
         {i18n("UserChangePasswordForm.ldapUserInfo")}
-      </Typography.Title>
-      <PasswordPolicyAlert hidden={!userDetails.domainAccount} />
+      </Typography.Text>
+      <PasswordPolicyAlert />
       <Form
         form={form}
         layout="vertical"

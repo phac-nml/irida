@@ -145,7 +145,11 @@ export default function UserDetailsPage() {
           valuePropName="checked"
           hidden={!userDetails.admin}
         >
-          <Checkbox disabled={!userDetails.canEditUserStatus}>
+          <Checkbox
+            disabled={
+              !userDetails.canEditUserStatus || userDetails.domainAccount
+            }
+          >
             {i18n("UserDetailsPage.form.enabled.label")}
           </Checkbox>
         </Form.Item>
