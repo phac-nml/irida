@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UserSecur
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
