@@ -15,4 +15,9 @@
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
           credentialsNonExpired="true" locale="en" user_type="TYPE_LOCAL"/>
+    <user id="4" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="ldap@nowhere.com" firstName="Mr." lastName="Ldap"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="ldap" enabled="true" system_role="ROLE_ADMIN"
+          credentialsNonExpired="true" locale="en" user_type="TYPE_DOMAIN"/>
 </dataset>

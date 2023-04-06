@@ -71,6 +71,7 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
                 message: i18n("validation-utilities.password.required"),
               },
             ]}
+            disabled={userDetails.domainAccount}
           >
             <Input.Password />
           </Form.Item>
@@ -85,11 +86,17 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
               },
             }),
           ]}
+          disabled={userDetails.domainAccount}
         >
           <Input.Password />
         </Form.Item>
         <Form.Item>
-          <Button className="t-submit-btn" type="primary" htmlType="submit">
+          <Button
+            className="t-submit-btn"
+            disabled={userDetails.domainAccount}
+            type="primary"
+            htmlType="submit"
+          >
             {i18n("UserChangePasswordForm.form.button.submit")}
           </Button>
         </Form.Item>

@@ -15,14 +15,15 @@ public class UserSecurityPage extends AbstractPage {
 	private PageUtilities pageUtilities;
 
 	public static String SECURITY_PAGE = "users/1/security";
+	public static String SECURITY_PAGE_LDAP = "users/1/security";
 
 	public UserSecurityPage(WebDriver driver) {
 		super(driver);
 		this.pageUtilities = new PageUtilities(driver);
 	}
 
-	public void goTo() {
-		get(driver, SECURITY_PAGE);
+	public void goTo(String page) {
+		get(driver, page);
 	}
 
 	public void getOtherUser(Long id) {

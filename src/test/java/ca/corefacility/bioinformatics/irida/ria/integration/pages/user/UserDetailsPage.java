@@ -14,12 +14,14 @@ public class UserDetailsPage extends AbstractPage {
 
 	public static String DETAILS_PAGE = "users/1/details";
 
+	public static String DETAILS_PAGE_LDAP = "users/4/details";
+
 	public UserDetailsPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public void goTo() {
-		get(driver, DETAILS_PAGE);
+	public void goTo(String page) {
+		get(driver, page);
 	}
 
 	public void enterFirstName(String newName) {
@@ -28,10 +30,27 @@ public class UserDetailsPage extends AbstractPage {
 		firstNameBox.sendKeys(newName);
 	}
 
+	public void enterLastName(String newName) {
+		WebElement lastNameBox = driver.findElement(By.id("lastName"));
+		lastNameBox.sendKeys(Keys.chord(Keys.CONTROL, "a", Keys.DELETE));
+		lastNameBox.sendKeys(newName);
+	}
+
 	public void enterEmail(String newEmail) {
 		WebElement emailBox = driver.findElement(By.id("email"));
 		emailBox.sendKeys(Keys.chord(Keys.CONTROL, "a", Keys.DELETE));
 		emailBox.sendKeys(newEmail);
+	}
+
+	public void enterPhone(String newPhone) {
+		WebElement phoneBox = driver.findElement(By.id("phoneNumber"));
+		phoneBox.sendKeys(Keys.chord(Keys.CONTROL, "a", Keys.DELETE));
+		phoneBox.sendKeys(newPhone);
+	}
+
+	public void clickEnabledCheckbox() {
+		WebElement checkbox = driver.findElement(By.id("enabled"));
+		checkbox.click();
 	}
 
 	public void clickSubmit() {

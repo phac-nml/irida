@@ -9,7 +9,10 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UserSecur
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.NoSuchElementException;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UserSecurityPageIT.xml")
@@ -27,7 +30,7 @@ public class UserSecurityPageIT extends AbstractIridaUIITChromeDriver {
 		String oldPassword = "Password1!";
 		String newPassword = "Password2!";
 		LoginPage.loginAsManager(driver());
-		userPage.goTo();
+		userPage.goTo(UserSecurityPage.SECURITY_PAGE);
 		userPage.changePassword(oldPassword, newPassword);
 		assertTrue(userPage.checkSuccessNotification());
 	}
@@ -37,7 +40,7 @@ public class UserSecurityPageIT extends AbstractIridaUIITChromeDriver {
 		String oldPassword = "Password1!";
 		String newPassword = "notagoodpassword";
 		LoginPage.loginAsManager(driver());
-		userPage.goTo();
+		userPage.goTo(UserSecurityPage.SECURITY_PAGE);
 		userPage.changePassword(oldPassword, newPassword);
 		assertTrue(userPage.hasErrors());
 	}
@@ -48,6 +51,17 @@ public class UserSecurityPageIT extends AbstractIridaUIITChromeDriver {
 		userPage.getOtherUser(2L);
 		userPage.sendPasswordReset();
 		assertTrue(userPage.checkSuccessNotification());
+	}
+
+	@Test
+	public void testChangeUserPasswordLdap() {
+		String oldPassword = "Password1!";
+		String newPassword = "Password2!";
+		LoginPage.loginAsAdmin(driver());
+		userPage.goTo(UserSecurityPage.SECURITY_PAGE_LDAP);
+		assertThrows(NoSuchElementException.class, () -> {
+			userPage.changePassword(oldPassword, newPassword);
+		});
 	}
 
 }
