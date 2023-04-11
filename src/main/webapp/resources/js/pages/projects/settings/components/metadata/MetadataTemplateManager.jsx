@@ -46,9 +46,8 @@ export default function MetadataTemplateManager() {
   const { id, projectId } = useParams();
   const { data: allFields } = useGetMetadataFieldsForProjectQuery(projectId);
 
-  const { data: templates, isFetching } = useGetTemplatesForProjectQuery(
-    projectId
-  );
+  const { data: templates, isFetching } =
+    useGetTemplatesForProjectQuery(projectId);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [updateMetadataTemplate] = useUpdateMetadataTemplateMutation();
   const [updateDefaultTemplate] = useUpdateDefaultMetadataTemplateMutation();
@@ -158,7 +157,7 @@ export default function MetadataTemplateManager() {
   const removeField = async (item) => {
     const updated = {
       ...template,
-      fields: fields.filter((field) => field.identifier !== item.identifier),
+      fields: fields.filter((field) => field.id !== item.id),
     };
     await completeUpdate(updated);
   };
