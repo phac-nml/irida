@@ -221,4 +221,16 @@ public class ProjectMetadataPage extends AbstractPage {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		wait.until(ExpectedConditions.visibilityOfAllElements(metadataTemplateRow));
 	}
+
+	public void removeMetadataField(String field) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
+		WebElement button = driver.findElement(
+				By.xpath("//td[contains(text(), '" + field + "')]//..//span[contains(@class, 'anticon-close')]"));
+		button.click();
+		wait.until(ExpectedConditions.stalenessOf(button));
+	}
+
+	public int getNumberOfTemplateMetadataFields() {
+		return driver.findElements(By.xpath("//tbody/tr['data-row-key']")).size();
+	}
 }
