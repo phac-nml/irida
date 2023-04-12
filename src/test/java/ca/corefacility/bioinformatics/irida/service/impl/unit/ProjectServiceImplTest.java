@@ -52,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -80,6 +81,8 @@ public class ProjectServiceImplTest {
 	private ProjectSubscriptionService projectSubscriptionService;
 	private UserGroupJoinRepository userGroupJoinRepository;
 
+	private UserGroupService userGroupService;
+
 	private Validator validator;
 
 	@BeforeEach
@@ -97,10 +100,11 @@ public class ProjectServiceImplTest {
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
 		projectSubscriptionService = mock(ProjectSubscriptionService.class);
 		userGroupJoinRepository = mock(UserGroupJoinRepository.class);
+		userGroupService = mock(UserGroupService.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
 				ssoRepository, pasRepository, sequencingObjectRepository, projectSubscriptionService,
-				userGroupJoinRepository, validator);
+				userGroupJoinRepository, validator, userGroupService);
 	}
 
 	@Test
@@ -492,5 +496,26 @@ public class ProjectServiceImplTest {
 		assertEquals(2, projects.size(), "User should be in 2 projects.");
 		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(p1)), "Should have found user project join.");
 		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(p2)), "Should have found group project join.");
+	}
+
+	@Test
+	public void testAddUserGroupToProject() {
+		final Project p1 = new Project("p1");
+		final Project p2 = new Project("p2");
+		final UserGroup ug1 = new UserGroup("group");
+		final UserGroup ug2 = new UserGroup("group");
+
+		UserGroupProjectJoin groupProjectJoin = new UserGroupProjectJoin(p1, ug1, ProjectRole.PROJECT_OWNER,
+				ProjectMetadataRole.LEVEL_4);
+
+		when(userGroupService.getProjectsWithUserGroup(ug1)).thenReturn(ImmutableList.of(groupProjectJoin));
+
+		// Throw exception when linking user group to project which is already linked
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addUserGroupToProject(p1, ug1, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
+		});
+
+		// Throw no exception when linking user group to project which is not already linked
+		assertDoesNotThrow(() -> projectService.addUserGroupToProject(p2, ug2, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 	}
 }

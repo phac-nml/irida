@@ -64,6 +64,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
+import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -96,6 +97,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ProjectSubscriptionService projectSubscriptionService;
 	private final UserGroupJoinRepository userGroupJoinRepository;
 
+	private final UserGroupService userGroupService;
+
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
@@ -105,7 +108,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			ProjectAnalysisSubmissionJoinRepository pasRepository,
 			SequencingObjectRepository sequencingObjectRepository,
 			ProjectSubscriptionService projectSubscriptionService, UserGroupJoinRepository userGroupJoinRepository,
-			Validator validator) {
+			Validator validator, UserGroupService userGroupService) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -121,6 +124,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.projectSubscriptionService = projectSubscriptionService;
 		this.userGroupJoinRepository = userGroupJoinRepository;
+		this.userGroupService = userGroupService;
 	}
 
 	/**
@@ -770,6 +774,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup,
 			final ProjectRole role, ProjectMetadataRole metadataRole) {
+		List<UserGroupProjectJoin> userGroupProjectJoins = userGroupService.getProjectsWithUserGroup(userGroup).stream().filter(ugpj -> ugpj.getSubject().equals(project)).collect(
+				Collectors.toList());
+		if(userGroupProjectJoins.size() > 0) {
+			throw new EntityExistsException("The user group is already linked to this project");
+		}
+
 		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
