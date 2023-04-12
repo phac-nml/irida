@@ -2,7 +2,7 @@
 # Changelog
 
 ## [23.01.2]
-* [UI]: Fixed bug that caused all metaedata fields to be removed when single field was removed from a template. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
+* [UI]: Fixed bug that caused all metadata fields to be removed when single field was removed from a template. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
 
 ## [23.01.1] - 2023/03/21
 * [UI]: Fixed issue where template order was not applied when applying a linelist template. See [PR 1479](https://github.com/phac-nml/irida/pull/1479)
