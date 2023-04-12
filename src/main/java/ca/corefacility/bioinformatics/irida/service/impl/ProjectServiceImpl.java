@@ -776,7 +776,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			final ProjectRole role, ProjectMetadataRole metadataRole) {
 		List<UserGroupProjectJoin> userGroupProjectJoins = userGroupService.getProjectsWithUserGroup(userGroup).stream().filter(ugpj -> ugpj.getSubject().equals(project)).collect(
 				Collectors.toList());
-		if(userGroupProjectJoins.size() > 0) {
+		if (userGroupProjectJoins.size() > 0) {
 			throw new EntityExistsException("The user group is already linked to this project");
 		}
 
