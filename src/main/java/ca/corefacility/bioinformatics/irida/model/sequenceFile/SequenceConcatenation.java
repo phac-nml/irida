@@ -12,8 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 /**
- * Class storing when 2 {@link SequencingObject}s are concatenated into a new
- * {@link SequencingObject}
+ * Class storing when 2 {@link SequencingObject}s are concatenated into a new {@link SequencingObject}
  */
 @Entity
 @Table(name = "sequence_concatenation")
@@ -30,13 +29,21 @@ public class SequenceConcatenation implements IridaThing {
 	private Date createdDate;
 
 	@ManyToMany
-	@JoinTable(joinColumns = @JoinColumn(name="sequence_concatenation_id"))
+	@JoinTable(joinColumns = @JoinColumn(name = "sequence_concatenation_id"))
 	@NotNull
 	private final List<SequencingObject> sources;
 
 	@OneToOne
 	@NotNull
 	private final SequencingObject concatenated;
+
+	/**
+	 * Default constructor needed by Hibernate.
+	 */
+	public SequenceConcatenation() {
+		this.sources = null;
+		this.concatenated = null;
+	}
 
 	public SequenceConcatenation(SequencingObject concatenated, List<SequencingObject> sources) {
 		this.concatenated = concatenated;

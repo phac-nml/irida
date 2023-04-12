@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceConcatenationRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -64,6 +65,7 @@ public class SampleServiceImplTest {
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private QCEntryRepository qcEntryRepository;
 	private SequencingObjectRepository sequencingObjectRepository;
+	private SequenceConcatenationRepository concatenationRepository;
 	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 	private UserRepository userRepository;
 	private MetadataEntryRepository metadataEntryRepository;
@@ -88,14 +90,16 @@ public class SampleServiceImplTest {
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		qcEntryRepository = mock(QCEntryRepository.class);
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
+		concatenationRepository = mock(SequenceConcatenationRepository.class);
 		sampleGenomeAssemblyJoinRepository = mock(SampleGenomeAssemblyJoinRepository.class);
 		metadataEntryRepository = mock(MetadataEntryRepository.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		submissionRepository = mock(AnalysisSubmissionRepository.class);
 
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository, ssoRepository,
-				qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository,
-				metadataEntryRepository, sequenceFileRepository, submissionRepository, null);
+				qcEntryRepository, sequencingObjectRepository, concatenationRepository,
+				sampleGenomeAssemblyJoinRepository, userRepository, metadataEntryRepository, sequenceFileRepository,
+				submissionRepository, null);
 
 		genomeAssemblyRepository = mock(GenomeAssemblyRepository.class);
 		validator = mock(Validator.class);

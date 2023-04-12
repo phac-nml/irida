@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceConcatenation;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -56,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceConcatenationRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
@@ -93,6 +95,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private QCEntryRepository qcEntryRepository;
 
 	private SequencingObjectRepository sequencingObjectRepository;
+	private SequenceConcatenationRepository concatenationRepository;
 
 	/**
 	 * Reference to {@link AnalysisRepository}.
@@ -115,6 +118,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param analysisRepository                 the analysis repository.
 	 * @param ssoRepository                      The {@link SampleSequencingObjectJoin} repository
 	 * @param sequencingObjectRepository         the {@link SequencingObject} repository
+	 * @param concatenationRepository            the {@link SequenceConcatenationRepository} repository
 	 * @param qcEntryRepository                  a repository for storing and reading {@link QCEntry}
 	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
 	 * @param userRepository                     A {@link UserRepository}
@@ -127,6 +131,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
+			SequenceConcatenationRepository concatenationRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
 			MetadataEntryRepository metadataEntryRepository, SequenceFileRepository sequenceFileRepository,
 			AnalysisSubmissionRepository submissionRepository, Validator validator) {
@@ -137,6 +142,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.ssoRepository = ssoRepository;
 		this.qcEntryRepository = qcEntryRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
+		this.concatenationRepository = concatenationRepository;
 		this.userRepository = userRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 		this.metadataEntryRepository = metadataEntryRepository;
@@ -382,8 +388,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			for (SequenceFile file : object.getFiles()) {
 				sequenceFileRepository.delete(file);
 			}
-			// TOD0: handle errors for removing concatenated files
-			// sequencingObjectRepository.delete(object);
+
+			SequenceConcatenation concatenatedObject = concatenationRepository.findConcatenatedSequencingObject(object);
+			if (concatenatedObject != null) {
+				concatenationRepository.delete(concatenatedObject);
+			}
+			
+			sequencingObjectRepository.delete(object);
 		}
 	}
 
