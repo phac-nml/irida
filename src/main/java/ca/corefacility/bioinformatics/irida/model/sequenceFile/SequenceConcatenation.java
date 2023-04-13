@@ -65,4 +65,7 @@ public class SequenceConcatenation implements IridaThing {
 		return id;
 	}
 
+	public List<SequencingObject> getSources() {
+		return sources;
+	}
 }
