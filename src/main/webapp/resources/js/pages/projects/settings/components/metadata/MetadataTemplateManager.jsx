@@ -87,7 +87,7 @@ export default function MetadataTemplateManager() {
         );
       }
     }
-  }, [id, isFetching, templates]);
+  }, [id, isFetching, navigate, templates]);
 
   React.useEffect(() => {
     if (Array.isArray(fields) && Array.isArray(allFields)) {
