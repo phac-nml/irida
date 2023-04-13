@@ -772,7 +772,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			final ProjectRole role, ProjectMetadataRole metadataRole) {
 		List<UserGroupProjectJoin> userGroupProjectJoinList = ugpjRepository.findProjectsByUserGroup(userGroup)
 				.stream()
-				.filter(ugpj -> ugpj.getSubject() == project)
+				.filter(ugpj -> ugpj.getSubject().equals(project))
 				.collect(Collectors.toList());
 
 		if (userGroupProjectJoinList.size() > 0) {
