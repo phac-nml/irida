@@ -398,16 +398,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 					for (SequencingObject concatenatedSource : concatenatedSources) {
 						SampleSequencingObjectJoin concatenatedSourceSample = ssoRepository.getSampleForSequencingObject(
 								concatenatedSource);
-						if (concatenatedSourceSample == null) {
-							Set<AnalysisSubmission> concatenatedSourceSubmissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(
-									concatenatedSource);
-							if (concatenatedSourceSubmissions.isEmpty()
-									&& concatenatedSource.getSequencingRun() == null) {
-								for (SequenceFile file : concatenatedSource.getFiles()) {
-									sequenceFileRepository.delete(file);
-								}
-								sequencingObjectRepository.delete(concatenatedSource);
+						Set<AnalysisSubmission> concatenatedSourceSubmissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(
+								concatenatedSource);
+						if (concatenatedSourceSample == null && concatenatedSourceSubmissions.isEmpty()
+								&& concatenatedSource.getSequencingRun() == null) {
+							for (SequenceFile file : concatenatedSource.getFiles()) {
+								sequenceFileRepository.delete(file);
 							}
+							sequencingObjectRepository.delete(concatenatedSource);
 						}
 					}
 					concatenationRepository.delete(concatenated);
