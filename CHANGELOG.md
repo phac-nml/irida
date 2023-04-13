@@ -7,6 +7,10 @@
 * [UI]: Add identifier to project drop-down on project synchronization page. See [PR 1474](https://github.com/phac-nml/irida/pull/1474)
 * [Developer]: Added functionality to delete sequence files from file storage when removed from sample. [See PR 1476](https://github.com/phac-nml/irida/pull/1476)
 
+## [23.01.1] - 2023/03/21
+* [UI]: Fixed issue where template order was not applied when applying a linelist template. See [PR 1479](https://github.com/phac-nml/irida/pull/1479)
+* [UI]: Added select all to associated projects filter on project > samples page. See [PR 1479](https://github.com/phac-nml/irida/pull/1479)
+
 ## [23.01] - 2023/02/28
 * [UI/Developer]: Updated `react-router` to the version 6.4.3. See[PR 1405](https://github.com/phac-nml/irida/pull/1405)
 * [Developer] Updated developer setup documentation, ignore java_pid\*.hprof files, and added quality of life file `gradle.properties`. See [PR 1415](https://github.com/phac-nml/irida/pull/1415).
@@ -182,8 +186,9 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/23.01...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/23.01.1...HEAD
 
+[23.01.1]: https://github.com/phac-nml/irida/compare/23.01...23.01.1
 [23.01]: https://github.com/phac-nml/irida/compare/22.09.7...23.01
 [22.09.7]: https://github.com/phac-nml/irida/compare/22.09.6...22.09.7
 [22.09.6]: https://github.com/phac-nml/irida/compare/22.09.5...22.09.6
