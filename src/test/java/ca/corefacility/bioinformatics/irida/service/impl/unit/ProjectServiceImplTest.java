@@ -52,7 +52,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -81,7 +80,6 @@ public class ProjectServiceImplTest {
 	private ProjectSubscriptionService projectSubscriptionService;
 	private UserGroupJoinRepository userGroupJoinRepository;
 
-	private UserGroupService userGroupService;
 
 	private Validator validator;
 
@@ -100,11 +98,10 @@ public class ProjectServiceImplTest {
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
 		projectSubscriptionService = mock(ProjectSubscriptionService.class);
 		userGroupJoinRepository = mock(UserGroupJoinRepository.class);
-		userGroupService = mock(UserGroupService.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
 				ssoRepository, pasRepository, sequencingObjectRepository, projectSubscriptionService,
-				userGroupJoinRepository, validator, userGroupService);
+				userGroupJoinRepository, validator);
 	}
 
 	@Test
@@ -508,7 +505,7 @@ public class ProjectServiceImplTest {
 		UserGroupProjectJoin groupProjectJoin = new UserGroupProjectJoin(p1, ug1, ProjectRole.PROJECT_OWNER,
 				ProjectMetadataRole.LEVEL_4);
 
-		when(userGroupService.getProjectsWithUserGroup(ug1)).thenReturn(ImmutableList.of(groupProjectJoin));
+		when(ugpjRepository.findProjectsByUserGroup(ug1)).thenReturn(ImmutableList.of(groupProjectJoin));
 
 		// Throw exception when linking user group to project which is already linked
 		assertThrows(EntityExistsException.class, () -> {
