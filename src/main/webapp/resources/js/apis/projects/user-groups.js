@@ -34,7 +34,6 @@ export async function getAvailableGroupsForProject({ projectId, query }) {
       `${BASE_URL}/available?${params.toString()}`
     );
     return Promise.resolve(data);
-    s;
   } catch (e) {
     return Promise.reject(e.response.data);
   }
