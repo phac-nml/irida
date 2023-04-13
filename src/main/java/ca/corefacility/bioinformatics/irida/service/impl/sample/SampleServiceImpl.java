@@ -394,6 +394,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 					// 1) it does not belong to any samples
 					// 2) it has no analyses
 					// 3) it is not associate to a sequencing run
+					concatenationRepository.delete(concatenated);
 					List<SequencingObject> concatenatedSources = concatenated.getSources();
 					for (SequencingObject concatenatedSource : concatenatedSources) {
 						SampleSequencingObjectJoin concatenatedSourceSample = ssoRepository.getSampleForSequencingObject(
@@ -408,7 +409,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 							sequencingObjectRepository.delete(concatenatedSource);
 						}
 					}
-					concatenationRepository.delete(concatenated);
 				}
 				for (SequenceFile file : object.getFiles()) {
 					sequenceFileRepository.delete(file);

@@ -3,10 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.sample;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -119,7 +116,7 @@ public class SampleServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void removeSequencingObjectFromSampleWithNoAnalysis() throws Exception {
+	public void removeSequencingObjectFromSample() throws Exception {
 		Sample sample = sampleService.read(10L);
 		SequencingObject sequencingObject = objectService.read(7L);
 		sequencingObject.getFiles().forEach(file -> {
@@ -137,6 +134,70 @@ public class SampleServiceImplIT {
 		sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
 		files.forEach(
 				file -> assertFalse(Files.exists(file.getFile()), "Sequence file should not exist on the file system"));
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void removeConcatenatedSequencingObjectFromSample() throws Exception {
+		Sample sample = sampleService.read(11L);
+		SequencingObject objectA = objectService.read(8L);
+		SequencingObject objectB = objectService.read(9L);
+		SequencingObject objectC = objectService.read(10L);
+		List<SequencingObject> objects = Arrays.asList(objectA, objectB, objectC);
+
+		objects.forEach(object -> {
+			object.getFiles().forEach(file -> {
+				try {
+					Path sequenceFile = Files.createTempFile(sequenceFileBaseDirectory, file.getFileName(), ".fastq");
+					Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+					file.setFile(sequenceFile);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
+
+			Set<SequenceFile> files = object.getFiles();
+			files.forEach(
+					file -> assertTrue(Files.exists(file.getFile()), "Sequence file should exist on the file system"));
+		});
+
+		sampleService.removeSequencingObjectFromSample(sample, objectC);
+		objects.forEach(object -> {
+			Set<SequenceFile> files = objectC.getFiles();
+			files.forEach(file -> assertFalse(Files.exists(file.getFile()),
+					"Sequence file should not exist on the file system"));
+		});
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void removeConcatenatedSequencingObjectSourceFromSample() throws Exception {
+		Sample sample = sampleService.read(11L);
+		SequencingObject objectA = objectService.read(8L);
+		SequencingObject objectB = objectService.read(9L);
+		SequencingObject objectC = objectService.read(10L);
+		List<SequencingObject> objects = Arrays.asList(objectA, objectB, objectC);
+
+		objects.forEach(object -> {
+			object.getFiles().forEach(file -> {
+				try {
+					Path sequenceFile = Files.createTempFile(sequenceFileBaseDirectory, file.getFileName(), ".fastq");
+					Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+					file.setFile(sequenceFile);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
+
+			Set<SequenceFile> files = object.getFiles();
+			files.forEach(
+					file -> assertTrue(Files.exists(file.getFile()), "Sequence file should exist on the file system"));
+		});
+
+		sampleService.removeSequencingObjectFromSample(sample, objectB);
+		Set<SequenceFile> files = objectB.getFiles();
+		files.forEach(
+				file -> assertTrue(Files.exists(file.getFile()), "Sequence file should exist on the file system"));
 	}
 
 	@Test
