@@ -67,7 +67,12 @@ public abstract class RemoteRepositoryImpl<Type extends IridaRepresentationModel
 	@Override
 	public Type read(String uri, RemoteAPI remoteAPI) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-		ResponseEntity<ResourceWrapper<Type>> exchange = restTemplate.exchange(uri, HttpMethod.GET, HttpEntity.EMPTY,
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON));
+		HttpEntity<Object> request = new HttpEntity<Object>(headers);
+
+		ResponseEntity<ResourceWrapper<Type>> exchange = restTemplate.exchange(uri, HttpMethod.GET, request,
 				objectTypeReference);
 
 		Type resource = exchange.getBody().getResource();
@@ -82,8 +87,13 @@ public abstract class RemoteRepositoryImpl<Type extends IridaRepresentationModel
 	@Override
 	public List<Type> list(String uri, RemoteAPI remoteAPI) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON));
+		HttpEntity<Object> request = new HttpEntity<Object>(headers);
+
 		ResponseEntity<ListResourceWrapper<Type>> exchange = restTemplate.exchange(uri, HttpMethod.GET,
-				HttpEntity.EMPTY, listTypeReference);
+				request, listTypeReference);
 
 		List<Type> resources = exchange.getBody().getResource().getResources();
 		for (Type r : resources) {
@@ -98,10 +108,11 @@ public abstract class RemoteRepositoryImpl<Type extends IridaRepresentationModel
 	@Override
 	public boolean getServiceStatus(RemoteAPI remoteAPI) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-		//ResponseEntity<String> forEntity = restTemplate.getForEntity(remoteAPI.getServiceURI(), String.class);
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON));
 		HttpEntity<Object> request = new HttpEntity<Object>(headers);
+
 		ResponseEntity<String> forEntity = restTemplate.exchange(remoteAPI.getServiceURI(), HttpMethod.GET, request, String.class);
 
 		return forEntity.getStatusCode() == HttpStatus.OK;
