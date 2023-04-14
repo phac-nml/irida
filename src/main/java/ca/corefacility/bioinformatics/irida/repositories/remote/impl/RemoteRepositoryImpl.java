@@ -2,10 +2,13 @@ package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import org.springframework.http.MediaType;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -95,7 +98,11 @@ public abstract class RemoteRepositoryImpl<Type extends IridaRepresentationModel
 	@Override
 	public boolean getServiceStatus(RemoteAPI remoteAPI) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-		ResponseEntity<String> forEntity = restTemplate.getForEntity(remoteAPI.getServiceURI(), String.class);
+		//ResponseEntity<String> forEntity = restTemplate.getForEntity(remoteAPI.getServiceURI(), String.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON));
+		HttpEntity<Object> request = new HttpEntity<Object>(headers);
+		ResponseEntity<String> forEntity = restTemplate.exchange(remoteAPI.getServiceURI(), HttpMethod.GET, request, String.class);
 
 		return forEntity.getStatusCode() == HttpStatus.OK;
 	}
