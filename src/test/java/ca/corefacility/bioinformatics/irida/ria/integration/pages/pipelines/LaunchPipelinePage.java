@@ -66,9 +66,6 @@ public class LaunchPipelinePage extends AbstractPage {
 	@FindBy(className = "t-modified-alert")
 	private List<WebElement> modifiedAlert;
 
-	@FindBy(className = "t-modified-saveas")
-	private WebElement modifiedSaveAsButton;
-
 	@FindBy(className = "t-modified-name")
 	private WebElement modifiedNameInput;
 
@@ -195,7 +192,7 @@ public class LaunchPipelinePage extends AbstractPage {
 		driver.findElement(By.tagName("body")).sendKeys(Keys.HOME);
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
 
-		wait.until(ExpectedConditions.elementToBeClickable(modifiedSaveAsButton));
+		WebElement modifiedSaveAsButton = driver.findElement(By.className("t-modified-saveas"));
 		modifiedSaveAsButton.click();
 		WebElement saveTemplatePopover = wait.until(
 				ExpectedConditions.visibilityOfElementLocated(By.className("t-save-params-form")));
