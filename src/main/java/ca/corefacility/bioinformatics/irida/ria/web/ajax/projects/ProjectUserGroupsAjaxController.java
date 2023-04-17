@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 import java.util.List;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,11 @@ public class ProjectUserGroupsAjaxController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ResponseEntity<String> addUserGroupToProject(@RequestParam Long projectId,
 			@RequestBody NewMemberRequest request, Locale locale) {
-		return ResponseEntity.ok(service.addUserGroupToProject(projectId, request, locale));
+		try {
+			return ResponseEntity.ok(service.addUserGroupToProject(projectId, request, locale));
+		} catch (EntityExistsException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+		}
 	}
 
 	/**

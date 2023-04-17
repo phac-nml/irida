@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 
 import org.springframework.context.MessageSource;
@@ -106,15 +107,21 @@ public class UIProjectUserGroupsService {
 	public String addUserGroupToProject(Long projectId, NewMemberRequest request, Locale locale) {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(request.getId());
-		ProjectRole role = ProjectRole.fromString(request.getProjectRole());
-		ProjectMetadataRole metadataRole;
-		if (role.equals(ProjectRole.PROJECT_OWNER)) {
-			metadataRole = ProjectMetadataRole.LEVEL_4;
-		} else {
-			metadataRole = ProjectMetadataRole.fromString(request.getMetadataRole());
+
+		try {
+			ProjectRole role = ProjectRole.fromString(request.getProjectRole());
+			ProjectMetadataRole metadataRole;
+			if (role.equals(ProjectRole.PROJECT_OWNER)) {
+				metadataRole = ProjectMetadataRole.LEVEL_4;
+			} else {
+				metadataRole = ProjectMetadataRole.fromString(request.getMetadataRole());
+			}
+
+			projectService.addUserGroupToProject(project, group, role, metadataRole);
+			return messageSource.getMessage("server.usergroups.add", new Object[] { group.getLabel() }, locale);
+		} catch(EntityExistsException e) {
+			throw new EntityExistsException(messageSource.getMessage("server.usergroups.add.error", new Object[] { group.getLabel() }, locale));
 		}
-		projectService.addUserGroupToProject(project, group, role, metadataRole);
-		return messageSource.getMessage("server.usergroups.add", new Object[] { group.getLabel() }, locale);
 	}
 
 	/**
