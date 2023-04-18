@@ -181,7 +181,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sample {@link Sample} to remove sequences from
 	 * @param object {@link SequencingObject} to remove
 	 */
-	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) throws Exception;
+	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object);
 
 	/**
 	 * Merge multiple samples into one. Merging samples copies the {@link SequenceFile} references from the set of
@@ -328,7 +328,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 
 	/**
 	 * Get Coverage for samples within a project.
-	 * 
+	 *
 	 * @param project   the {@link Project} to use to calculate the coverage
 	 * @param sampleIds the {@link Sample} ids to get coverage for
 	 * @return a map of sample id to coverage value
