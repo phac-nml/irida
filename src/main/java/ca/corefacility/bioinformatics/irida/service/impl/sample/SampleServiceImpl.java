@@ -376,6 +376,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
 	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) {
+		ssoRepository.delete(ssoRepository.readObjectForSample(sample, object.getId()));
+		object = sequencingObjectRepository.findSequencingObjectById(object.getId());
+		if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
+				.getId()
+				.equals(object.getId())) {
+			sampleRepository.removeDefaultSequencingObject(sample);
+		}
 		Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(object);
 		if (submissions.isEmpty() && object.getSequencingRun() == null) {
 			Set<SequenceConcatenation> concatenations = concatenationRepository.findConcatenatedSequencingObjectSources(
@@ -391,13 +398,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			for (SequenceFile file : object.getFiles()) {
 				sequenceFileRepository.delete(file);
 			}
-			if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
-					.getId()
-					.equals(object.getId())) {
-				sampleRepository.removeDefaultSequencingObject(sample);
-			}
-			SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, object.getId());
-			ssoRepository.delete(readObjectForSample);
 			sequencingObjectRepository.delete(object);
 		}
 	}
