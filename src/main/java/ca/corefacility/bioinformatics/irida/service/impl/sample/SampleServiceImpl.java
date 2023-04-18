@@ -385,36 +385,20 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 		Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(object);
 		if (submissions.isEmpty() && object.getSequencingRun() == null) {
-			Set<SequenceConcatenation> sources = concatenationRepository.findConcatenatedSequencingObjectSources(
+			Set<SequenceConcatenation> concatenations = concatenationRepository.findConcatenatedSequencingObjectSources(
 					object);
-			if (sources.isEmpty()) {
-				SequenceConcatenation concatenated = concatenationRepository.findConcatenatedSequencingObject(object);
-				if (concatenated != null) {
-					// Delete all the concatenated sources and their sequence files if the following criteria is met:
-					// 1) it does not belong to any samples
-					// 2) it has no analyses
-					// 3) it is not associate to a sequencing run
-					concatenationRepository.delete(concatenated);
-					List<SequencingObject> concatenatedSources = concatenated.getSources();
-					for (SequencingObject concatenatedSource : concatenatedSources) {
-						SampleSequencingObjectJoin concatenatedSourceSample = ssoRepository.getSampleForSequencingObject(
-								concatenatedSource);
-						Set<AnalysisSubmission> concatenatedSourceSubmissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(
-								concatenatedSource);
-						if (concatenatedSourceSample == null && concatenatedSourceSubmissions.isEmpty()
-								&& concatenatedSource.getSequencingRun() == null) {
-							for (SequenceFile file : concatenatedSource.getFiles()) {
-								sequenceFileRepository.delete(file);
-							}
-							sequencingObjectRepository.delete(concatenatedSource);
-						}
-					}
-				}
-				for (SequenceFile file : object.getFiles()) {
-					sequenceFileRepository.delete(file);
-				}
-				sequencingObjectRepository.delete(object);
+			for (SequenceConcatenation concat : concatenations) {
+				concat.removeSource(object);
+				concatenationRepository.save(concat);
 			}
+			SequenceConcatenation concatenated = concatenationRepository.findConcatenatedSequencingObject(object);
+			if (concatenated != null) {
+				concatenationRepository.delete(concatenated);
+			}
+			for (SequenceFile file : object.getFiles()) {
+				sequenceFileRepository.delete(file);
+			}
+			sequencingObjectRepository.delete(object);
 		}
 	}
 

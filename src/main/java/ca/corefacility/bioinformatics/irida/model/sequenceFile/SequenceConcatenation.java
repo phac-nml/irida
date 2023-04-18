@@ -68,4 +68,12 @@ public class SequenceConcatenation implements IridaThing {
 	public List<SequencingObject> getSources() {
 		return sources;
 	}
+
+	public SequencingObject getConcatenated() {
+		return concatenated;
+	}
+
+	public void removeSource(SequencingObject object) {
+		sources.remove(object);
+	}
 }
