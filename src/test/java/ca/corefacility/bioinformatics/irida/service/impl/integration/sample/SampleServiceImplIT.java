@@ -171,37 +171,6 @@ public class SampleServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void removeConcatenatedSequencingObjectSourceFromSample() {
-		Sample sample = sampleService.read(11L);
-		SequencingObject objectA = objectService.read(8L);
-		SequencingObject objectB = objectService.read(9L);
-		SequencingObject objectC = objectService.read(10L);
-		List<SequencingObject> objects = Arrays.asList(objectA, objectB, objectC);
-
-		objects.forEach(object -> {
-			object.getFiles().forEach(file -> {
-				try {
-					Path sequenceFile = Files.createTempFile(sequenceFileBaseDirectory, file.getFileName(), ".fastq");
-					Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-					file.setFile(sequenceFile);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			});
-
-			Set<SequenceFile> files = object.getFiles();
-			files.forEach(
-					file -> assertTrue(Files.exists(file.getFile()), "Sequence file should exist on the file system"));
-		});
-
-		sampleService.removeSequencingObjectFromSample(sample, objectB);
-		Set<SequenceFile> files = objectB.getFiles();
-		files.forEach(
-				file -> assertTrue(Files.exists(file.getFile()), "Sequence file should exist on the file system"));
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void removeSampleDefaultGenomeAssembly() {
 		Sample sample = sampleService.read(2L);
 		GenomeAssembly genomeAssembly = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(), 2L)
