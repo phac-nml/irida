@@ -17,9 +17,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  */
 public interface SequencingObjectRepository extends IridaJpaRepository<SequencingObject, Long> {
 
-	@Query("select f from SequencingObject f where f.id = ?1")
-	public SequencingObject findSequencingObjectById(Long id);
-
 	/**
 	 * Get the {@link SequencingObject}s for a given {@link SequencingRun}
 	 *

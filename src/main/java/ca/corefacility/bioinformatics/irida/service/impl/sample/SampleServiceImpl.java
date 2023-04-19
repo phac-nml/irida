@@ -376,8 +376,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
 	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) {
-		ssoRepository.delete(ssoRepository.readObjectForSample(sample, object.getId()));
-		object = sequencingObjectRepository.findSequencingObjectById(object.getId());
+		SampleSequencingObjectJoin readObjectForSample = ssoRepository.readObjectForSample(sample, object.getId());
+		ssoRepository.delete(readObjectForSample);
 		if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
 				.getId()
 				.equals(object.getId())) {

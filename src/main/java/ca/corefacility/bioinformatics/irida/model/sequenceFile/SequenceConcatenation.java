@@ -74,6 +74,6 @@ public class SequenceConcatenation implements IridaThing {
 	}
 
 	public void removeSource(SequencingObject object) {
-		sources.remove(object);
+		sources.removeIf(source -> source.getId().equals(object.getId()));
 	}
 }

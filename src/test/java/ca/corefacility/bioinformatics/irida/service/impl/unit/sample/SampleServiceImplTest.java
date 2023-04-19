@@ -125,7 +125,7 @@ public class SampleServiceImplTest {
 	}
 
 	@Test
-	public void testRemoveSequencingObjectFromSample() throws Exception {
+	public void testRemoveSequencingObjectFromSample() {
 		Sample s = new Sample();
 		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
@@ -136,7 +136,6 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, obj);
 
 		when(ssoRepository.readObjectForSample(s, obj.getId())).thenReturn(join);
-		when(sequencingObjectRepository.findSequencingObjectById(obj.getId())).thenReturn(obj);
 		assertNotNull(s.getDefaultSequencingObject());
 		assertEquals(s.getDefaultSequencingObject().getId(), 2L,
 				"The default sequencing object id should match the sequencing object id");

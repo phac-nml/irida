@@ -101,7 +101,7 @@ public class SampleServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void removeSampleDefaultSequencingObject() throws Exception {
+	public void removeSampleDefaultSequencingObject() {
 		Sample sample = sampleService.read(9L);
 		SequencingObject sequencingObject = objectService.read(2L);
 		sample.setDefaultSequencingObject(sequencingObject);
@@ -116,7 +116,7 @@ public class SampleServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void removeSequencingObjectFromSample() throws Exception {
+	public void removeSequencingObjectFromSample() {
 		Sample sample = sampleService.read(10L);
 		SequencingObject sequencingObject = objectService.read(7L);
 		sequencingObject.getFiles().forEach(file -> {
@@ -138,7 +138,7 @@ public class SampleServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void removeConcatenatedSequencingObjectFromSample() throws Exception {
+	public void removeConcatenatedSequencingObjectFromSample() {
 		Sample sample = sampleService.read(11L);
 		SequencingObject objectA = objectService.read(8L);
 		SequencingObject objectB = objectService.read(9L);
@@ -171,7 +171,7 @@ public class SampleServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void removeConcatenatedSequencingObjectSourceFromSample() throws Exception {
+	public void removeConcatenatedSequencingObjectSourceFromSample() {
 		Sample sample = sampleService.read(11L);
 		SequencingObject objectA = objectService.read(8L);
 		SequencingObject objectB = objectService.read(9L);
