@@ -43,8 +43,8 @@ def list_sequence_files(startDate, endDate, host, user, password, database):
 def main():
     parser = argparse.ArgumentParser(description="This program lists the sequence files and folders that have been previously deleted in IRIDA.")
     parser.add_argument('--purge', help="Deletes the sequence files and folders from the filesystem.", action="store_true")
-    parser.add_argument('--startDate',  type=datetime.date.fromisoformat, help="The start date in format YYYY-MM-DD (inclusive).", required=False)
-    parser.add_argument('--endDate',  type=datetime.date.fromisoformat, help="The end date in format YYYY-MM-DD (inclusive).", required=False)
+    parser.add_argument('--startDate', type=datetime.date.fromisoformat, help="The start date in format YYYY-MM-DD (inclusive).", required=False)
+    parser.add_argument('--endDate', type=datetime.date.fromisoformat, help="The end date in format YYYY-MM-DD (inclusive).", required=False)
     parser.add_argument('--baseDirectory', default='/tmp/irida/sequence-files', help="The sequence file base directory.", required=False)
     parser.add_argument('--host', default='localhost', help="The database host name.", required=False)
     parser.add_argument('--database', default='irida_test', help="The database name.", required=False)
