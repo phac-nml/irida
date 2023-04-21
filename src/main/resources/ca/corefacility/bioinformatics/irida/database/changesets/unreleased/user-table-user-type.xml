@@ -7,9 +7,7 @@
 
     <changeSet id="user-table-user-type" author="jeff">
         <addColumn tableName="user">
-            <column name="user_type" type="varchar(255)" >
-                <constraints nullable="false" />
-            </column>
+            <column name="user_type" type="varchar(255)" />
         </addColumn>
 
         <update tableName="user">
@@ -17,9 +15,7 @@
         </update>
 
         <addColumn tableName="user_AUD">
-            <column name="user_type" type="varchar(255)" >
-                <constraints nullable="false" />
-            </column>
+            <column name="user_type" type="varchar(255)" />
         </addColumn>
 
         <update tableName="user_AUD">

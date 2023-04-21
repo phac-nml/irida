@@ -86,7 +86,6 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@Column(name = "system_role")
 	private Role systemRole;
 
-	@NotNull(message = "{user.userType.notnull}")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "user_type")
 	private UserType userType;
@@ -359,7 +358,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	}
 
 	public void setUserType(UserType userType) {
-		this.userType = userType;
+		this.userType = Objects.requireNonNull(userType, "userType must not be Null");
 	}
 
 	@JsonIgnore
