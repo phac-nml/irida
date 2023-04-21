@@ -36,6 +36,7 @@ export function AddGroupButton({
 }) {
   const { roles: metadataRoles } = useMetadataRoles();
   const [metadataRole, setMetadataRole] = useState("LEVEL_1");
+
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
@@ -87,7 +88,6 @@ export function AddGroupButton({
     form,
     visible,
   });
-
   /*
   Watch for changes to the debounced entered value for the user search.
   Once it changes send a request for filtered users.
@@ -123,12 +123,20 @@ export function AddGroupButton({
       groupId,
       role,
       metadataRole,
-    }).then((message) => {
-      onGroupAdded();
-      notification.success({ message });
-      form.resetFields();
-      setVisible(false);
-    });
+    })
+      .then((message) => {
+        onGroupAdded();
+        notification.success({ message });
+        setVisible(false);
+        setQuery("");
+        setGroupId(undefined);
+        setRole(defaultRole);
+        setMetadataRole("LEVEL_1");
+        form.resetFields();
+      })
+      .catch((message) => {
+        notification.error({ message });
+      });
   };
 
   /*
@@ -155,12 +163,16 @@ export function AddGroupButton({
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ role, metadataRole }}
+          initialValues={{
+            groupId,
+            role,
+            metadataRole,
+          }}
         >
           <Form.Item
             label={i18n("AddGroupButton.group.label")}
             help={i18n("AddGroupButton.group.label-help")}
-            name="user"
+            name="groupId"
           >
             <Select
               ref={groupRef}

@@ -3,12 +3,15 @@ package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -74,9 +77,13 @@ public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<Sample> imp
 		// get the metadata link
 		Link metadataLink = sample.getLink(METADATA_REL).map(i -> i).orElse(null);
 
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON));
+		HttpEntity<Object> request = new HttpEntity<Object>(headers);
+
 		// request metadata response
 		ResponseEntity<ResourceWrapper<SampleMetadataWrapper>> exchange = restTemplate.exchange(metadataLink.getHref(),
-				HttpMethod.GET, HttpEntity.EMPTY, metadataTypeReference);
+				HttpMethod.GET, request, metadataTypeReference);
 
 		// pull metadata response from request
 		Map<String, MetadataEntry> resource = exchange.getBody().getResource().getMetadata();

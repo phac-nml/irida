@@ -249,7 +249,7 @@ public class FileUtilities {
 				if (isZippedFile(filepath)) {
 					ext = "html-zip";
 				}
-			} catch (IOException e) {
+			} catch (IOException | StorageException e) {
 				logger.error("Could not find file " + filepath.toString());
 			}
 		}
