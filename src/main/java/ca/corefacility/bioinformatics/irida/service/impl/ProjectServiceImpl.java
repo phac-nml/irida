@@ -770,6 +770,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup,
 			final ProjectRole role, ProjectMetadataRole metadataRole) {
+		List<UserGroupProjectJoin> userGroupProjectJoinList = ugpjRepository.findProjectsByUserGroup(userGroup)
+				.stream()
+				.filter(ugpj -> ugpj.getSubject().equals(project))
+				.collect(Collectors.toList());
+
+		if (userGroupProjectJoinList.size() > 0) {
+			throw new EntityExistsException("The user group is already linked to this project");
+		}
+
 		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
