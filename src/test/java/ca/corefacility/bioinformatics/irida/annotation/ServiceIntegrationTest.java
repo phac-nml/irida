@@ -1,13 +1,6 @@
 package ca.corefacility.bioinformatics.irida.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import java.lang.annotation.*;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,10 +13,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.IridaApplication;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+
 /**
- * Annotation that is to be specified on Service layer integration tests.
- * Simplifies the configuration of tests by automatically adding a number of
- * necessary annotations.
+ * Annotation that is to be specified on Service layer integration tests. Simplifies the configuration of tests by
+ * automatically adding a number of necessary annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -33,9 +27,11 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemCo
 @Tag("IntegrationTest")
 @Tag("Service")
 @ActiveProfiles("it")
-@SpringBootTest(classes = { IridaApplication.class,
-		IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+@SpringBootTest(classes = {
+		IridaApplication.class, IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT,
+		properties = { "delete.from.filesystem=true" })
+@TestExecutionListeners({
+		DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 public @interface ServiceIntegrationTest {
 
