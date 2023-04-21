@@ -8,6 +8,7 @@
 * [Developer]: Added override flag that determines if files should be deleted from file storage. [See PR 1486](https://github.com/phac-nml/irida/pull/1486)
 * [Developer]: Fixed flaky text in `PipelinesPhylogenomicsPageIT#testPageSetup` test. See [PR 1490](https://github.com/phac-nml/irida/pull/1492)
 * [ALL]: Added LDAP/ADLDAP support.
+* [Developer]: Added start and ends dates to filesystem clean up script. [See PR 1487](https://github.com/phac-nml/irida/pull/1487)
 
 ## [23.01.3] - 2023/05/09
 * [Developer]: Fixed issue with metadata uploader removing existing data. See [PR 1489](https://github.com/phac-nml/irida/pull/1489)
