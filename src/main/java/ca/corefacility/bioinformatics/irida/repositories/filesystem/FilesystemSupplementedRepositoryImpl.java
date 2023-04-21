@@ -14,6 +14,7 @@ import javax.persistence.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
@@ -33,8 +34,10 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 	private final Path baseDirectory;
 	private final EntityManager entityManager;
-
 	private IridaFileStorageUtility iridaFileStorageUtility;
+
+	@Value("${delete.from.filesystem}")
+	private boolean deleteFromFilesystem;
 
 	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory,
 			final IridaFileStorageUtility iridaFileStorageUtility) {
@@ -173,14 +176,16 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * @param entity the entity to delete.
 	 */
 	protected void deleteInternal(final Type entity) {
-		Path deletePath = null;
+		if (deleteFromFilesystem) {
+			Path deletePath = null;
 
-		if (entity instanceof SequenceFile) {
-			//remove all sequence file copies from revision folders
-			deletePath = ((SequenceFile) entity).getFile().getParent().getParent();
-			
-			if (deletePath != null) {
-				iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
+			if (entity instanceof SequenceFile) {
+				//remove all sequence file copies from revision folders
+				deletePath = ((SequenceFile) entity).getFile().getParent().getParent();
+
+				if (deletePath != null) {
+					iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
+				}
 			}
 		}
 	}
