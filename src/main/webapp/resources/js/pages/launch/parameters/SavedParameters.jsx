@@ -126,6 +126,7 @@ export function SavedParameters({ form, sets }) {
                 <Popover
                   placement="bottomRight"
                   trigger="click"
+                  overlayClassName="t-save-params-form"
                   content={
                     <>
                       <Typography.Text>

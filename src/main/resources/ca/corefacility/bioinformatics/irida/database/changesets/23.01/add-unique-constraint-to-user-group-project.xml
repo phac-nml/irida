@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <changeSet id="add-unique-constraint-to-user-group-project" author="deep">
+        <sql>
+            DELETE ugp1 FROM user_group_project ugp1, user_group_project ugp2 WHERE ugp1.id > ugp2.id AND ugp1.project_id = ugp2.project_id AND ugp1.user_group_id = ugp2.user_group_id;
+        </sql>
+        <addUniqueConstraint columnNames="project_id, user_group_id"
+                             constraintName="UK_USERGROUP_PROJECT"
+                             tableName="user_group_project"
+        />
+    </changeSet>
+</databaseChangeLog>

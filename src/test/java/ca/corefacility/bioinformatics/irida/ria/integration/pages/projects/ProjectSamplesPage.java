@@ -66,9 +66,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-cmd-text")
 	private WebElement linkerCmd;
 
-	@FindBy(className = "t-summary")
-	private WebElement tableSummary;
-
 	// FILTERS
 	@FindBy(css = ".t-td-name .ant-table-filter-trigger")
 	private WebElement sampleNameFilterToggle;
@@ -346,6 +343,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public TableSummary getTableSummary() {
+		WebElement tableSummary = driver.findElement(By.className("t-summary"));
 		return new TableSummary(tableSummary.getText());
 	}
 
