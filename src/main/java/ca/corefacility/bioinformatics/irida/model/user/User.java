@@ -86,6 +86,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@Column(name = "system_role")
 	private Role systemRole;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "user_type")
 	private UserType userType;
