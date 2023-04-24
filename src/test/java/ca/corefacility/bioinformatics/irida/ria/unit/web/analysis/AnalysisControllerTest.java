@@ -59,7 +59,7 @@ public class AnalysisControllerTest {
 		userServiceMock = mock(UserService.class);
 		analysisTypesService = mock(AnalysisTypesService.class);
 		messageSource = mock(MessageSource.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, messageSource, iridaFileStorageUtility);
@@ -87,12 +87,12 @@ public class AnalysisControllerTest {
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals(AnalysisController.ANALYSIS_PAGE, analysisPage, "should be analysis page");
 
-		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"), 
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"),
 				"Phylogenetic Tree tab should be available");
 
 		assertEquals(submission.getName(), model.get("analysisName"), "submission name should be in model");
 
-		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"), 
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"),
 				"analysisType should be PHYLOGENOMICS");
 	}
 
@@ -117,8 +117,7 @@ public class AnalysisControllerTest {
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals(AnalysisController.ANALYSIS_PAGE, analysisPage, "should be analysis page");
 
-		assertFalse(submission.getAnalysisState() == AnalysisState.COMPLETED,
-				"Analysis should not be completed");
+		assertFalse(submission.getAnalysisState() == AnalysisState.COMPLETED, "Analysis should not be completed");
 
 		assertEquals(submission.getName(), model.get("analysisName"), "submission name should be in model");
 	}

@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileC
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -57,7 +56,7 @@ public class UIProjectReferenceFileServiceTest {
 		projectService = mock(ProjectService.class);
 		referenceFileService = mock(ReferenceFileService.class);
 		messageSource = mock(MessageSource.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		// Set up the reference file
@@ -74,14 +73,14 @@ public class UIProjectReferenceFileServiceTest {
 	public void testCreateNewReferenceFile() throws UnsupportedReferenceFileContentError, IOException {
 		Path path = Paths.get(FILE_PATH);
 		byte[] origBytes = Files.readAllBytes(path);
-		List<MultipartFile> mockMultipartFiles = ImmutableList
-				.of(new MockMultipartFile(FILE_NAME, FILE_NAME, "octet-stream", origBytes));
+		List<MultipartFile> mockMultipartFiles = ImmutableList.of(
+				new MockMultipartFile(FILE_NAME, FILE_NAME, "octet-stream", origBytes));
 		Project project = new Project("foo");
 		ReferenceFile referenceFile = new TestReferenceFile(path, 2L);
 
 		when(projectService.read(PROJECT_ID)).thenReturn(project);
-		when(projectService.addReferenceFileToProject(eq(project), any(ReferenceFile.class)))
-				.thenReturn(new ProjectReferenceFileJoin(project, referenceFile));
+		when(projectService.addReferenceFileToProject(eq(project), any(ReferenceFile.class))).thenReturn(
+				new ProjectReferenceFileJoin(project, referenceFile));
 
 		uiProjectReferenceFileService.addReferenceFileToProject(PROJECT_ID, mockMultipartFiles, Locale.ENGLISH);
 

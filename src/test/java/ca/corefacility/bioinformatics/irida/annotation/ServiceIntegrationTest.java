@@ -28,8 +28,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @Tag("Service")
 @ActiveProfiles("it")
 @SpringBootTest(classes = {
-		IridaApplication.class, IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT,
-		properties = { "delete.from.filesystem=true" })
+		IridaApplication.class, IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestExecutionListeners({
 		DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })

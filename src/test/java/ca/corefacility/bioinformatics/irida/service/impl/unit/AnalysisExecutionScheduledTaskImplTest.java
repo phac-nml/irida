@@ -1,25 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Future;
 
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -41,9 +31,15 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
+
+import com.google.common.collect.Sets;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests out scheduling analysis tasks.
@@ -89,14 +85,13 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-
 	/**
 	 * Sets up variables for tests.
 	 */
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
@@ -191,7 +186,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testExecuteAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowException, IOException {
@@ -210,7 +205,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testExecuteAnalysesNoAnalyses() throws ExecutionManagerException, IridaWorkflowException, IOException {
@@ -225,9 +220,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching analysis state to
-	 * {@link AnalysisState#FINISHED_RUNNING} on success in Galaxy.
-	 * Also ,tests not sending an email on pipeline completion.
+	 * Tests successfully switching analysis state to {@link AnalysisState#FINISHED_RUNNING} on success in Galaxy. Also
+	 * ,tests not sending an email on pipeline completion.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -254,9 +248,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching analysis state to
-	 * {@link AnalysisState#FINISHED_RUNNING} on success in Galaxy.
-	 * Also, tests sending an email to user on pipeline completion.
+	 * Tests successfully switching analysis state to {@link AnalysisState#FINISHED_RUNNING} on success in Galaxy. Also,
+	 * tests sending an email to user on pipeline completion.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -285,8 +278,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully skipping over switching analysis state for a running
-	 * analysis in Galaxy.
+	 * Tests successfully skipping over switching analysis state for a running analysis in Galaxy.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -310,8 +302,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully staying on RUNNING state when
-	 * GalaxyWorkflowState = OK and outputFilesExist = false
+	 * Tests successfully staying on RUNNING state when GalaxyWorkflowState = OK and outputFilesExist = false
 	 * {@link AnalysisState#RUNNING} on success in Galaxy.
 	 *
 	 * @throws ExecutionManagerException
@@ -337,8 +328,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully skipping over switching analysis state for a queued
-	 * analysis in Galaxy.
+	 * Tests successfully skipping over switching analysis state for a queued analysis in Galaxy.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -362,9 +352,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR}
-	 * if there was an error Galaxy state. Also, tests not sending a pipeline
-	 * result email.
+	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR} if there was an error Galaxy state. Also,
+	 * tests not sending a pipeline result email.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -390,9 +379,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
-	 * if there was an error Galaxy state. On  error, user is sent an email
-	 * with the pipeline result.
+	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR} if there was an error Galaxy state. On
+	 * error, user is sent an email with the pipeline result.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -443,9 +431,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR}
-	 * if there was an error building the workflow status. Also, tests not
-	 * sending of pipeline status email.
+	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR} if there was an error building the
+	 * workflow status. Also, tests not sending of pipeline status email.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -467,9 +454,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR}
-	 * if there was an error building the workflow status. Also, tests
-	 * sending of pipeline status email.
+	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR} if there was an error building the
+	 * workflow status. Also, tests sending of pipeline status email.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -493,8 +479,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR}
-	 * if there was an Galaxy job with an error, but still running.
+	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR} if there was an Galaxy job with an error,
+	 * but still running.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -561,8 +547,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully cleaning up analysis submissions with completed
-	 * status.
+	 * Tests successfully cleaning up analysis submissions with completed status.
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -600,8 +585,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully not cleaning up any analysis submissions in the
-	 * running state.
+	 * Tests successfully not cleaning up any analysis submissions in the running state.
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -620,8 +604,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully not cleaning up an analysis in completed when it's
-	 * already cleaned.
+	 * Tests successfully not cleaning up an analysis in completed when it's already cleaned.
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -640,8 +623,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully not cleaning up an analysis in completed when it's in
-	 * a cleaning error.
+	 * Tests successfully not cleaning up an analysis in completed when it's in a cleaning error.
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -660,8 +642,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully not cleaning up an analysis in completed when it's
-	 * already being cleaned.
+	 * Tests successfully not cleaning up an analysis in completed when it's already being cleaned.
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -680,8 +661,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully cleaning up analysis submissions with completed status
-	 * that are over a day old (time limit until they should be cleaned).
+	 * Tests successfully cleaning up analysis submissions with completed status that are over a day old (time limit
+	 * until they should be cleaned).
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -693,9 +674,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now()
-				.minusDays(2)
-				.toDate());
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().minusDays(2).toDate());
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
 				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
@@ -707,8 +686,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully cleaning up analysis submissions with completed status
-	 * when cleanup time is zero.
+	 * Tests successfully cleaning up analysis submissions with completed status when cleanup time is zero.
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -720,8 +698,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now()
-				.toDate());
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().toDate());
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
 				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
@@ -733,9 +710,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully not cleaning up analysis submissions with completed
-	 * status that are under a day old (time limit until they should be
-	 * cleaned).
+	 * Tests successfully not cleaning up analysis submissions with completed status that are under a day old (time
+	 * limit until they should be cleaned).
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -747,8 +723,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now()
-				.toDate());
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().toDate());
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
 				AnalysisCleanedState.NOT_CLEANED)).thenReturn(Arrays.asList(analysisSubmissionMock));
@@ -760,9 +735,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully cleaning up analysis submissions with completed status
-	 * where one is over a day old (so gets cleaned up) and one is under a day
-	 * old (so does not get cleaned up).
+	 * Tests successfully cleaning up analysis submissions with completed status where one is over a day old (so gets
+	 * cleaned up) and one is under a day old (so does not get cleaned up).
 	 *
 	 * @throws ExecutionManagerException
 	 */
@@ -774,14 +748,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now()
-				.minusDays(2)
-				.toDate());
+		when(analysisSubmissionMock.getCreatedDate()).thenReturn(DateTime.now().minusDays(2).toDate());
 
 		when(analysisSubmissionMock2.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock2.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
-		when(analysisSubmissionMock2.getCreatedDate()).thenReturn(DateTime.now()
-				.toDate());
+		when(analysisSubmissionMock2.getCreatedDate()).thenReturn(DateTime.now().toDate());
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.COMPLETED,
 				AnalysisCleanedState.NOT_CLEANED)).thenReturn(

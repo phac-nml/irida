@@ -2,11 +2,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,10 +10,14 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAna
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 
 import com.google.common.collect.Lists;
@@ -34,7 +33,6 @@ public class RESTSampleAssemblyControllerTest {
 	private RESTSampleAssemblyController controller;
 	private SampleService sampleService;
 	private GenomeAssemblyService genomeAssemblyService;
-
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	GenomeAssemblyFromAnalysis assemblyFromAnalysis;
@@ -45,7 +43,7 @@ public class RESTSampleAssemblyControllerTest {
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		controller = new RESTSampleAssemblyController(sampleService, genomeAssemblyService);
@@ -76,9 +74,7 @@ public class RESTSampleAssemblyControllerTest {
 
 		assertNotNull(readAssemblies.getSelfHref(), "has self rel");
 
-		GenomeAssembly genomeAssembly = readAssemblies.getResources()
-				.iterator()
-				.next();
+		GenomeAssembly genomeAssembly = readAssemblies.getResources().iterator().next();
 
 		assertTrue(genomeAssembly.getLink("self").isPresent(), "has self rel");
 		assertEquals(assemblyFromAnalysis.getId(), genomeAssembly.getId(), "should be same assembly");

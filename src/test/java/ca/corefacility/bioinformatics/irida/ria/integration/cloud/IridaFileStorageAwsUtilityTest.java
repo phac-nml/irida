@@ -88,7 +88,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 			s3Client.createBucket(new CreateBucketRequest(bucketName, BUCKET_REGION));
 		}
 
-		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(bucketName, BUCKET_REGION, AWS_ACCESS_KEY,
+		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(true, bucketName, BUCKET_REGION, AWS_ACCESS_KEY,
 				AWS_SECRET_KEY, Optional.ofNullable(ENDPOINT_URL));
 
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);

@@ -25,7 +25,7 @@ public class Fast5ObjectTest {
 
 	@BeforeEach
 	public void setUp() {
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 

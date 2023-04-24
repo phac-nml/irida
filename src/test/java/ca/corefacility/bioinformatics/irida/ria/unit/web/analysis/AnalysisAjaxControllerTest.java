@@ -13,15 +13,12 @@ import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConf
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
-
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
@@ -29,8 +26,8 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.*;
@@ -43,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class AnalysisAjaxControllerTest {
@@ -74,8 +70,7 @@ public class AnalysisAjaxControllerTest {
 	private UpdateSamplePermission updateSamplePermission;
 
 	/**
-	 * Analysis Output File key names from
-	 * {@link TestDataFactory#constructAnalysis()}
+	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
 	 */
 	private final List<String> outputNames = Lists.newArrayList("tree", "matrix", "table", "contigs-with-repeats",
 			"refseq-masher-matches");
@@ -96,16 +91,15 @@ public class AnalysisAjaxControllerTest {
 		httpServletResponseMock = mock(HttpServletResponse.class);
 		analysisTypesServiceMock = mock(AnalysisTypesService.class);
 		emailControllerMock = mock(EmailController.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
-
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysisSubmissionSampleProcessor, messageSourceMock, configFileMock,
-				analysisAuditMock, analysisTypesServiceMock, emailControllerMock, iridaFileStorageUtility, updateSamplePermission);
-
+				analysisAuditMock, analysisTypesServiceMock, emailControllerMock, iridaFileStorageUtility,
+				updateSamplePermission);
 
 	}
 
@@ -117,8 +111,8 @@ public class AnalysisAjaxControllerTest {
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId()))
-				.thenReturn(Lists.newArrayList("tree"));
+		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId())).thenReturn(
+				Lists.newArrayList("tree"));
 
 		List<AnalysisOutputFileInfo> outputInfos = analysisAjaxController.getOutputFilesInfo(submissionId);
 
@@ -137,8 +131,8 @@ public class AnalysisAjaxControllerTest {
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId()))
-				.thenThrow(new IridaWorkflowNotFoundException(""));
+		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId())).thenThrow(
+				new IridaWorkflowNotFoundException(""));
 
 		List<AnalysisOutputFileInfo> outputInfos = analysisAjaxController.getOutputFilesInfo(submissionId);
 
@@ -154,8 +148,8 @@ public class AnalysisAjaxControllerTest {
 		Long analysisSubmissionId = 1L;
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
-		when(analysisSubmissionServiceMock.read(analysisSubmissionId))
-				.thenReturn(TestDataFactory.constructAnalysisSubmission());
+		when(analysisSubmissionServiceMock.read(analysisSubmissionId)).thenReturn(
+				TestDataFactory.constructAnalysisSubmission());
 		try {
 			analysisAjaxController.getAjaxDownloadAnalysisSubmission(analysisSubmissionId, response);
 			assertEquals("application/zip", response.getContentType(), "Has the correct content type");
@@ -178,7 +172,8 @@ public class AnalysisAjaxControllerTest {
 		final List<AnalysisOutputFileInfo> infos = analysisAjaxController.getOutputFilesInfo(submissionId);
 		assertEquals(5, infos.size(), "Expecting 5 analysis output file info items");
 		final Optional<AnalysisOutputFileInfo> optInfo = infos.stream()
-				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches")).findFirst();
+				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches"))
+				.findFirst();
 		assertTrue(optInfo.isPresent(), "Should be a refseq-masher-matches.tsv output file");
 		final AnalysisOutputFileInfo info = optInfo.get();
 		final String firstLine = "sample\ttop_taxonomy_name\tdistance\tpvalue\tmatching\tfull_taxonomy\ttaxonomic_subspecies\ttaxonomic_species\ttaxonomic_genus\ttaxonomic_family\ttaxonomic_order\ttaxonomic_class\ttaxonomic_phylum\ttaxonomic_superkingdom\tsubspecies\tserovar\tplasmid\tbioproject\tbiosample\ttaxid\tassembly_accession\tmatch_id";
@@ -214,7 +209,8 @@ public class AnalysisAjaxControllerTest {
 		final List<AnalysisOutputFileInfo> infos = analysisAjaxController.getOutputFilesInfo(submissionId);
 		assertEquals(5, infos.size(), "Expecting 5 analysis output file info items");
 		final Optional<AnalysisOutputFileInfo> optInfo = infos.stream()
-				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches")).findFirst();
+				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches"))
+				.findFirst();
 		assertTrue(optInfo.isPresent(), "Should be a refseq-masher-matches.tsv output file");
 		final AnalysisOutputFileInfo info = optInfo.get();
 		final String firstLine = "sample\ttop_taxonomy_name\tdistance\tpvalue\tmatching\tfull_taxonomy\ttaxonomic_subspecies\ttaxonomic_species\ttaxonomic_genus\ttaxonomic_family\ttaxonomic_order\ttaxonomic_class\ttaxonomic_phylum\ttaxonomic_superkingdom\tsubspecies\tserovar\tplasmid\tbioproject\tbiosample\ttaxid\tassembly_accession\tmatch_id";
@@ -308,8 +304,8 @@ public class AnalysisAjaxControllerTest {
 		assertNotNull(analysisSubmissionServiceMock.read(submission.getId()), "Submission exists");
 		verify(iridaWorkflowsServiceMock, times(1)).getIridaWorkflowOrUnknown(submission);
 		verify(analysisAuditMock, times(1)).getAnalysisRunningTime(submission);
-		verify(analysisSubmissionSampleProcessor, times(1))
-				.hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
+		verify(analysisSubmissionSampleProcessor, times(1)).hasRegisteredAnalysisSampleUpdater(
+				submission.getAnalysis().getAnalysisType());
 	}
 
 	@Test

@@ -48,7 +48,6 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	private static String containerName = "irida-azure-test";
 	private static String containerUrl = "http://127.0.0.1:10000/devstoreaccount1/" + containerName;
 	private static String FILENAME = "test_file.fasta";
-
 	private Path PATH_TO_FASTA_FILE = Paths.get("/opt/irida/data/" + FILENAME);
 	private static String AZURE_PATH_TO_FASTA_FILE = "opt/irida/data/" + FILENAME;
 	private Path PATH_TO_IMAGE_FILE = Paths.get("/opt/irida/data/perBaseQualityScoreChart.png");
@@ -89,7 +88,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 			containerClient = blobServiceClient.getBlobContainerClient(containerName);
 		}
 
-		iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, storageSharedKeyCredential,
+		iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(true, containerUrl, storageSharedKeyCredential,
 				containerName);
 
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);

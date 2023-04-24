@@ -20,7 +20,7 @@ public class FileUtilitiesTest {
 
 	@BeforeEach
 	public void setup() {
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
@@ -44,7 +44,7 @@ public class FileUtilitiesTest {
 	}
 
 	@Test
-	public void testGetFileExt()  {
+	public void testGetFileExt() {
 		// File doesn't exist on local disk
 		Path fastqFile = Paths.get("src/test/resources/files/test_fastq.fastq");
 		// File doesn't exist on local disk

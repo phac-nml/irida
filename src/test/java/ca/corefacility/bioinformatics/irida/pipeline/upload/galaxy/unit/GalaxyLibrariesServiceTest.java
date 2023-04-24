@@ -38,7 +38,7 @@ public class GalaxyLibrariesServiceTest {
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		setupLibrariesTest();
 	}
 
@@ -101,15 +101,15 @@ public class GalaxyLibrariesServiceTest {
 
 	/**
 	 * Tests create empty library.
+	 *
 	 * @throws CreateLibraryException
 	 */
 	@Test
 	public void testBuildEmptyLibrary() throws CreateLibraryException {
-		when(librariesClient.createLibrary(any(Library.class))).thenReturn(
-				testLibrary);
+		when(librariesClient.createLibrary(any(Library.class))).thenReturn(testLibrary);
 
-		Library library = new GalaxyLibrariesService(librariesClient, 1, 2, 1).buildEmptyLibrary(new GalaxyProjectName(
-				"test"));
+		Library library = new GalaxyLibrariesService(librariesClient, 1, 2, 1).buildEmptyLibrary(
+				new GalaxyProjectName("test"));
 
 		assertNotNull(library);
 		assertEquals("test", library.getName());
@@ -118,7 +118,7 @@ public class GalaxyLibrariesServiceTest {
 
 	/**
 	 * Tests create empty library.
-	 * 
+	 *
 	 * @throws CreateLibraryException
 	 */
 	@Test

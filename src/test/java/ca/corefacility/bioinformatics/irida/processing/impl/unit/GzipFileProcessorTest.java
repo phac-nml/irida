@@ -1,15 +1,5 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,10 +18,12 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 /**
  * Tests for {@link GzipFileProcessor}.
- * 
- * 
  */
 
 public class GzipFileProcessorTest {
@@ -44,7 +36,7 @@ public class GzipFileProcessorTest {
 	@BeforeEach
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE, iridaFileStorageUtility);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
