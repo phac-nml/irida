@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @FileSystemIntegrationTest
 public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureUtilityTest.class);
+	private static StorageSharedKeyCredential storageSharedKeyCredential;
 	private static BlobServiceClient blobServiceClient;
 	private static BlobContainerClient containerClient;
 	private static String containerName = "irida-azure-test";
@@ -75,8 +76,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	@BeforeAll
 	public static void setUp() {
 		logger.info("Starting azure storage blob testing");
-		StorageSharedKeyCredential storageSharedKeyCredential = new StorageSharedKeyCredential(ACCOUNT_NAME,
-				ACCOUNT_KEY);
+		storageSharedKeyCredential = new StorageSharedKeyCredential(ACCOUNT_NAME, ACCOUNT_KEY);
 
 		blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl)
 				.credential(storageSharedKeyCredential)
@@ -208,7 +208,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 
 	@Test
 	@Override
-	public void testDeleteFile() {
+	public void testDeleteFileWithFlagOn() {
 		iridaFileStorageUtility.deleteFile(PATH_TO_FASTA_FILE);
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
 		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
@@ -216,13 +216,38 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 
 	@Test
 	@Override
-	public void testDeleteFolder() {
+	public void testDeleteFileWithFlagOff() {
+		iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(false, containerUrl, storageSharedKeyCredential,
+				containerName);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		iridaFileStorageUtility.deleteFile(PATH_TO_FASTA_FILE);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertTrue(fileExistsInBlobStorage, "File should exist in azure blob storage");
+	}
+
+	@Test
+	@Override
+	public void testDeleteFolderWithFlagOn() {
 		Path folder = PATH_TO_FASTA_FILE.getParent();
 		iridaFileStorageUtility.deleteFolder(folder);
 		boolean folderExistsInBlobStorage = iridaFileStorageUtility.fileExists(folder);
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
 		assertFalse(folderExistsInBlobStorage, "Folder should not exist in azure blob storage");
 		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
+	}
+
+	@Test
+	@Override
+	public void testDeleteFolderWithFlagOff() {
+		iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(false, containerUrl, storageSharedKeyCredential,
+				containerName);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		Path folder = PATH_TO_FASTA_FILE.getParent();
+		iridaFileStorageUtility.deleteFolder(folder);
+		boolean folderExistsInBlobStorage = iridaFileStorageUtility.fileExists(folder);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertTrue(folderExistsInBlobStorage, "Folder should exist in azure blob storage");
+		assertTrue(fileExistsInBlobStorage, "File should exist in azure blob storage");
 	}
 
 	@Test
