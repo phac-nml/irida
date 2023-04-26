@@ -160,7 +160,7 @@ public class UIProjectSampleService {
 		Join<Project, Sample> join = projectService.addSampleToProjectWithoutEvent(project, sample, true);
 		if (request.getMetadata() != null) {
 			Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata());
-			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
+			sampleService.updateSampleMetadata(sample, metadataEntrySet);
 		}
 		return join.getObject().getId();
 	}
@@ -208,7 +208,7 @@ public class UIProjectSampleService {
 		}
 		if (request.getMetadata() != null) {
 			Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata());
-			sampleService.updateSampleMetadata(sample, metadataEntrySet);
+			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 		}
 		return sampleService.update(sample);
 
