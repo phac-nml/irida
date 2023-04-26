@@ -1,6 +1,9 @@
 
 # Changelog
 
+## [Unreleased]
+* [Developer]: Added override flag that determines if files should be deleted from file storage. [See PR 1486](https://github.com/phac-nml/irida/pull/1486)
+
 ## [23.01.2]
 * [UI]: Fixed bug that caused all metadata fields to be removed when single field was removed from a template. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
 * [Developer]: Fixed bug which allowed duplicated entries in the user_group_project table which prevented the user group from being removed. Fixed bug which was preventing analyses with `html` file outputs from completing. See [PR 1483](https://github.com/phac-nml/irida/pull/1483)
