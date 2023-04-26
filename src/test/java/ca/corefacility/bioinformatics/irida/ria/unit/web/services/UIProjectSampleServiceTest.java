@@ -141,7 +141,7 @@ public class UIProjectSampleServiceTest {
 				.stream()
 				.filter(response -> ((SampleResponse) response.getValue()).isError())
 				.count();
-		verify(sampleService, times(1)).updateSampleMetadata(any(), any());
+		verify(sampleService, times(1)).mergeSampleMetadata(any(), any());
 		assertEquals(0, errorCount, "Sample should be created");
 	}
 
