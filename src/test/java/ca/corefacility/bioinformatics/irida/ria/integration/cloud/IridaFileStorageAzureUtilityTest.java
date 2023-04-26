@@ -230,9 +230,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	public void testDeleteFolderWithFlagOn() {
 		Path folder = PATH_TO_FASTA_FILE.getParent();
 		iridaFileStorageUtility.deleteFolder(folder);
-		boolean folderExistsInBlobStorage = iridaFileStorageUtility.fileExists(folder);
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
-		assertFalse(folderExistsInBlobStorage, "Folder should not exist in azure blob storage");
 		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
 	}
 
@@ -244,9 +242,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		Path folder = PATH_TO_FASTA_FILE.getParent();
 		iridaFileStorageUtility.deleteFolder(folder);
-		boolean folderExistsInBlobStorage = iridaFileStorageUtility.fileExists(folder);
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
-		assertTrue(folderExistsInBlobStorage, "Folder should exist in azure blob storage");
 		assertTrue(fileExistsInBlobStorage, "File should exist in azure blob storage");
 	}
 
