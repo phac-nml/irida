@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDeletePage;
@@ -30,6 +31,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	private static final String EMPTY_AND_DUPLICATE_HEADERS_FILE_PATH = "src/test/resources/files/metadata-upload/empty_and_duplicate_headers.xlsx";
 	private static final String DUPLICATE_HEADERS_FILE_PATH = "src/test/resources/files/metadata-upload/duplicate_headers.xlsx";
 	private static final String SAMPLE_NAME_COLUMN = "NLEP #";
+
+	private static final String SAMPLE_NAME = "sample1";
 	private static final Long PROJECT_ID = 1L;
 
 	@BeforeEach
@@ -188,5 +191,26 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		//manager tries to complete metadata import
 		page.clickUploadButton();
 		assertTrue(page.isErrorNotificationDisplayed(), "Error notification did not display");
+	}
+
+	@Test
+	public void testUploadDoesNotOverwriteExistingSampleMetadata() {
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(GOOD_FILE_PATH);
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
+		page.goToCompletePage();
+		assertTrue(page.isSuccessDisplayed(), "Successful upload did not happen");
+		ProjectSamplesPage samplePage = ProjectSamplesPage.goToPage(driver(), PROJECT_ID);
+		samplePage.clickSampleName(SAMPLE_NAME);
+		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
+		sampleDetailsViewer.clickMetadataTabLink();
+		assertTrue(sampleDetailsViewer.addNewMetadataButtonVisible());
+		sampleDetailsViewer.getNumberOfMetadataEntries();
+		assertEquals(10, sampleDetailsViewer.getNumberOfMetadataEntries(),
+				"Should have the proper number of metadata entries");
+		assertEquals("Sneezing", sampleDetailsViewer.getValueForMetadataField("symptom"),
+				"Should have existing metadata");
+		assertEquals("AB", sampleDetailsViewer.getValueForMetadataField("Province"), "Should have uploaded metadata");
 	}
 }
