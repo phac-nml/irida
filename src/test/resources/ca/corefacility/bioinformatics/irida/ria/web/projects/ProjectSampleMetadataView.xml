@@ -31,6 +31,8 @@
         <sample id="1" createdDate="2013-07-01 14:00:19.0" modifiedDate="2015-07-01 14:00:19.0" description="description1" sampleName="sample1" organism="E. coli" />
         <sample id="2" createdDate="2013-07-02 14:01:19.0" modifiedDate="2015-07-02 14:00:19.0" description="description2" sampleName="sample2" organism="E. coli" />
         <sample id="3" createdDate="2013-07-03 14:02:19.0" modifiedDate="2015-07-02 14:00:19.0" description="description3" sampleName="sample3" organism="E. coli" />
+        <sample id="4" createdDate="2013-07-04 14:03:19.0" modifiedDate="2015-07-03 14:00:19.0" description="description4" sampleName="sample4" organism="Listeria" />
+        <sample id="5" createdDate="2013-07-06 14:05:19.0" modifiedDate="2015-07-06 14:00:19.0" description="description5" sampleName="sample523423" />
 
         <metadata_field id="1" label="symptom" type="text" DTYPE="MetadataTemplateField"/>
 
@@ -39,6 +41,8 @@
         <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:21:19.0" />
         <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:22:19.0" />
         <project_sample id="3" project_id="1" sample_id="3" createdDate="2013-07-14 14:23:19.0" />
+        <project_sample id="4" project_id="1" sample_id="4" createdDate="2013-07-16 14:24:19.0" />
+        <project_sample id="5" project_id="1" sample_id="5" createdDate="2013-07-18 14:26:19.0" />
 
         <sequence_file id="1" created_date="2013-07-18 14:20:19.0" file_path="src/test/resources/files/test_file.fastq" />
         <sequence_file id="2" created_date="2013-07-18 14:20:19.0" file_path="/sequenceFile2" />
