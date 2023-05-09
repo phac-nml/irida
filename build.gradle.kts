@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "ca.corefacility.bioinformatics"
-version = "23.01.2"
+version = "23.01.3"
 description = "irida"
 
 java {

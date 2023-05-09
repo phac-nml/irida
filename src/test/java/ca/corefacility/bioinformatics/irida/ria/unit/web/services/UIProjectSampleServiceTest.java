@@ -25,11 +25,17 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class UIProjectSampleServiceTest {
 	private UIProjectSampleService service;
+	private ProjectService projectService;
+	private SampleService sampleService;
+	private MetadataTemplateService metadataTemplateService;
+	private MessageSource messageSource;
+
+	private Sample sample;
+	private Join<Project, Sample> join;
 
 	// DATA
 	private final Long PROJECT_1_ID = 1L;
@@ -44,10 +50,10 @@ public class UIProjectSampleServiceTest {
 
 	@BeforeEach
 	public void setUp() {
-		ProjectService projectService = mock(ProjectService.class);
-		SampleService sampleService = mock(SampleService.class);
-		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
-		MessageSource messageSource = mock(MessageSource.class);
+		projectService = mock(ProjectService.class);
+		sampleService = mock(SampleService.class);
+		metadataTemplateService = mock(MetadataTemplateService.class);
+		messageSource = mock(MessageSource.class);
 
 		service = new UIProjectSampleService(projectService, sampleService, metadataTemplateService, messageSource);
 
@@ -55,9 +61,9 @@ public class UIProjectSampleServiceTest {
 		when(sampleService.read(SAMPLE_1_ID)).thenReturn(SAMPLE_1);
 		when(sampleService.getSampleBySampleName(PROJECT_1, GOOD_NAME)).thenThrow(
 				new EntityNotFoundException("Sample not found"));
-		Sample sample = new Sample(GOOD_NAME);
+		sample = new Sample(GOOD_NAME);
 		sample.setId(SAMPLE_1_ID);
-		Join<Project, Sample> join = new ProjectSampleJoin(PROJECT_1, sample, true);
+		join = new ProjectSampleJoin(PROJECT_1, sample, true);
 		when(projectService.addSampleToProject(any(Project.class), any(Sample.class), any(Boolean.class))).thenReturn(
 				join);
 		when(projectService.addSampleToProjectWithoutEvent(any(Project.class), any(Sample.class),
@@ -135,6 +141,7 @@ public class UIProjectSampleServiceTest {
 				.stream()
 				.filter(response -> ((SampleResponse) response.getValue()).isError())
 				.count();
+		verify(sampleService, times(1)).mergeSampleMetadata(any(), any());
 		assertEquals(0, errorCount, "Sample should be created");
 	}
 
@@ -149,6 +156,8 @@ public class UIProjectSampleServiceTest {
 				.stream()
 				.filter(response -> ((SampleErrorResponse) response.getValue()).isError())
 				.count();
+		verify(sampleService, times(1)).mergeSampleMetadata(any(), any());
 		assertEquals(0, errorCount, "Sample should be updated");
 	}
+
 }
