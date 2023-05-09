@@ -1,6 +1,6 @@
 
 # Changelog
-## [23.01.3]
+## [23.01.3] - 2023/05/09
 * [Developer]: Fixed issue with metadata uploader removing exiting data. See [PR 1489](https://github.com/phac-nml/irida/pull/1489)
 
 ## [23.01.2] - 2023/04/17
