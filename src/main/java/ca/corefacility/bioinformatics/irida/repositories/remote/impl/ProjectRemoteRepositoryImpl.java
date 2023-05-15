@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
+import com.google.common.collect.ImmutableList;
 import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -11,10 +12,12 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ProjectHashResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -64,8 +67,12 @@ public class ProjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Project> i
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 		Link link = project.getLink(HASH_REL).map(i -> i).orElse(null);
 
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON));
+		HttpEntity<Object> request = new HttpEntity<Object>(headers);
+
 		ResponseEntity<ResourceWrapper<ProjectHashResource>> exchange = restTemplate.exchange(link.getHref(),
-				HttpMethod.GET, HttpEntity.EMPTY, projectHashReference);
+				HttpMethod.GET, request, projectHashReference);
 
 		Integer projectHash = exchange.getBody().getResource().getProjectHash();
 
