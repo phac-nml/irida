@@ -154,11 +154,9 @@ public class UserTest {
 	@Test
 	public void testNullUserType() {
 		User u = new User();
-		u.setUserType(null);
-		Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "userType");
-
-		assertEquals(1, constraintViolations.size());
-		assertEquals(b.getString("user.userType.notnull"), constraintViolations.iterator().next().getMessage());
+		assertThrows(NullPointerException.class, () -> {
+			u.setUserType(null);
+		});
 	}
 
 	@Test

@@ -1,5 +1,6 @@
 
 # Changelog
+<<<<<<< HEAD
 ## [Unreleased]
 * [ALL]: Added LDAP/ADLDAP support.
 
@@ -7,6 +8,11 @@
 * [Developer]: Fixed issue with metadata uploader removing exiting data. See [PR 1489](https://github.com/phac-nml/irida/pull/1489)
 
 ## [23.01.2] - 2023/04/17
+
+## [Unreleased]
+* [ALL]: Added LDAP/ADLDAP support.
+
+## [23.01.2]
 * [UI]: Fixed bug that caused all metadata fields to be removed when single field was removed from a template. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
 * [Developer]: Fixed bug which allowed duplicated entries in the user_group_project table which prevented the user group from being removed. Fixed bug which was preventing analyses with `html` file outputs from completing. See [PR 1483](https://github.com/phac-nml/irida/pull/1483)
 * [Developer]: Fixed flaky PipelinesPhylogenomicsPageIT test. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
