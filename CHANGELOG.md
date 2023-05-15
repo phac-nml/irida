@@ -1,7 +1,9 @@
 
 # Changelog
+## [23.01.3] - 2023/05/09
+* [Developer]: Fixed issue with metadata uploader removing exiting data. See [PR 1489](https://github.com/phac-nml/irida/pull/1489)
 
-## [23.01.2]
+## [23.01.2] - 2023/04/17
 * [UI]: Fixed bug that caused all metadata fields to be removed when single field was removed from a template. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
 * [Developer]: Fixed bug which allowed duplicated entries in the user_group_project table which prevented the user group from being removed. Fixed bug which was preventing analyses with `html` file outputs from completing. See [PR 1483](https://github.com/phac-nml/irida/pull/1483)
 * [Developer]: Fixed flaky PipelinesPhylogenomicsPageIT test. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
@@ -189,8 +191,9 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/23.01.2...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/23.01.3...HEAD
 
+[23.01.3]: https://github.com/phac-nml/irida/compare/23.01.2...23.01.3
 [23.01.2]: https://github.com/phac-nml/irida/compare/23.01.1...23.01.2
 [23.01.1]: https://github.com/phac-nml/irida/compare/23.01...23.01.1
 [23.01]: https://github.com/phac-nml/irida/compare/22.09.7...23.01
