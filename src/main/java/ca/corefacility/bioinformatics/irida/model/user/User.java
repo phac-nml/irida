@@ -86,6 +86,11 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@Column(name = "system_role")
 	private Role systemRole;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "user_type")
+	private UserType userType;
+
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -125,6 +130,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 		locale = "en";
 		credentialsNonExpired = true;
 		this.systemRole = Role.ROLE_USER;
+		this.userType = UserType.TYPE_LOCAL;
 	}
 
 	/**
@@ -330,6 +336,8 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 		return systemRole;
 	}
 
+	public UserType getUserType() { return userType; }
+
 	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
@@ -348,6 +356,10 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
+	}
+
+	public void setUserType(UserType userType) {
+		this.userType = Objects.requireNonNull(userType, "userType must not be Null");
 	}
 
 	@JsonIgnore

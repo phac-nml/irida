@@ -4,6 +4,12 @@
 ## [Unreleased]
 * [ALL]: Added LDAP/ADLDAP support.
 
+## [23.01.2]
+* [UI]: Fixed bug that caused all metadata fields to be removed when single field was removed from a template. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
+* [Developer]: Fixed bug which allowed duplicated entries in the user_group_project table which prevented the user group from being removed. Fixed bug which was preventing analyses with `html` file outputs from completing. See [PR 1483](https://github.com/phac-nml/irida/pull/1483)
+* [Developer]: Fixed flaky PipelinesPhylogenomicsPageIT test. See [PR 1482](https://github.com/phac-nml/irida/pull/1482)
+* [REST]: Fixed issues with syncing between newer IRIDA (>22.09) and older IRIDA (<=20.09) by disabling requests for `application/xml` for some of the REST requests and only requesting data as `application/json`. See [PR 1484](https://github.com/phac-nml/irida/pull/1484).
+
 ## [23.01.1] - 2023/03/21
 * [UI]: Fixed issue where template order was not applied when applying a linelist template. See [PR 1479](https://github.com/phac-nml/irida/pull/1479)
 * [UI]: Added select all to associated projects filter on project > samples page. See [PR 1479](https://github.com/phac-nml/irida/pull/1479)
@@ -186,8 +192,9 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/23.01.1...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/23.01.2...HEAD
 
+[23.01.2]: https://github.com/phac-nml/irida/compare/23.01.1...23.01.2
 [23.01.1]: https://github.com/phac-nml/irida/compare/23.01...23.01.1
 [23.01]: https://github.com/phac-nml/irida/compare/22.09.7...23.01
 [22.09.7]: https://github.com/phac-nml/irida/compare/22.09.6...22.09.7

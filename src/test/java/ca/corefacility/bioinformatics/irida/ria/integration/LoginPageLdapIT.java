@@ -93,8 +93,8 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(MRTEST_USERNAME, MRTEST_PASSWORD);
-		assertTrue(driver().getCurrentUrl().contains("login?error=true"), "Should update the url with '?error=true'");
-		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
+		assertFalse(driver().getCurrentUrl().contains("login?error=true"), "Url should not contain '?error=true'");
+		assertTrue(driver().getTitle().contains("Dashboard"), "The 'mrtest' user is logged in and redirected.");
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 	public void testCreateAccountLogin() throws Exception {
 		// User should not exist in db
 		UsernameNotFoundException e = assertThrows(UsernameNotFoundException.class,
-				() -> {userRepository.loadUserByUsername(TORONTO_USERNAME);});
+				() -> {userRepository.loadUserByUsername(TORONTO_USERNAME); });
 		LoginPage.login(driver(), TORONTO_USERNAME, TORONTO_PASSWORD);
 		assertTrue(driver().getTitle().contains("Dashboard"), "The 'ttokyo' user is logged in and redirected.");
 		// User should now exist in db
@@ -134,7 +134,7 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 	public void testCreateAccountMissingFields() throws Exception {
 		// User should not exist in db
 		UsernameNotFoundException e = assertThrows(UsernameNotFoundException.class,
-				() -> {userRepository.loadUserByUsername(MIRA_USERNAME);});
+				() -> {userRepository.loadUserByUsername(MIRA_USERNAME); });
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(MIRA_USERNAME, MIRA_PASSWORD);
@@ -167,7 +167,7 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 	public void testCreateAccountInvalidFields() throws Exception {
 		// User should not exist in db
 		UsernameNotFoundException e = assertThrows(UsernameNotFoundException.class,
-				() -> {userRepository.loadUserByUsername(COLLAPSE_USERNAME);});
+				() -> {userRepository.loadUserByUsername(COLLAPSE_USERNAME); });
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(COLLAPSE_USERNAME, COLLAPSE_PASSWORD);
@@ -175,20 +175,19 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
 	}
 
-//	/**
-//	 * Test signing in with sequencer account
-//	 * TODO: This is currently not implemented, sequencer and admin account ldap bypass signin will be in the next PR
-//	 * @throws Exception
-//	 */
-//	@Test
-//	public void testSequencerLogin() throws Exception {
-//		LoginPage page = LoginPage.to(driver());
-//		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
-//		page.login(LoginPage.SEQUENCER_USERNAME, LoginPage.GOOD_PASSWORD);
-//		assertFalse(driver().getTitle().contains("Dashboard"),
-//				"The sequencer user should not be able to see the dashboard");
-//		assertTrue(driver().getCurrentUrl().contains("login?error=true&sequencer-login=true"),
-//				"Should update the url with '?error=true&sequencer-login=true'");
-//		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
-//	}
+	/**
+	 * Test signing in with sequencer account
+	 * @throws Exception
+	 */
+	@Test
+	public void testSequencerLogin() throws Exception {
+		LoginPage page = LoginPage.to(driver());
+		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
+		page.login(LoginPage.SEQUENCER_USERNAME, LoginPage.GOOD_PASSWORD);
+		assertFalse(driver().getTitle().contains("Dashboard"),
+				"The sequencer user should not be able to see the dashboard");
+		assertTrue(driver().getCurrentUrl().contains("login?error=true&sequencer-login=true"),
+				"Should update the url with '?error=true&sequencer-login=true'");
+		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
+	}
 }

@@ -22,10 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LoginPageLdapNoServerIT extends AbstractIridaUIITChromeDriver {
 
 	private static final String JOHN_USERNAME = "jwick";
-	private static final String JOHN_PASSWORD = "Password1!";
+	private static final String JOHN_PASSWORD = "ldappassword";
+
+	private static final String MRTEST_USERNAME = "mrtest";
+	private static final String MRTEST_PASSWORD = "Password1!";
 
 	/**
-	 * Test signing in with user when there is no LDAP server
+	 * Test signing in with a ldap user when there is no LDAP server
 	 *
 	 * @throws Exception
 	 */
@@ -34,8 +37,20 @@ public class LoginPageLdapNoServerIT extends AbstractIridaUIITChromeDriver {
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(JOHN_USERNAME, JOHN_PASSWORD);
-		assertTrue(driver().getCurrentUrl().contains("login?ldap-error=6"), "Should update the url with '?ldap-error=6'");
+		String expectedUrl = driver().getCurrentUrl().substring(0, 23) + "irida/login?ldap-error=6";
+		assertEquals(expectedUrl, driver().getCurrentUrl());
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
+	}
+
+	/**
+	 * Test signing in with a local db only user when there is no LDAP server
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testLoginLocalNoLdapServer() throws Exception {
+		LoginPage.login(driver(), MRTEST_USERNAME, MRTEST_PASSWORD);
+		assertTrue(driver().getTitle().contains("Dashboard"), "The 'mrtest' user is logged in and redirected.");
 	}
 }
 

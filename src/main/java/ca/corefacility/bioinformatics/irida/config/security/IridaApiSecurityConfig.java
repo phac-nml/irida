@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermission
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -32,9 +33,20 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 @Import({ IridaAuthenticationSecurityConfig.class })
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
+	@Autowired(required = false)
+	@Qualifier("ldapAuthenticationProvider")
+	private AuthenticationProvider ldapAuthenticationProvider;
+
+	@Autowired(required = false)
+	@Qualifier("activeDirectoryLdapAuthenticationProvider")
+	private AuthenticationProvider activeDirectoryLdapAuthenticationProvider;
+
 	@Autowired
-	@Qualifier("apiAuthenticationProvider")
-	private AuthenticationProvider authenticationProvider;
+	@Qualifier("defaultAuthenticationProvider")
+	private AuthenticationProvider defaultAuthenticationProvider;
+
+	@Value("${irida.administrative.authentication.mode}")
+	private String authenticationMode;
 
 	public static final int METHOD_SECURITY_ORDER = Ordered.LOWEST_PRECEDENCE;
 
@@ -70,7 +82,15 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(authenticationProvider).authenticationProvider(anonymousAuthenticationProvider());
+		// Order of auth providers matters.
+		// Default DAO must be first to allow admin/local sign-in if ldap servers are unresponsive.
+		auth.authenticationProvider(defaultAuthenticationProvider);
+		if (authenticationMode.equals("ldap")) {
+			auth.authenticationProvider(ldapAuthenticationProvider);
+		} else if (authenticationMode.equals("adldap")) {
+			auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider);
+		}
+		auth.authenticationProvider(anonymousAuthenticationProvider());
 	}
 
 	/**

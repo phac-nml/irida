@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -8,6 +7,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectMetadataView.xml")
 public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
@@ -86,12 +87,25 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	void testRemovingMetadataFieldsFromTemplate() {
+		LoginPage.loginAsManager(driver());
+		ProjectMetadataPage page = ProjectMetadataPage.goTo(driver());
+		page.gotoMetadataTemplates();
+		page.gotoTemplate("test template");
+		int numFields = page.getNumberOfTemplateMetadataFields();
+		page.removeMetadataField("Province");
+		assertEquals(numFields - 1, page.getNumberOfTemplateMetadataFields(),
+				"Should be one less field in the template");
+	}
+
+	@Test
 	public void testMemberProjectMetadata() {
 		LoginPage.loginAsUser(driver());
 		ProjectMetadataPage page = ProjectMetadataPage.goTo(driver());
 
 		// TEST FIELD RESTRICTIONS
-		assertFalse(page.areFieldRestrictionSettingsVisible(), "Fields restrictions settings should not be visible to collaborators");
+		assertFalse(page.areFieldRestrictionSettingsVisible(),
+				"Fields restrictions settings should not be visible to collaborators");
 
 		assertFalse(page.isCreateTemplateButtonVisible(), "Should not have a create template button");
 		assertEquals(5, page.getNumberOfMetadataFields(), "Should be able to see the metadata fields");

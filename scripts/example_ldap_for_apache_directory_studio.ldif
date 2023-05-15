@@ -1,0 +1,32 @@
+dn: ou=people,dc=example,dc=com
+objectclass: top
+objectclass: organizationalUnit
+ou: people
+
+dn: uid=jwick,ou=people,dc=example,dc=com
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: John Wick
+sn: Wick
+uid: jwick
+givenName: John
+mail: jwick@example.com
+telephoneNumber: 169-637-3314
+userPassword: Password1!
+
+dn: uid=jdoe,ou=people,dc=example,dc=com
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Jane Doe
+sn: Doe
+description: 19650324000000Z
+employeeNumber: 12
+givenName: Jane
+mail: jane@example.com
+telephoneNumber: 907-547-9114
+uid: jdoe
+userPassword: Password1

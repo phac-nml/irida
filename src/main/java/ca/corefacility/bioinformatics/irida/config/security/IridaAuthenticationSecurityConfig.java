@@ -4,10 +4,12 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import ca.corefacility.bioinformatics.irida.security.IridaPostAuthenicationChecker;
 import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
+import ca.corefacility.bioinformatics.irida.service.impl.user.UserDetailsServiceLocalAuthImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -29,11 +31,11 @@ public class IridaAuthenticationSecurityConfig {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private UserDetailsServiceLocalAuthImpl userDetailsServiceLocalAuth;
+
 	@Autowired(required = false)
 	private IridaUserDetailsContextMapper iridaUserDetailsContextMapper;
-
-	@Value("${irida.administrative.authentication.mode}")
-	private String authenticationMode;
 
 	@Value("${irida.administrative.authentication.ldap.url}")
 	private String ldapUrl;
@@ -69,42 +71,14 @@ public class IridaAuthenticationSecurityConfig {
 	private int passwordExpiryInDays = -1;
 
 	/**
-	 * Builds and returns an {@link AuthenticationProvider} based on the irida.administrative.authentication.mode config option
-	 *
-	 * @return {@link AuthenticationProvider}
-	 */
-	@Bean("apiAuthenticationProvider")
-	public AuthenticationProvider authenticationProvider() {
-		AuthenticationProvider provider;
-
-		switch(authenticationMode)
-		{
-			case "ldap":
-				provider = ldapAuthenticationProvider();
-				break;
-			case "adldap":
-				provider = activeDirectoryLdapAuthenticationProvider();
-				break;
-			case "local":
-				provider = DaoAuthenticationProvider();
-				break;
-			default:
-				String errorMessage = "Configured authentication mode not one of the supported modes [local, ldap, adldap]";
-				logger.error(errorMessage);
-				throw new IllegalStateException(errorMessage);
-		}
-
-		logger.info("IRIDA configured to authenticate with " + authenticationMode);
-		return provider;
-	}
-
-	/**
 	 * Default authentication using the local database.
 	 * @return {@link DaoAuthenticationProvider}
 	 */
-	private AuthenticationProvider DaoAuthenticationProvider() {
+	@Bean("defaultAuthenticationProvider")
+	public AuthenticationProvider DaoAuthenticationProvider() {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userRepository);
+		// setup with new service provider
+		authenticationProvider.setUserDetailsService(userDetailsServiceLocalAuth);
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
 
 		/*
@@ -135,7 +109,9 @@ public class IridaAuthenticationSecurityConfig {
 	 * Configures and connects to a LDAP server based on configuration options set in authentication.properties
 	 * @return {@link LdapAuthenticationProvider}
 	 */
-	private AuthenticationProvider ldapAuthenticationProvider() {
+	@ConditionalOnExpression("'${irida.administrative.authentication.mode}'.equals('ldap')")
+	@Bean("ldapAuthenticationProvider")
+	public AuthenticationProvider ldapAuthenticationProvider() {
 		BindAuthenticator ldapAuthenticator = new BindAuthenticator(ldapContextSource());
 		String[] userDnPatterns = {ldapUserDnSearchPatterns};
 		ldapAuthenticator.setUserDnPatterns(userDnPatterns);
@@ -173,7 +149,9 @@ public class IridaAuthenticationSecurityConfig {
 	 * Configures and connects to an Active Directory LDAP server based on configuration options in authentication.properties
 	 * @return {@link ActiveDirectoryLdapAuthenticationProvider}
 	 */
-	private AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
+	@ConditionalOnExpression("'${irida.administrative.authentication.mode}'.equals('adldap')")
+	@Bean("activeDirectoryLdapAuthenticationProvider")
+	public AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
 		ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
 				new ActiveDirectoryLdapAuthenticationProvider(adLdapDomain, adLdapUrl, adLdapRootDn);
 		authenticationProvider.setUserDetailsContextMapper(iridaUserDetailsContextMapper);
