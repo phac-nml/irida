@@ -208,7 +208,7 @@ public class UIProjectSampleService {
 		}
 		if (request.getMetadata() != null) {
 			Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata());
-			sampleService.updateSampleMetadata(sample, metadataEntrySet);
+			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 		}
 		return sampleService.update(sample);
 
