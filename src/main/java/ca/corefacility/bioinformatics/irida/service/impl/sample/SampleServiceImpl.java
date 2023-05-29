@@ -385,17 +385,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 		Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(object);
 		if (submissions.isEmpty() && object.getSequencingRun() == null) {
-			// concatenation sources must be removed before the concatenated object
-			Set<SequenceConcatenation> concatenations = concatenationRepository.findConcatenatedSequencingObjectsBySource(
-					object);
-			for (SequenceConcatenation concat : concatenations) {
-				concat.removeSource(object);
-				concatenationRepository.save(concat);
-			}
-			SequenceConcatenation concatenated = concatenationRepository.findConcatenatedSequencingObject(object);
-			if (concatenated != null) {
-				concatenationRepository.delete(concatenated);
-			}
+			removeSequencingObjectAsConcatenationSource(object);
+			removeConcatenatedSequencingObjectsForSequencingObject(object);
 			for (SequenceFile file : object.getFiles()) {
 				sequenceFileRepository.delete(file);
 			}
@@ -876,5 +867,33 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				.stream()
 				.collect(HashMap::new, (sampleCoverageMap, sampleCoverageTuple) -> sampleCoverageMap.put(
 						(Long) sampleCoverageTuple.get(0), (Long) sampleCoverageTuple.get(1)), Map::putAll);
+	}
+
+	/**
+	 * Removes the {@link SequencingObject} database entries, if it is a source of a concatenated sequencing object.
+	 *
+	 * @param object The {@link SequencingObject} to be removed
+	 */
+	@Transactional
+	private void removeSequencingObjectAsConcatenationSource(SequencingObject object) {
+		Set<SequenceConcatenation> concatenations = concatenationRepository.findConcatenatedSequencingObjectsBySource(
+				object);
+		for (SequenceConcatenation concat : concatenations) {
+			concat.removeSource(object);
+			concatenationRepository.save(concat);
+		}
+	}
+
+	/**
+	 * Removes the {@link SequencingObject} database entry, if it is the result of a concatenated sequencing object.
+	 *
+	 * @param object The {@link SequencingObject} to be removed
+	 */
+	@Transactional
+	private void removeConcatenatedSequencingObjectsForSequencingObject(SequencingObject object) {
+		SequenceConcatenation concatenated = concatenationRepository.findConcatenatedSequencingObject(object);
+		if (concatenated != null) {
+			concatenationRepository.delete(concatenated);
+		}
 	}
 }
