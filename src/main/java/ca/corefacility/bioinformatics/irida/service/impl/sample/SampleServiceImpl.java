@@ -386,7 +386,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(object);
 		if (submissions.isEmpty() && object.getSequencingRun() == null) {
 			// concatenation sources must be removed before the concatenated object
-			Set<SequenceConcatenation> concatenations = concatenationRepository.findConcatenatedSequencingObjectSources(
+			Set<SequenceConcatenation> concatenations = concatenationRepository.findConcatenatedSequencingObjectsBySource(
 					object);
 			for (SequenceConcatenation concat : concatenations) {
 				concat.removeSource(object);

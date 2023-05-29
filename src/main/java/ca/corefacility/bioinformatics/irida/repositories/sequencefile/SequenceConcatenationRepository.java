@@ -29,6 +29,6 @@ public interface SequenceConcatenationRepository extends IridaJpaRepository<Sequ
 	 * @return the set of {@link SequenceConcatenation}s
 	 */
 	@Query("select sc from SequenceConcatenation sc where ?1 IN elements(sc.sources)")
-	public Set<SequenceConcatenation> findConcatenatedSequencingObjectSources(SequencingObject sequencingObject);
+	public Set<SequenceConcatenation> findConcatenatedSequencingObjectsBySource(SequencingObject sequencingObject);
 
 }
