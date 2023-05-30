@@ -386,7 +386,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		Set<AnalysisSubmission> submissions = submissionRepository.findAnalysisSubmissionsForSequencingObject(object);
 		if (submissions.isEmpty() && object.getSequencingRun() == null) {
 			removeSequencingObjectAsConcatenationSource(object);
-			removeConcatenatedSequencingObjectsForSequencingObject(object);
+			removeConcatenatedSequencingObjectForSequencingObject(object);
 			for (SequenceFile file : object.getFiles()) {
 				sequenceFileRepository.delete(file);
 			}
@@ -890,7 +890,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param object The {@link SequencingObject} to be removed
 	 */
 	@Transactional
-	private void removeConcatenatedSequencingObjectsForSequencingObject(SequencingObject object) {
+	private void removeConcatenatedSequencingObjectForSequencingObject(SequencingObject object) {
 		SequenceConcatenation concatenated = concatenationRepository.findConcatenatedSequencingObject(object);
 		if (concatenated != null) {
 			concatenationRepository.delete(concatenated);
