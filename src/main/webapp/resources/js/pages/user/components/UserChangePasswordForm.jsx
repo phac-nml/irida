@@ -50,57 +50,58 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
       <Typography.Title level={5}>
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
-      <Typography.Text type="secondary" hidden={!userDetails.domainAccount}>
-        {i18n("UserChangePasswordForm.ldapUserInfo")}
-      </Typography.Text>
-      <PasswordPolicyAlert />
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFormFinish}
-        autoComplete="off"
-        hidden={userDetails.domainAccount}
-      >
-        {requireOldPassword && (
-          <Form.Item
-            label={i18n("UserChangePasswordForm.form.label.oldPassword")}
-            name="oldPassword"
-            rules={[
-              {
-                required: true,
-                message: i18n("validation-utilities.password.required"),
-              },
-            ]}
-            disabled={userDetails.domainAccount}
+      {userDetails.domainAccount ? (
+        <Typography.Text type="secondary">
+          {i18n("UserChangePasswordForm.ldapUserInfo")}
+        </Typography.Text>
+      ) : (
+        <div>
+          <PasswordPolicyAlert />
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFormFinish}
+            autoComplete="off"
           >
-            <Input.Password />
-          </Form.Item>
-        )}
-        <Form.Item
-          label={i18n("UserChangePasswordForm.form.label.newPassword")}
-          name="newPassword"
-          rules={[
-            () => ({
-              validator(_, value) {
-                return validatePassword(value);
-              },
-            }),
-          ]}
-          disabled={userDetails.domainAccount}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item>
-          <Button
-            className="t-submit-btn"
-            disabled={userDetails.domainAccount}
-            type="primary"
-            htmlType="submit"
-          >
-            {i18n("UserChangePasswordForm.form.button.submit")}
-          </Button>
-        </Form.Item>
-      </Form>
+            {requireOldPassword && (
+              <Form.Item
+                label={i18n("UserChangePasswordForm.form.label.oldPassword")}
+                name="oldPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: i18n("validation-utilities.password.required"),
+                  },
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+            )}
+            <Form.Item
+              label={i18n("UserChangePasswordForm.form.label.newPassword")}
+              name="newPassword"
+              rules={[
+                () => ({
+                  validator(_, value) {
+                    return validatePassword(value);
+                  },
+                }),
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                className="t-submit-btn"
+                type="primary"
+                htmlType="submit"
+              >
+                {i18n("UserChangePasswordForm.form.button.submit")}
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      )}
     </Skeleton>
   );
 }

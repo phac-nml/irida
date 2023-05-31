@@ -22,19 +22,21 @@ export default function UserSecurityPage() {
       <Typography.Title level={4}>
         {i18n("UserSecurityPage.title")}
       </Typography.Title>
-      {userDetails.canCreatePasswordReset && !emailConfigured && (
-        <Alert
-          style={{ marginBottom: SPACE_SM }}
-          message={i18n("UserSecurityPage.alert.title")}
-          description={
-            <Typography.Paragraph>
-              {i18n("UserSecurityPage.alert.description")}
-            </Typography.Paragraph>
-          }
-          type="info"
-          showIcon
-        />
-      )}
+      {!userDetails.domainAccount &&
+        userDetails.canCreatePasswordReset &&
+        !emailConfigured && (
+          <Alert
+            style={{ marginBottom: SPACE_SM }}
+            message={i18n("UserSecurityPage.alert.title")}
+            description={
+              <Typography.Paragraph>
+                {i18n("UserSecurityPage.alert.description")}
+              </Typography.Paragraph>
+            }
+            type="info"
+            showIcon
+          />
+        )}
       {userDetails.canEditUserInfo && (
         <UserChangePasswordForm
           userId={userId}

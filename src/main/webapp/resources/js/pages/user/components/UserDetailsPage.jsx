@@ -76,9 +76,11 @@ export default function UserDetailsPage() {
         initialValues={userDetails.user}
         onFinish={onFormFinish}
       >
-        <Typography.Text type="secondary" hidden={!userDetails.domainAccount}>
-          {i18n("UserDetailsPage.ldapUserInfo")}
-        </Typography.Text>
+        {userDetails.domainAccount && (
+          <Typography.Text type="secondary">
+            {i18n("UserDetailsPage.ldapUserInfo")}
+          </Typography.Text>
+        )}
         <Form.Item
           label={i18n("UserDetailsPage.form.firstName.label")}
           name="firstName"
