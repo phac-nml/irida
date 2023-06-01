@@ -53,11 +53,14 @@
 			createdDate="2013-07-18 14:20:19.0" />
 	<sample id="7" sampleName="sample"
 			createdDate="2013-07-18 14:20:19.0" />
-	<sample id="8" createdDate="2013-05-18 14:20:19.0" description="description5"
+	<sample id="8" createdDate="2013-05-18 14:20:19.0"
 		sampleName="sample8" organism="org3" />
-	<sample id="9" createdDate="2013-05-18 14:20:19.0" description="description5"
+	<sample id="9" createdDate="2013-05-18 14:20:19.0"
 		sampleName="sample9" organism="org3" />
-
+	<sample id="10" createdDate="2013-05-18 14:20:19.0"
+		sampleName="sample10" organism="org3" />
+	<sample id="11" createdDate="2013-05-18 14:20:19.0"
+		sampleName="sample11" organism="org3" />
 
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" owner="true" />
@@ -77,7 +80,10 @@
 		project_id="2" sample_id="8" owner="true" />
 	<project_sample id="9" createdDate="2013-07-18 14:20:19.0"
 		project_id="2" sample_id="9" owner="true" />
-
+	<project_sample id="10" createdDate="2013-07-18 14:20:19.0"
+		project_id="2" sample_id="10" owner="true" />
+	<project_sample id="11" createdDate="2013-07-18 14:20:19.0"
+		project_id="2" sample_id="11" owner="true" />
 
 	<tool_execution id="1" command_line="a"
 		created_date="2013-07-18 14:20:19.0" execution_manager_identifier="x"
@@ -144,6 +150,14 @@
 		file_path="/sequenceFile8" />
 	<sequence_file id="9" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile9" />
+	<sequence_file id="10" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile10" />
+	<sequence_file id="11" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile11" />
+	<sequence_file id="12" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile12" />
+	<sequence_file id="13" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile13" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
 	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
@@ -151,6 +165,10 @@
 	<sequencing_object id="4" created_date="2013-07-18 14:20:19.0" />
 	<sequencing_object id="5" created_date="2013-07-18 14:20:19.0" />
 	<sequencing_object id="6" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="7" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="8" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="9" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="10" created_date="2013-07-18 14:20:19.0" />
 
 	<sequence_file_pair id="1" />
 	<sequence_file_pair id="2" />
@@ -174,6 +192,10 @@
 	<sequence_file_single_end id="4" file_id="1" />
 	<sequence_file_single_end id="5" file_id="2" />
 	<sequence_file_single_end id="6" file_id="3" />
+	<sequence_file_single_end id="7" file_id="10" />
+	<sequence_file_single_end id="8" file_id="11" />
+	<sequence_file_single_end id="9" file_id="12" />
+	<sequence_file_single_end id="10" file_id="13" />
 
 	<sample_sequencingobject id="1"
 		created_date="2013-07-18 14:20:19.0" sample_id="1"
@@ -193,6 +215,23 @@
 	<sample_sequencingobject id="8"
 		created_date="2013-07-18 14:20:19.0" sample_id="9"
 		sequencingobject_id="3" />
+	<sample_sequencingobject id="9"
+		created_date="2013-07-18 14:20:19.0" sample_id="10"
+		sequencingobject_id="7" />
+	<sample_sequencingobject id="10"
+		created_date="2013-07-18 14:20:19.0" sample_id="11"
+		sequencingobject_id="8" />
+	<sample_sequencingobject id="11"
+		created_date="2013-07-18 14:20:19.0" sample_id="11"
+		sequencingobject_id="9" />
+	<sample_sequencingobject id="12"
+		created_date="2013-07-18 14:20:19.0" sample_id="11"
+		sequencingobject_id="10" />
+
+	<sequence_concatenation id="1" created_date="2013-07-18 14:20:19.0" concatenated_id="10" />
+
+	<sequence_concatenation_sequencing_object sequence_concatenation_id="1" sources_id="8" />
+	<sequence_concatenation_sequencing_object sequence_concatenation_id="1" sources_id="9" />
 
 	<analysis_submission id="2" name="my analysis" email_pipeline_result_error="0"
 		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
