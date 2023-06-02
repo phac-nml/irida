@@ -188,7 +188,8 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void saveModifiedTemplateAs(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2L));
+		WebElement alertBox = driver.findElement(By.className("t-modified-alert"));
 
 		// Scroll to the modified alert
 		WebElement modifiedSaveAsButton = driver.findElement(By.className("t-modified-saveas"));
@@ -201,7 +202,7 @@ public class LaunchPipelinePage extends AbstractPage {
 				ExpectedConditions.visibilityOfElementLocated(By.className("t-save-params-form")));
 		modifiedNameInput.sendKeys(name);
 		saveTemplatePopover.findElement(By.tagName("button")).click();
-		wait.until(ExpectedConditions.invisibilityOf(modifiedAlert.get(0)));
+		wait.until(ExpectedConditions.invisibilityOf(alertBox));
 	}
 
 	public String getSelectedParametersTemplateName() {
