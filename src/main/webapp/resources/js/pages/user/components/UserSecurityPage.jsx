@@ -43,13 +43,15 @@ export default function UserSecurityPage() {
           requireOldPassword={userDetails.ownAccount}
         />
       )}
-      {userDetails.canCreatePasswordReset && emailConfigured && (
-        <UserResetPasswordLink
-          userId={userId}
-          firstName={userDetails.user.firstName}
-          lastName={userDetails.user.lastName}
-        />
-      )}
+      {!userDetails.domainAccount &&
+        userDetails.canCreatePasswordReset &&
+        emailConfigured && (
+          <UserResetPasswordLink
+            userId={userId}
+            firstName={userDetails.user.firstName}
+            lastName={userDetails.user.lastName}
+          />
+        )}
     </>
   );
 }
