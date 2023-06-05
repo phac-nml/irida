@@ -5,12 +5,12 @@ import java.util.Set;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Repository for storing and retrieving {@link SequencingObject}s
@@ -27,8 +27,7 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	public Set<SequencingObject> findSequencingObjectsForSequencingRun(SequencingRun sequencingRun);
 
 	/**
-	 * Get the {@link SequencingObject}s associated with a given
-	 * {@link AnalysisSubmission}
+	 * Get the {@link SequencingObject}s associated with a given {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmission the {@link AnalysisSubmission}
 	 * @return the set of associated {@link SequencingObject}s
@@ -37,7 +36,8 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	public Set<SequencingObject> findSequencingObjectsForAnalysisSubmission(AnalysisSubmission analysisSubmission);
 
 	/**
-	 * Get all {@link SequencingObject}s with the given {@link ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject.ProcessingState}
+	 * Get all {@link SequencingObject}s with the given
+	 * {@link ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject.ProcessingState}
 	 *
 	 * @param processingState the state to get files for
 	 * @return a list of {@link SequencingObject}

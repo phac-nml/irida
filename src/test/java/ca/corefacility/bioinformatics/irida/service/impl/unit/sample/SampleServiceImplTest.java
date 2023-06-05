@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+import javax.validation.Validator;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
@@ -35,6 +38,8 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceConcatenationRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -48,8 +53,6 @@ import com.google.common.collect.Sets;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import javax.validation.Validator;
-
 /**
  * Unit tests for {@link SampleServiceImpl}.
  */
@@ -62,12 +65,15 @@ public class SampleServiceImplTest {
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private QCEntryRepository qcEntryRepository;
 	private SequencingObjectRepository sequencingObjectRepository;
+	private SequenceConcatenationRepository concatenationRepository;
 	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 	private UserRepository userRepository;
 	private MetadataEntryRepository metadataEntryRepository;
+	private SequenceFileRepository sequenceFileRepository;
 
 	private GenomeAssemblyRepository genomeAssemblyRepository;
 	private GenomeAssemblyService genomeAssemblyService;
+	private AnalysisSubmissionRepository submissionRepository;
 
 	private Validator validator;
 
@@ -84,12 +90,16 @@ public class SampleServiceImplTest {
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		qcEntryRepository = mock(QCEntryRepository.class);
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
+		concatenationRepository = mock(SequenceConcatenationRepository.class);
 		sampleGenomeAssemblyJoinRepository = mock(SampleGenomeAssemblyJoinRepository.class);
 		metadataEntryRepository = mock(MetadataEntryRepository.class);
+		sequenceFileRepository = mock(SequenceFileRepository.class);
+		submissionRepository = mock(AnalysisSubmissionRepository.class);
 
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository, ssoRepository,
-				qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository,
-				metadataEntryRepository, null);
+				qcEntryRepository, sequencingObjectRepository, concatenationRepository,
+				sampleGenomeAssemblyJoinRepository, userRepository, metadataEntryRepository, sequenceFileRepository,
+				submissionRepository, null);
 
 		genomeAssemblyRepository = mock(GenomeAssemblyRepository.class);
 		validator = mock(Validator.class);
@@ -115,7 +125,7 @@ public class SampleServiceImplTest {
 	}
 
 	@Test
-	public void testRemoveSequencingObjectFromSample() throws Exception {
+	public void testRemoveSequencingObjectFromSample() {
 		Sample s = new Sample();
 		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
