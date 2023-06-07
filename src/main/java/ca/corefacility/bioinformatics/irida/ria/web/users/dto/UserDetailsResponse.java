@@ -14,15 +14,17 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean canEditUserStatus;
 	private boolean isOwnAccount;
 	private boolean canCreatePasswordReset;
+	private boolean isDomainAccount;
 
 	public UserDetailsResponse(UserDetailsModel userDetails, boolean isAdmin, boolean canEditUserInfo,
-			boolean canEditUserStatus, boolean isOwnAccount, boolean canCreatePasswordReset) {
+			boolean canEditUserStatus, boolean isOwnAccount, boolean canCreatePasswordReset, boolean isDomainAccount) {
 		this.userDetails = userDetails;
 		this.isAdmin = isAdmin;
 		this.canEditUserInfo = canEditUserInfo;
 		this.canEditUserStatus = canEditUserStatus;
 		this.isOwnAccount = isOwnAccount;
 		this.canCreatePasswordReset = canCreatePasswordReset;
+		this.isDomainAccount = isDomainAccount;
 	}
 
 	public UserDetailsModel getUser() {
@@ -57,6 +59,14 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canEditUserStatus = canEditUserStatus;
 	}
 
+	public boolean isDomainAccount(){
+		return this.isDomainAccount;
+	}
+
+	public void setDomainAccount(boolean isDomainAccount) {
+		this.isDomainAccount = isDomainAccount;
+	}
+
 	public boolean isOwnAccount() {
 		return isOwnAccount;
 	}
@@ -83,12 +93,12 @@ public class UserDetailsResponse extends AjaxResponse {
 		return isAdmin == that.isAdmin && canEditUserInfo == that.canEditUserInfo
 				&& canEditUserStatus == that.canEditUserStatus && isOwnAccount == that.isOwnAccount
 				&& canCreatePasswordReset == that.canCreatePasswordReset && Objects.equals(userDetails,
-				that.userDetails);
+				that.userDetails) && isDomainAccount == that.isDomainAccount;
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, isOwnAccount,
-				canCreatePasswordReset);
+				canCreatePasswordReset, isDomainAccount);
 	}
 }

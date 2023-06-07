@@ -1,7 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, notification, Typography } from "antd";
-import { useChangeUserPasswordMutation } from "../../../apis/users/users";
+import { Button, Form, Input, notification, Skeleton, Typography } from "antd";
+import {
+  useChangeUserPasswordMutation,
+  useGetUserDetailsQuery,
+} from "../../../apis/users/users";
 import { validatePassword } from "../../../utilities/validation-utilities";
 import { PasswordPolicyAlert } from "../../../components/alerts/PasswordPolicyAlert";
 
@@ -14,6 +17,7 @@ import { PasswordPolicyAlert } from "../../../components/alerts/PasswordPolicyAl
  */
 export function UserChangePasswordForm({ userId, requireOldPassword }) {
   const [changeUserPassword] = useChangeUserPasswordMutation();
+  const { data: userDetails = {}, isLoading } = useGetUserDetailsQuery(userId);
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
@@ -42,50 +46,58 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
   };
 
   return (
-    <>
+    <Skeleton loading={isLoading}>
       <Typography.Title level={5}>
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
-      <PasswordPolicyAlert />
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFormFinish}
-        autoComplete="off"
-      >
-        {requireOldPassword && (
-          <Form.Item
-            label={i18n("UserChangePasswordForm.form.label.oldPassword")}
-            name="oldPassword"
-            rules={[
-              {
-                required: true,
-                message: i18n("validation-utilities.password.required"),
-              },
-            ]}
+      {userDetails.domainAccount ? (
+        <Typography.Text type="secondary">
+          {i18n("UserChangePasswordForm.ldapUserInfo")}
+        </Typography.Text>
+      ) : (
+        <div>
+          <PasswordPolicyAlert />
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFormFinish}
+            autoComplete="off"
           >
-            <Input.Password />
-          </Form.Item>
-        )}
-        <Form.Item
-          label={i18n("UserChangePasswordForm.form.label.newPassword")}
-          name="newPassword"
-          rules={[
-            () => ({
-              validator(_, value) {
-                return validatePassword(value);
-              },
-            }),
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item>
-          <Button className="t-submit-btn" type="primary" htmlType="submit">
-            {i18n("UserChangePasswordForm.form.button.submit")}
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
+            {requireOldPassword && (
+              <Form.Item
+                label={i18n("UserChangePasswordForm.form.label.oldPassword")}
+                name="oldPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: i18n("validation-utilities.password.required"),
+                  },
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+            )}
+            <Form.Item
+              label={i18n("UserChangePasswordForm.form.label.newPassword")}
+              name="newPassword"
+              rules={[
+                () => ({
+                  validator(_, value) {
+                    return validatePassword(value);
+                  },
+                }),
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item>
+              <Button className="t-submit-btn" type="primary" htmlType="submit">
+                {i18n("UserChangePasswordForm.form.button.submit")}
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      )}
+    </Skeleton>
   );
 }

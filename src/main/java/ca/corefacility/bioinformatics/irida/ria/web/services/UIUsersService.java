@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.UserType;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
@@ -225,9 +226,10 @@ public class UIUsersService {
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean isOwnAccount = isOwnAccount(principalUser, user);
 		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
+		boolean isDomainAccount = isDomainAccount(user);
 
 		return new UserDetailsResponse(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, isOwnAccount,
-				canCreatePasswordReset);
+				canCreatePasswordReset, isDomainAccount);
 	}
 
 	/**
@@ -451,6 +453,16 @@ public class UIUsersService {
 		boolean usersEqual = user.equals(principalUser);
 
 		return !(principalAdmin && usersEqual);
+	}
+
+	/**
+	 * Check if the User viewed is a Domain (LDAP/ADLDAP) User
+	 *
+	 * @param user - the user to edit
+	 * @return boolean if the User is a Domain User
+	 */
+	private boolean isDomainAccount(User user) {
+		return user.getUserType().equals(UserType.TYPE_DOMAIN);
 	}
 
 	/**

@@ -38,7 +38,9 @@ export function UserTable() {
       render(text, full) {
         // Don't let the current user disabled themselves!
         const disabled =
-          !IS_ADMIN || window.TL._USER.username === full.username;
+          !IS_ADMIN ||
+          window.TL._USER.username === full.username ||
+          full.type === "TYPE_DOMAIN"; // Domain users are disabled via ldap/adldap
         return (
           <Checkbox
             className="t-cb-enable"
@@ -107,6 +109,22 @@ export function UserTable() {
             return i18n("systemRole.ROLE_ADMIN");
           case "ROLE_TECHNICIAN":
             return i18n("systemRole.ROLE_TECHNICIAN");
+          default:
+            return text;
+        }
+      },
+    },
+    {
+      title: i18n("UserTable.type"),
+      key: "type",
+      dataIndex: "type",
+      sorter: true,
+      render(text) {
+        switch (text) {
+          case "TYPE_LOCAL":
+            return i18n("userType.TYPE_LOCAL");
+          case "TYPE_DOMAIN":
+            return i18n("userType.TYPE_DOMAIN");
           default:
             return text;
         }

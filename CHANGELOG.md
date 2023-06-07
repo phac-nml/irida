@@ -196,7 +196,6 @@
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
 [Unreleased]: https://github.com/phac-nml/irida/compare/23.01.3...HEAD
-
 [23.01.3]: https://github.com/phac-nml/irida/compare/23.01.2...23.01.3
 [23.01.2]: https://github.com/phac-nml/irida/compare/23.01.1...23.01.2
 [23.01.1]: https://github.com/phac-nml/irida/compare/23.01...23.01.1
