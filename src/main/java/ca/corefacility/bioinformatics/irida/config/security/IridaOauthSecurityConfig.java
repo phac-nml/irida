@@ -162,7 +162,6 @@ public class IridaOauthSecurityConfig {
 			OAuth2AuthorizationServerConfigurer<HttpSecurity> authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer<>();
 
 			RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
-
 			authorizationServerConfigurer.clientAuthentication(clientAuthentication -> clientAuthentication.authenticationProvider(clientSecretAuthenticationProvider));
 
 			authorizationServerConfigurer.tokenEndpoint((tokenEndpoint) -> tokenEndpoint.accessTokenRequestConverter(

@@ -11,11 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaLdapAuthenticationException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -45,6 +47,9 @@ public class IridaPostAuthenticationFailureHandler extends SimpleUrlAuthenticati
 	/**
 	 * Custom authentication failure handling for specific AuthenticationException's otherwise default to
 	 * {@link SimpleUrlAuthenticationFailureHandler} behaviour.
+	 * Handle CredentialsExpiredException and create a {@link PasswordReset}.
+	 * Handle IridaLdapAuthenticationException and redirect with appropriate error code
+	 * If not CredentialsExpiredException or IridaLdapAuthenticationException pass to super.
 	 */
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
@@ -75,6 +80,15 @@ public class IridaPostAuthenticationFailureHandler extends SimpleUrlAuthenticati
 			// redirect the user to the login page with the sequencer-login url param
 			String contextPath = request.getContextPath();
 			response.sendRedirect(contextPath + "/login?error=true&sequencer-login=true");
+		} else if (exception instanceof IridaLdapAuthenticationException) {
+			logger.trace(exception.toString());
+			String contextPath = request.getContextPath();
+			response.sendRedirect(contextPath + "/login?ldap-error="+((IridaLdapAuthenticationException) exception).getErrorCode());
+		} else if (exception instanceof InternalAuthenticationServiceException) {
+			// LDAP/ADLDAP service is not reachable
+			logger.trace(exception.toString());
+			String contextPath = request.getContextPath();
+			response.sendRedirect(contextPath + "/login?ldap-error=6");
 		} else {
 			super.onAuthenticationFailure(request, response, exception);
 		}

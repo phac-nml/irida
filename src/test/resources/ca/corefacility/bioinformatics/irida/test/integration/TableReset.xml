@@ -11,7 +11,7 @@
 	<sequence_file_properties />
 
 	<!--Keeping an admin user in the db for scheduling purposes -->
-	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="admin@irida.com" firstName="admin" lastName="admin" password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK" phoneNumber="867-5309" username="admin" system_role="ROLE_ADMIN" credentialsNonExpired="true" enabled="true" />
+	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="admin@irida.com" firstName="admin" lastName="admin" password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK" phoneNumber="867-5309" username="admin" system_role="ROLE_ADMIN" credentialsNonExpired="true" enabled="true" user_type="TYPE_LOCAL" />
 
 	<remote_api />
 	<remote_status />

@@ -5,6 +5,7 @@
 * [UI]: Add identifier to project drop-down on project synchronization page. See [PR 1474](https://github.com/phac-nml/irida/pull/1474)
 * [Developer]: Added functionality to delete sequence files from file storage when removed from sample. [See PR 1476](https://github.com/phac-nml/irida/pull/1476)
 * [Developer]: Fixed flaky text in `PipelinesPhylogenomicsPageIT#testPageSetup` test. See [PR 1490](https://github.com/phac-nml/irida/pull/1492)
+* [ALL]: Added LDAP/ADLDAP support.
 
 ## [23.01.3] - 2023/05/09
 * [Developer]: Fixed issue with metadata uploader removing existing data. See [PR 1489](https://github.com/phac-nml/irida/pull/1489)

@@ -17,6 +17,9 @@ public class AdminUsersTableRequest extends TableRequest {
 		case "role":
 			super.setSortColumn("systemRole");
 			return;
+		case "type":
+			super.setSortColumn("userType");
+			return;
 		default:
 			super.setSortColumn(sortColumn);
 		}

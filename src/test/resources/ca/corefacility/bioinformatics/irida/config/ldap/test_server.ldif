@@ -1,0 +1,98 @@
+dn: dc=springframework,dc=org
+objectclass: top
+objectclass: domain
+objectclass: extensibleObject
+dc: springframework
+
+dn: ou=groups,dc=springframework,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
+
+dn: ou=subgroups,ou=groups,dc=springframework,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: subgroups
+
+dn: ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: people
+
+dn: uid=jwick,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: John Wick
+sn: Wick
+uid: jwick
+givenName: John
+mail: jwick@example.com
+telephoneNumber: 169-637-3314
+userPassword: Password1!
+
+dn: uid=jdoe,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Jane Doe
+sn: Doe
+description: 19650324000000Z
+employeeNumber: 12
+givenName: Jane
+mail: jane@example.com
+telephoneNumber: 169-637-3314
+telephoneNumber: 907-547-9114
+uid: jdoe
+userPassword: Password1
+
+dn: uid=ttokyo,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Toronto Tokyo
+sn: Tokyo
+uid: ttokyo
+givenName: Toronto
+mail: ttokyo@example.com
+telephoneNumber: 169-637-3314
+userPassword: Password1!
+
+dn: uid=mira,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Miroslaw Kolpakov
+sn: Kolpakov
+uid: mira
+userPassword: Password1!
+
+dn: uid=collapse,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Magomed Khalilov
+sn: Khalilov
+uid: collapse
+givenName: Magomed
+mail: collapse.at.example.com
+telephoneNumber: 12
+userPassword: Password1!
+
+dn: uid=yatoro,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Illya Mulyarchuk
+sn: Mulyarchuk
+uid: yatoro
+givenName: Illya
+mail: yatoro@example.com
+telephoneNumber: 1234
+userPassword: Password1!

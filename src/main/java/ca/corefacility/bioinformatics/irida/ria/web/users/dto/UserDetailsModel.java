@@ -16,6 +16,7 @@ public class UserDetailsModel extends TableModel {
 	private String phoneNumber;
 	private String username;
 	private String role;
+	private String type;
 	private Date lastLogin;
 	private boolean enabled;
 	private String locale;
@@ -28,6 +29,7 @@ public class UserDetailsModel extends TableModel {
 		this.phoneNumber = user.getPhoneNumber();
 		this.username = user.getUsername();
 		this.role = user.getSystemRole().getName();
+		this.type = user.getUserType().getName();
 		this.lastLogin = user.getLastLogin();
 		this.enabled = user.isEnabled();
 		this.locale = user.getLocale();
@@ -57,6 +59,8 @@ public class UserDetailsModel extends TableModel {
 		return role;
 	}
 
+	public String getType() { return type; }
+
 	public Date getLastLogin() {
 		return lastLogin;
 	}
@@ -78,12 +82,13 @@ public class UserDetailsModel extends TableModel {
 		UserDetailsModel that = (UserDetailsModel) o;
 		return enabled == that.enabled && Objects.equals(firstName, that.firstName) && Objects.equals(lastName,
 				that.lastName) && Objects.equals(email, that.email) && Objects.equals(phoneNumber, that.phoneNumber)
-				&& Objects.equals(username, that.username) && Objects.equals(role, that.role) && Objects.equals(
-				lastLogin, that.lastLogin) && Objects.equals(locale, that.locale);
+				&& Objects.equals(username, that.username) && Objects.equals(role, that.role)
+				&& Objects.equals(type, that.type) && Objects.equals(lastLogin, that.lastLogin)
+				&& Objects.equals(locale, that.locale);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(firstName, lastName, email, phoneNumber, username, role, lastLogin, enabled, locale);
+		return Objects.hash(firstName, lastName, email, phoneNumber, username, role, type, lastLogin, enabled, locale);
 	}
 }
