@@ -355,6 +355,7 @@ val permittedTestSystemProperties = listOf(
     "server.base.url",
     "server.port",
     "file.processing.decompress",
+    "delete.from.filesystem",
     "spring.datasource.dbcp2.max-wait",
     "webdriver.chrome.driver",
     "webdriver.selenium.url",
@@ -375,6 +376,7 @@ fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: Str
             "irida.it.headless" to "true",
             "spring.profiles.active" to "test",
             "irida.it.rootdirectory" to temporaryDir,
+            "delete.from.filesystem" to "true",
             "sequence.file.base.directory" to "${temporaryDir}/sequence-file-base",
             "reference.file.base.directory" to "${temporaryDir}/reference-file-base",
             "output.file.base.directory" to "${temporaryDir}/output-file-base"
