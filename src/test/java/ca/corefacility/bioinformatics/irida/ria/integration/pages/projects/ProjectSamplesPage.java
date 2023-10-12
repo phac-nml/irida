@@ -451,7 +451,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		int prevTotal = getTableSummary().getTotal();
 		modifiedDateFilterToggle.click();
 		modifiedDateFilter.findElement(By.className("t-clear-btn")).click();
-		modifiedDateFilterToggle.click();
 		waitForTableToUpdate(prevTotal);
 	}
 

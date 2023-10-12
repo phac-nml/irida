@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="manager@nowhere.com" firstName="Mr." lastName="Manager" password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK" phoneNumber="867-5309" username="mrtest" enabled="true" system_role="ROLE_ADMIN" credentialsNonExpired="true" />
+	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="manager@nowhere.com" firstName="Mr." lastName="Manager" password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK" phoneNumber="867-5309" username="mrtest" enabled="true" system_role="ROLE_ADMIN" credentialsNonExpired="true" user_type="TYPE_LOCAL" />
 
 	<client_details id="1" clientId="testClient" clientSecret="xxxxxxxx" token_validity="100000" createdDate="2013-07-18 14:20:19.0" />
 	<client_details id="2" clientId="testClient2" clientSecret="xxxxxxxx" token_validity="100000" createdDate="2013-07-18 14:20:19.0" />

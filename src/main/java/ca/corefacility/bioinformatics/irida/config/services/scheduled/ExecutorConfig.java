@@ -104,8 +104,8 @@ public class ExecutorConfig {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		//check if admin user exists.  If not add one
-		if (jdbcTemplate.queryForList("SELECT userName FROM user WHERE userName='admin'").isEmpty()) {
-			String userInsertSql = "insert into user (createdDate, credentialsNonExpired, email, enabled, firstName, lastName, password, phoneNumber, userName, system_role) values (now(),1,'admin@irida.ca',1,'admin','admin','xxxx','0000','admin','ROLE_ADMIN')";
+		if (jdbcTemplate.queryForList("SELECT userName FROM user WHERE userName='admin' and user_type='TYPE_LOCAL'").isEmpty()) {
+			String userInsertSql = "insert into user (createdDate, credentialsNonExpired, email, enabled, firstName, lastName, password, phoneNumber, userName, system_role, user_type) values (now(),1,'admin@irida.ca',1,'admin','admin','xxxx','0000','admin','ROLE_ADMIN', 'TYPE_LOCAL')";
 			jdbcTemplate.update(userInsertSql);
 		}
 	}

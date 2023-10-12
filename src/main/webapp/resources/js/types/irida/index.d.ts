@@ -178,6 +178,11 @@ declare namespace IRIDA {
     ROLE_TECHNICIAN = "ROLE_TECHNICIAN",
   }
 
+  enum UserType {
+    TYPE_LOCAL = "TYPE_LOCAL",
+    TYPE_DOMAIN = "TYPE_DOMAIN",
+  }
+
   interface User extends BaseModel {
     username: string;
     email: string;
@@ -186,6 +191,7 @@ declare namespace IRIDA {
     phoneNumber: string;
     enabled: boolean;
     systemRole: SystemRole;
+    userType: UserType;
     lastLogin: Date;
     locale: string;
     projects: Project[];

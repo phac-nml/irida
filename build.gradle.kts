@@ -121,7 +121,10 @@ dependencies {
     }
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-data-ldap")
     implementation("org.springframework.security:spring-security-oauth2-authorization-server:0.3.1")
+    implementation("org.springframework.ldap:spring-ldap-core")
+    implementation("org.springframework.security:spring-security-ldap")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.3")
     implementation("com.nimbusds:oauth2-oidc-sdk:10.1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -221,6 +224,8 @@ dependencies {
     testImplementation("org.seleniumhq.selenium:selenium-support:4.4.0")
     testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:4.4.0")
     testImplementation("org.mockftpserver:MockFtpServer:3.0.0")
+    testImplementation("org.springframework.ldap:spring-ldap-test")
+    testImplementation("com.unboundid:unboundid-ldapsdk:6.0.5")
 }
 
 tasks.register<Zip>("packageDistribution") {

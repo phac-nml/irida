@@ -10,6 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -187,18 +188,21 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void saveModifiedTemplateAs(String name) {
-		driver.manage().window().maximize();
-		// Fixes issue where save button scrolled off page.
-		driver.findElement(By.tagName("body")).sendKeys(Keys.HOME);
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2L));
+		WebElement alertBox = driver.findElement(By.className("t-modified-alert"));
 
+		// Scroll to the modified alert
 		WebElement modifiedSaveAsButton = driver.findElement(By.className("t-modified-saveas"));
+		Actions actions = new Actions(driver);
+		actions.moveToElement(modifiedSaveAsButton);
+		actions.perform();
+
 		modifiedSaveAsButton.click();
 		WebElement saveTemplatePopover = wait.until(
 				ExpectedConditions.visibilityOfElementLocated(By.className("t-save-params-form")));
 		modifiedNameInput.sendKeys(name);
 		saveTemplatePopover.findElement(By.tagName("button")).click();
-		wait.until(ExpectedConditions.invisibilityOf(modifiedAlert.get(0)));
+		wait.until(ExpectedConditions.invisibilityOf(alertBox));
 	}
 
 	public String getSelectedParametersTemplateName() {

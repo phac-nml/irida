@@ -152,6 +152,14 @@ public class UserTest {
 	}
 
 	@Test
+	public void testNullUserType() {
+		User u = new User();
+		assertThrows(NullPointerException.class, () -> {
+			u.setUserType(null);
+		});
+	}
+
+	@Test
 	public void testValidUser() {
 		User u = new User();
 		u.setUsername("fbristow");
