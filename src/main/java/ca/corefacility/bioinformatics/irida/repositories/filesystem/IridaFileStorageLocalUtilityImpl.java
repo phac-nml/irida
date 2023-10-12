@@ -32,8 +32,11 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
 	private final StorageType storageType = StorageType.LOCAL;
 
+	private boolean deleteFromFilesystem;
+
 	@Autowired
-	public IridaFileStorageLocalUtilityImpl() {
+	public IridaFileStorageLocalUtilityImpl(boolean deleteFromFilesystem) {
+		this.deleteFromFilesystem = deleteFromFilesystem;
 	}
 
 	/**
@@ -106,12 +109,14 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public void deleteFile(Path file) {
-		try {
-			logger.trace("Deleting file: [" + file.toString() + "]");
-			Files.deleteIfExists(file);
-		} catch (IOException e) {
-			logger.error("Unable to delete file", e);
-			throw new StorageException("Unable to delete file", e);
+		if (deleteFromFilesystem) {
+			try {
+				logger.trace("Deleting file: [" + file.toString() + "]");
+				Files.deleteIfExists(file);
+			} catch (IOException e) {
+				logger.error("Unable to delete file", e);
+				throw new StorageException("Unable to delete file", e);
+			}
 		}
 	}
 
@@ -120,12 +125,14 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public void deleteFolder(Path folder) {
-		try {
-			logger.trace("Deleting folder: [" + folder.toString() + "]");
-			FileSystemUtils.deleteRecursively(folder);
-		} catch (IOException e) {
-			logger.error("Unable to delete folder", e);
-			throw new StorageException("Unable to delete folder", e);
+		if (deleteFromFilesystem) {
+			try {
+				logger.trace("Deleting folder: [" + folder.toString() + "]");
+				FileSystemUtils.deleteRecursively(folder);
+			} catch (IOException e) {
+				logger.error("Unable to delete folder", e);
+				throw new StorageException("Unable to delete folder", e);
+			}
 		}
 	}
 

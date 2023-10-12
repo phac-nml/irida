@@ -1,10 +1,5 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +18,11 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 public class ChecksumFileProcessorTest {
 	private ChecksumFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
@@ -33,7 +33,7 @@ public class ChecksumFileProcessorTest {
 	@BeforeEach
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		fileProcessor = new ChecksumFileProcessor(sequenceFileRepository, iridaFileStorageUtility);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}

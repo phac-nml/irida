@@ -88,7 +88,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 			s3Client.createBucket(new CreateBucketRequest(bucketName, BUCKET_REGION));
 		}
 
-		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(bucketName, BUCKET_REGION, AWS_ACCESS_KEY,
+		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(true, bucketName, BUCKET_REGION, AWS_ACCESS_KEY,
 				AWS_SECRET_KEY, Optional.ofNullable(ENDPOINT_URL));
 
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
@@ -180,7 +180,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 
 	@Test
 	@Override
-	public void testDeleteFile() {
+	public void testDeleteFileWithFlagOn() {
 		iridaFileStorageUtility.deleteFile(PATH_TO_FASTA_FILE);
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
 		assertFalse(fileExistsInBlobStorage, "File should not exist in aws s3 bucket");
@@ -188,13 +188,34 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 
 	@Test
 	@Override
-	public void testDeleteFolder() {
+	public void testDeleteFileWithFlagOff() {
+		IridaFileStorageUtility iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(false, bucketName,
+				BUCKET_REGION, AWS_ACCESS_KEY, AWS_SECRET_KEY, Optional.ofNullable(ENDPOINT_URL));
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		iridaFileStorageUtility.deleteFile(PATH_TO_FASTA_FILE);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertTrue(fileExistsInBlobStorage, "File should exist in aws s3 bucket");
+	}
+
+	@Test
+	@Override
+	public void testDeleteFolderWithFlagOn() {
 		Path folder = PATH_TO_FASTA_FILE.getParent();
 		iridaFileStorageUtility.deleteFolder(folder);
-		boolean folderExistsInBlobStorage = iridaFileStorageUtility.fileExists(folder);
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
-		assertFalse(folderExistsInBlobStorage, "Folder should not exist in aws s3 bucket");
 		assertFalse(fileExistsInBlobStorage, "File should not exist in aws s3 bucket");
+	}
+
+	@Test
+	@Override
+	public void testDeleteFolderWithFlagOff() {
+		IridaFileStorageUtility iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(false, bucketName,
+				BUCKET_REGION, AWS_ACCESS_KEY, AWS_SECRET_KEY, Optional.ofNullable(ENDPOINT_URL));
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		Path folder = PATH_TO_FASTA_FILE.getParent();
+		iridaFileStorageUtility.deleteFolder(folder);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertTrue(fileExistsInBlobStorage, "File should exist in aws s3 bucket");
 	}
 
 	@Test

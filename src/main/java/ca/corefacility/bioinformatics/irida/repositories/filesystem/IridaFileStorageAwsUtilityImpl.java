@@ -46,14 +46,15 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
 
+	private boolean deleteFromFilesystem;
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
 	private final StorageType storageType = StorageType.AWS;
 
 	@Autowired
-	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey,
-			Optional<String> bucketUrl) {
+	public IridaFileStorageAwsUtilityImpl(boolean deleteFromFilesystem, String bucketName, String bucketRegion,
+			String accessKey, String secretKey, Optional<String> bucketUrl) {
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
 		if (!bucketUrl.isPresent()) {
 			this.s3 = AmazonS3ClientBuilder.standard()
@@ -70,6 +71,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 					.build();
 		}
 		this.bucketName = bucketName;
+		this.deleteFromFilesystem = deleteFromFilesystem;
 	}
 
 	/**
@@ -187,12 +189,14 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public void deleteFile(Path file) {
-		try {
-			logger.trace("Deleting file: [" + file.toString() + "]");
-			s3.deleteObject(bucketName, getAwsFileAbsolutePath(file));
-		} catch (SdkClientException e) {
-			logger.error("Unable to delete file", e);
-			throw new StorageException("Unable to delete file", e);
+		if (deleteFromFilesystem) {
+			try {
+				logger.trace("Deleting file: [" + file.toString() + "]");
+				s3.deleteObject(bucketName, getAwsFileAbsolutePath(file));
+			} catch (SdkClientException e) {
+				logger.error("Unable to delete file", e);
+				throw new StorageException("Unable to delete file", e);
+			}
 		}
 	}
 
@@ -201,15 +205,17 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public void deleteFolder(Path folder) {
-		try {
-			logger.trace("Deleting folder: [" + folder.toString() + "]");
-			for (S3ObjectSummary file : s3.listObjects(bucketName, getAwsFileAbsolutePath(folder))
-					.getObjectSummaries()) {
-				s3.deleteObject(bucketName, file.getKey());
+		if (deleteFromFilesystem) {
+			try {
+				logger.trace("Deleting folder: [" + folder.toString() + "]");
+				for (S3ObjectSummary file : s3.listObjects(bucketName, getAwsFileAbsolutePath(folder))
+						.getObjectSummaries()) {
+					s3.deleteObject(bucketName, file.getKey());
+				}
+			} catch (SdkClientException e) {
+				logger.error("Unable to delete folder", e);
+				throw new StorageException("Unable to delete folder", e);
 			}
-		} catch (SdkClientException e) {
-			logger.error("Unable to delete folder", e);
-			throw new StorageException("Unable to delete folder", e);
 		}
 	}
 

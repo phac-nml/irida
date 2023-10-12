@@ -1,34 +1,19 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
-import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
-import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
-import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
-import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
-import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
-import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
-import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.*;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.*;
-import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
-import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
-import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import javax.validation.Validator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,18 +42,38 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
-import javax.validation.Validator;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
+import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
+import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.*;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageAwsUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageAzureUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
+import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -77,18 +82,11 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 @Configuration
 @Import({
-		IridaApiSecurityConfig.class,
-		IridaApiAspectsConfig.class,
-		IridaApiRepositoriesConfig.class,
-		ExecutionManagerConfig.class,
-		AnalysisExecutionServiceConfig.class,
-		WebEmailConfig.class,
-		IridaScheduledTasksConfig.class,
-		IridaPluginConfig.class,
-		IridaWorkflowsConfig.class })
+		IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
+		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, WebEmailConfig.class,
+		IridaScheduledTasksConfig.class, IridaPluginConfig.class, IridaWorkflowsConfig.class })
 @ComponentScan(basePackages = {
-		"ca.corefacility.bioinformatics.irida.service",
-		"ca.corefacility.bioinformatics.irida.processing",
+		"ca.corefacility.bioinformatics.irida.service", "ca.corefacility.bioinformatics.irida.processing",
 		"ca.corefacility.bioinformatics.irida.pipeline.results.updater" })
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
@@ -162,6 +160,8 @@ public class IridaApiServicesConfig {
 	@Value("${aws.bucket.url:#{null}}")
 	private String bucketUrl;
 
+	@Value("${delete.from.filesystem}")
+	private boolean deleteFromFilesystem;
 
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
@@ -198,8 +198,8 @@ public class IridaApiServicesConfig {
 			final List<String> workflowMessageSources = findWorkflowMessageSources(this.getClass().getClassLoader(),
 					WORKFLOWS_DIRECTORY);
 			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));
-			final String[] allMessageSources = workflowMessageSources
-					.toArray(new String[workflowMessageSources.size()]);
+			final String[] allMessageSources = workflowMessageSources.toArray(
+					new String[workflowMessageSources.size()]);
 			source.setBasenames(allMessageSources);
 		} catch (IOException e) {
 			logger.error("Could not set/load workflow message sources. " + e);
@@ -284,13 +284,13 @@ public class IridaApiServicesConfig {
 		// gets the classpath resource paths to any 'messages_en.properties' files under
 		// workflowsDirectory
 		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
-		final Resource[] resources = resolver
-				.getResources("classpath:" + workflowsDirectory + "**/messages_en.properties");
+		final Resource[] resources = resolver.getResources(
+				"classpath:" + workflowsDirectory + "**/messages_en.properties");
 
 		// extracts and returns the basenames for the paths to the
 		// 'messages_en.properties' files
-		final Pattern pattern = Pattern
-				.compile(String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
+		final Pattern pattern = Pattern.compile(
+				String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
 		return Arrays.stream(resources)
 				.map(x -> getClasspathResourceBasename(pattern, x))
 				.filter(Objects::nonNull)
@@ -319,9 +319,8 @@ public class IridaApiServicesConfig {
 	}
 
 	/**
-	 * Used to configure both the IridaFileStorageUtility implementation
-	 * as well as set the implementation in the IridaFiles static class
-	 * which uses this implementation.
+	 * Used to configure both the IridaFileStorageUtility implementation as well as set the implementation in the
+	 * IridaFiles static class which uses this implementation.
 	 *
 	 * @param storageType The {@link StorageType}
 	 * @return A new {@link IridaFileStorageUtility} implementation.
@@ -330,12 +329,13 @@ public class IridaApiServicesConfig {
 	public IridaFileStorageUtility iridaFileStorageService(StorageType storageType) {
 		IridaFileStorageUtility iridaFileStorageUtility;
 		if (storageType.equals(StorageType.AWS)) {
-			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey,
-					awsSecretKey, Optional.ofNullable(bucketUrl));
+			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(deleteFromFilesystem, awsBucketName,
+					awsBucketRegion, awsAccessKey, awsSecretKey, Optional.ofNullable(bucketUrl));
 		} else if (storageType.equals(StorageType.AZURE)) {
-			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
+			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(deleteFromFilesystem, containerUrl, sasToken,
+					containerName);
 		} else {
-			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(deleteFromFilesystem);
 		}
 
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
@@ -349,9 +349,10 @@ public class IridaApiServicesConfig {
 
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, IridaFileStorageUtility iridaFileStorageUtility, GzipFileProcessor gzipFileProcessor,
-			FastqcFileProcessor fastQcFileProcessor, ChecksumFileProcessor checksumProcessor,
-			CoverageFileProcessor coverageProcessor, AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
+			QCEntryRepository qcRepository, IridaFileStorageUtility iridaFileStorageUtility,
+			GzipFileProcessor gzipFileProcessor, FastqcFileProcessor fastQcFileProcessor,
+			ChecksumFileProcessor checksumProcessor, CoverageFileProcessor coverageProcessor,
+			AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
 
 		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
@@ -363,7 +364,8 @@ public class IridaApiServicesConfig {
 			fileProcessors.remove(gzipFileProcessor);
 		}
 
-		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, iridaFileStorageUtility, fileProcessors);
+		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, iridaFileStorageUtility,
+				fileProcessors);
 	}
 
 	@Bean(name = "fileProcessingChainExecutor")

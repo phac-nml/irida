@@ -40,23 +40,27 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient;
+	private boolean deleteFromFilesystem;
 	private final StorageType storageType = StorageType.AZURE;
 
 	@Autowired
-	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName) {
+	public IridaFileStorageAzureUtilityImpl(boolean deleteFromFilesystem, String containerUrl, String sasToken,
+			String containerName) {
 		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl).sasToken(sasToken).buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
+		this.deleteFromFilesystem = deleteFromFilesystem;
 	}
 
 	/*
 	This instantiation method should only be used for testing. DO NOT USE IN PRODUCTION. USE THE SAS TOKEN METHOD ABOVE FOR PRODUCTION.
 	 */
-	public IridaFileStorageAzureUtilityImpl(String url, StorageSharedKeyCredential storageSharedKeyCredential,
-			String containerName) {
+	public IridaFileStorageAzureUtilityImpl(boolean deleteFromFilesystem, String url,
+			StorageSharedKeyCredential storageSharedKeyCredential, String containerName) {
 		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(url)
 				.credential(storageSharedKeyCredential)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
+		this.deleteFromFilesystem = deleteFromFilesystem;
 	}
 
 	/**
@@ -174,13 +178,15 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public void deleteFile(Path file) {
-		try {
-			logger.trace("Deleting file: [" + file.toString() + "]");
-			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			blobClient.deleteIfExists();
-		} catch (BlobStorageException e) {
-			logger.error("Unable to delete file", e);
-			throw new StorageException("Unable to delete file", e);
+		if (deleteFromFilesystem) {
+			try {
+				logger.trace("Deleting file: [" + file.toString() + "]");
+				BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+				blobClient.deleteIfExists();
+			} catch (BlobStorageException e) {
+				logger.error("Unable to delete file", e);
+				throw new StorageException("Unable to delete file", e);
+			}
 		}
 	}
 
@@ -189,16 +195,18 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public void deleteFolder(Path folder) {
-		try {
-			logger.trace("Deleting folder: [" + folder.toString() + "]");
-			ListBlobsOptions options = new ListBlobsOptions().setPrefix(getAzureFileAbsolutePath(folder));
-			containerClient.listBlobs(options, null).forEach(blob -> {
-				BlobClient blobClient = containerClient.getBlobClient(blob.getName());
-				blobClient.deleteIfExists();
-			});
-		} catch (BlobStorageException e) {
-			logger.error("Unable to delete folder", e);
-			throw new StorageException("Unable to delete folder", e);
+		if (deleteFromFilesystem) {
+			try {
+				logger.trace("Deleting folder: [" + folder.toString() + "]");
+				ListBlobsOptions options = new ListBlobsOptions().setPrefix(getAzureFileAbsolutePath(folder));
+				containerClient.listBlobs(options, null).forEach(blob -> {
+					BlobClient blobClient = containerClient.getBlobClient(blob.getName());
+					blobClient.deleteIfExists();
+				});
+			} catch (BlobStorageException e) {
+				logger.error("Unable to delete folder", e);
+				throw new StorageException("Unable to delete folder", e);
+			}
 		}
 	}
 

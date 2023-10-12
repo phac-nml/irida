@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -11,9 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -22,21 +15,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.util.ReflectionUtils;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 /**
  * Tests for {@link FastqcFileProcessor}.
- * 
- * 
  */
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
@@ -46,8 +44,8 @@ public class FastqcFileProcessorTest {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
 	private static final String SEQUENCE = "ACGTACGTN";
-	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
-			+ SEQUENCE + "\n+\n?????????";
+	private static final String FASTQ_FILE_CONTENTS =
+			"@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n" + SEQUENCE + "\n+\n?????????";
 	private static final String FASTA_FILE_CONTENTS = ">test read\n" + SEQUENCE;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
@@ -56,9 +54,10 @@ public class FastqcFileProcessorTest {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		outputFileRepository = mock(AnalysisOutputFileRepository.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
-		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository, iridaFileStorageUtility);
+		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository,
+				iridaFileStorageUtility);
 	}
 
 	@Test
@@ -133,11 +132,14 @@ public class FastqcFileProcessorTest {
 
 		verify(outputFileRepository, times(3)).save(any(AnalysisOutputFile.class));
 
-		assertNotNull(updated.getAnalysisOutputFileNames().contains("perBaseQualityScoreChart"), "Per-base quality score chart was not created.");
+		assertNotNull(updated.getAnalysisOutputFileNames().contains("perBaseQualityScoreChart"),
+				"Per-base quality score chart was not created.");
 
-		assertNotNull(updated.getAnalysisOutputFileNames().contains("perSequenceQualityScoreChart"), "Per-sequence quality score chart was not created.");
+		assertNotNull(updated.getAnalysisOutputFileNames().contains("perSequenceQualityScoreChart"),
+				"Per-sequence quality score chart was not created.");
 
-		assertNotNull(updated.getAnalysisOutputFileNames().contains("duplicationLevelChart"), "Duplication level chart was not created.");
+		assertNotNull(updated.getAnalysisOutputFileNames().contains("duplicationLevelChart"),
+				"Duplication level chart was not created.");
 
 		Iterator<OverrepresentedSequence> ovrs = updated.getOverrepresentedSequences().iterator();
 		assertTrue(ovrs.hasNext(), "No overrepresented sequences added to analysis.");
@@ -161,8 +163,7 @@ public class FastqcFileProcessorTest {
 			try {
 				Files.deleteIfExists(fileToDelete);
 			} catch (IOException e) {
-				logger.debug("Couldn't delete path ["
-						+ fileToDelete
+				logger.debug("Couldn't delete path [" + fileToDelete
 						+ "]. This should be safe to ignore; FastQC opens an input stream on the file and never closes it.");
 			}
 		}

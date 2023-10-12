@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -49,7 +48,7 @@ public class BioHanselSampleUpdaterTest {
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		sampleService = mock(SampleService.class);
 		bioHanselSampleUpdater = new BioHanselSampleUpdater(metadataTemplateService, sampleService);
-		IridaFiles.setIridaFileStorageUtility(new IridaFileStorageLocalUtilityImpl());
+		IridaFiles.setIridaFileStorageUtility(new IridaFileStorageLocalUtilityImpl(true));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -63,8 +62,8 @@ public class BioHanselSampleUpdaterTest {
 				"bio_hansel/heidelberg/v0.5.0/QC Message", "FAIL: Missing Tiles Error 1: 25.25% missing tiles; more than 5.00% missing tiles threshold. Okay coverage depth (27.6 >= 20.0 expected), but this may be the wrong serovar or species for scheme \"heidelberg\" | FAIL: Mixed Sample Error 2: Mixed subtypes found: \"1; 2.2.1.1.2\"."
 		);
 		// @formatter:on
-		final Path path = Paths
-				.get("src/test/resources/files/bio_hansel/SRR1203042-bio_hansel-results-heidelberg-0.5.0.json");
+		final Path path = Paths.get(
+				"src/test/resources/files/bio_hansel/SRR1203042-bio_hansel-results-heidelberg-0.5.0.json");
 		final AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(path, null, null, null);
 		final Analysis analysis = new Analysis(null, ImmutableMap.of("bio_hansel-results.json", analysisOutputFile),
 				null, null);

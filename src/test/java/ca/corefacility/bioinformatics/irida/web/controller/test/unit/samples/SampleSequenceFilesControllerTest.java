@@ -1,29 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
-
-import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,27 +17,38 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.FileCopyUtils;
 
-import com.google.common.collect.Lists;
-import com.google.common.net.HttpHeaders;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
+
+import com.google.common.collect.Lists;
+import com.google.common.net.HttpHeaders;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link RESTSampleSequenceFilesController}.
@@ -78,7 +71,7 @@ public class SampleSequenceFilesControllerTest {
 		analysisService = mock(AnalysisService.class);
 		sequencingRun = mock(SequencingRun.class);
 
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,
@@ -114,19 +107,16 @@ public class SampleSequenceFilesControllerTest {
 		Link sample = resources.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation =
-				sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + so.getSequenceFile()
-						.getId();
+				sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + so.getSequenceFile().getId();
 
 		assertEquals(sampleLocation + "/sequenceFiles", selfCollection.getHref());
 		assertEquals(sampleLocation, sample.getHref());
 
 		// confirm that the self rel for an individual sequence file exists
-		SequenceFile sfr = resources.iterator()
-				.next();
+		SequenceFile sfr = resources.iterator().next();
 		Link self = sfr.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
 		assertEquals(sequenceFileLocation, self.getHref());
-		assertEquals(so.getSequenceFile()
-				.getFile(), sfr.getFile());
+		assertEquals(so.getSequenceFile().getFile(), sfr.getFile());
 	}
 
 	@Test
@@ -148,7 +138,9 @@ public class SampleSequenceFilesControllerTest {
 		assertNotNull(resource);
 
 		Link sample = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
-		Link sequenceFiles = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
+		Link sequenceFiles = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES)
+				.map(i -> i)
+				.orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 
@@ -167,8 +159,8 @@ public class SampleSequenceFilesControllerTest {
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
 		ResponseResource<SequenceFile> modelMap = controller.readSequenceFileForSequencingObject(s.getId(),
-				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(), so.getSequenceFile()
-						.getId());
+				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(),
+				so.getSequenceFile().getId());
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
@@ -177,17 +169,17 @@ public class SampleSequenceFilesControllerTest {
 		assertNotNull(o);
 		assertTrue(o instanceof SequenceFile);
 		SequenceFile sfr = (SequenceFile) o;
-		assertEquals(so.getSequenceFile()
-				.getFile(), sfr.getFile());
+		assertEquals(so.getSequenceFile().getFile(), sfr.getFile());
 
 		Link self = sfr.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
-		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
+		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES)
+				.map(i -> i)
+				.orElse(null);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation =
-				sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + so.getSequenceFile()
-						.getId();
+				sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + so.getSequenceFile().getId();
 
 		assertNotNull(self);
 		assertEquals(sequenceFileLocation, self.getHref());
@@ -206,17 +198,16 @@ public class SampleSequenceFilesControllerTest {
 
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
-		when(analysisService.getFastQCAnalysisForSequenceFile(so, so.getSequenceFile()
-				.getId())).thenReturn(analysisFastQC);
+		when(analysisService.getFastQCAnalysisForSequenceFile(so, so.getSequenceFile().getId())).thenReturn(
+				analysisFastQC);
 
 		ResponseResource<AnalysisFastQC> readQCForSequenceFile = controller.readQCForSequenceFile(s.getId(),
-				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(), so.getSequenceFile()
-						.getId());
+				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(),
+				so.getSequenceFile().getId());
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
-		verify(analysisService).getFastQCAnalysisForSequenceFile(so, so.getSequenceFile()
-				.getId());
+		verify(analysisService).getFastQCAnalysisForSequenceFile(so, so.getSequenceFile().getId());
 
 		Object object = readQCForSequenceFile.getResource();
 		assertTrue(object instanceof AnalysisFastQC);
@@ -275,7 +266,9 @@ public class SampleSequenceFilesControllerTest {
 
 		assertEquals(HttpStatus.CREATED.value(), response.getStatus(), "response must have CREATED status");
 		Link self = sfr.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
-		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
+		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES)
+				.map(i -> i)
+				.orElse(null);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
@@ -349,8 +342,7 @@ public class SampleSequenceFilesControllerTest {
 		String file2Name = "file2_R2_01.fastq.gz";
 
 		SequenceFilePair pair = TestDataFactory.constructSequenceFilePair();
-		Iterator<SequenceFile> iterator = pair.getFiles()
-				.iterator();
+		Iterator<SequenceFile> iterator = pair.getFiles().iterator();
 		SequenceFile sf1 = iterator.next();
 		SequenceFile sf2 = iterator.next();
 
@@ -386,14 +378,17 @@ public class SampleSequenceFilesControllerTest {
 				resource1, mmf2, resource2, response);
 
 		verify(sampleService).read(s.getId());
-		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), ArgumentMatchers.eq(s));
+		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class),
+				ArgumentMatchers.eq(s));
 
 		SequenceFilePair returnVal = (SequenceFilePair) responseResource.getResource();
 		assertNotNull(returnVal, "sequence file pair should not be null");
 
 		Link selfCollection = returnVal.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
 		Link sampleRC = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
-		Link sampleSequenceFiles = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
+		Link sampleSequenceFiles = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES)
+				.map(i -> i)
+				.orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String pairLocation = sampleLocation + "/pairs/" + pair.getId();
@@ -410,8 +405,7 @@ public class SampleSequenceFilesControllerTest {
 
 		assertEquals(pairLocation, locationHeader, "The location header should have the self rel");
 
-		Iterator<SequenceFile> filesIterator = returnVal.getFiles()
-				.iterator();
+		Iterator<SequenceFile> filesIterator = returnVal.getFiles().iterator();
 
 		for (int i = 0; i < 2; i++) {
 			SequenceFile returnedFile = filesIterator.next();

@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.unit;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
@@ -23,16 +34,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,7 +60,7 @@ public class SISTRSampleUpdaterTest {
 		iridaWorkflowsService = mock(IridaWorkflowsService.class);
 		iridaWorkflow = mock(IridaWorkflow.class);
 		iridaWorkflowDescription = mock(IridaWorkflowDescription.class);
-		IridaFiles.setIridaFileStorageUtility(new IridaFileStorageLocalUtilityImpl());
+		IridaFiles.setIridaFileStorageUtility(new IridaFileStorageLocalUtilityImpl(true));
 
 		updater = new SISTRSampleUpdater(metadataTemplateService, sampleService, iridaWorkflowsService);
 
@@ -72,8 +73,8 @@ public class SISTRSampleUpdaterTest {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testUpdaterPassed() throws PostProcessingException, AnalysisAlreadySetException {
-		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder().put(
-				"SISTR serovar (v0.1)", "Enteritidis")
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder()
+				.put("SISTR serovar (v0.1)", "Enteritidis")
 				.put("SISTR cgMLST Subspecies (v0.1)", "enterica")
 				.put("SISTR QC Status (v0.1)", "PASS")
 				.put("SISTR O-antigen (v0.1)", "1,9,12")
@@ -122,8 +123,7 @@ public class SISTRSampleUpdaterTest {
 				found++;
 			}
 		}
-		assertEquals(expectedResults.keySet().size(), found,
-				"should have found the same number of results");
+		assertEquals(expectedResults.keySet().size(), found, "should have found the same number of results");
 
 		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
 		// this bit just ensures the merged data got saved
@@ -131,16 +131,14 @@ public class SISTRSampleUpdaterTest {
 
 		Set<MetadataEntry> value = setCaptor.getValue();
 
-		assertEquals(metadataSet.iterator()
-				.next(), value.iterator()
-				.next());
+		assertEquals(metadataSet.iterator().next(), value.iterator().next());
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testUpdateFailResultsNullST() throws PostProcessingException, AnalysisAlreadySetException {
-		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder().put(
-				"SISTR serovar (v0.1)", "-:-:-")
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder()
+				.put("SISTR serovar (v0.1)", "-:-:-")
 				.put("SISTR QC Status (v0.1)", "FAIL")
 				.put("SISTR cgMLST Sequence Type (v0.1)", "")
 				.build();
@@ -184,8 +182,7 @@ public class SISTRSampleUpdaterTest {
 				found++;
 			}
 		}
-		assertEquals(expectedResults.keySet().size(), found,
-				"should have found the same number of results");
+		assertEquals(expectedResults.keySet().size(), found, "should have found the same number of results");
 
 		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
 		// this bit just ensures the merged data got saved
@@ -193,9 +190,7 @@ public class SISTRSampleUpdaterTest {
 
 		Set<MetadataEntry> value = setCaptor.getValue();
 
-		assertEquals(metadataSet.iterator()
-				.next(), value.iterator()
-				.next());
+		assertEquals(metadataSet.iterator().next(), value.iterator().next());
 	}
 
 	@Test
@@ -218,7 +213,6 @@ public class SISTRSampleUpdaterTest {
 			updater.update(Lists.newArrayList(sample), submission);
 		});
 	}
-
 
 	@Test
 	public void testUpdaterNoFile() throws PostProcessingException, AnalysisAlreadySetException, IOException {

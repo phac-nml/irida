@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile.unit;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,10 +14,11 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Tests for SequenceFilePair
- * 
- *
  */
 public class SequenceFilePairTest {
 
@@ -42,12 +40,12 @@ public class SequenceFilePairTest {
 
 	/**
 	 * Sets up files for tests.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@BeforeEach
 	public void setup() throws IOException {
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		Path tempDir = Paths.get("/tmp");

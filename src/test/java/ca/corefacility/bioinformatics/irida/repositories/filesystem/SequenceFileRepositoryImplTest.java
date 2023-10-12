@@ -1,11 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -23,9 +17,12 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepositoryImpl;
 import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Tests for {@link FilesystemSupplementedRepositoryImpl}.
- * 
  */
 public class SequenceFileRepositoryImplTest {
 
@@ -39,7 +36,7 @@ public class SequenceFileRepositoryImplTest {
 	public void setUp() throws IOException {
 		baseDirectory = Files.createTempDirectory(TEMP_FILE_PREFIX);
 		entityManager = mock(EntityManager.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl(true);
 		repository = new SequenceFileRepositoryImpl(entityManager, baseDirectory, iridaFileStorageUtility);
 	}
 
@@ -77,8 +74,8 @@ public class SequenceFileRepositoryImplTest {
 
 		// the created file should reside in the base directory within a new
 		// directory using the sequence file's identifier.
-		Path p = FileSystems.getDefault().getPath(baseDirectory.toString(), lid.toString(),
-				s.getFileRevisionNumber().toString(), filename);
+		Path p = FileSystems.getDefault()
+				.getPath(baseDirectory.toString(), lid.toString(), s.getFileRevisionNumber().toString(), filename);
 		assertEquals(p, s.getFile());
 		assertTrue(Files.exists(p));
 		Files.delete(p);

@@ -33,7 +33,6 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 	private final Path baseDirectory;
 	private final EntityManager entityManager;
-
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory,
@@ -178,7 +177,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		if (entity instanceof SequenceFile) {
 			//remove all sequence file copies from revision folders
 			deletePath = ((SequenceFile) entity).getFile().getParent().getParent();
-			
+
 			if (deletePath != null) {
 				iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
 			}
