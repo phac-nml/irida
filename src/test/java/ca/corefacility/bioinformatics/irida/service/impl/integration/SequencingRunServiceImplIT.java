@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -283,7 +282,6 @@ public class SequencingRunServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
-	@Disabled
 	public void testDeleteFilesOnFilesystem() throws IOException {
 		SequencingRun miseqRun = miseqRunService.read(1L);
 		Path sequenceFile = Files.createTempFile(null, null);
