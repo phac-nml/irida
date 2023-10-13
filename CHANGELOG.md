@@ -1,6 +1,6 @@
 # Changelog
  
-## [Unreleased]
+## [23.10] - 2023/10/15
 * [Developer]: Added functionality to delete sequence files from file system when a sequence run is removed. [See PR 1468](https://github.com/phac-nml/irida/pull/1468)
 * [Developer]: Added script to do initial cleanup of sequence files from file system. [See PR 1469](https://github.com/phac-nml/irida/pull/1469)
 * [UI]: Add identifier to project drop-down on project synchronization page. See [PR 1474](https://github.com/phac-nml/irida/pull/1474)
