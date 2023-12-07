@@ -88,6 +88,13 @@ public class UIProjectMembersServiceTest {
 		assertNotNull(response.getDataSource());
 		List<ProjectMemberTableModel> members = response.getDataSource();
 		assertEquals(2, members.size(), "Should have 2 members");
+
+		// Test that the members are sorted by name
+		TableRequest sortRequest = new TableRequest(0, 10, "name", "asc", "");
+		when(userService.searchUsersForProject(PROJECT, sortRequest.getSearch(), sortRequest.getCurrent(),
+				sortRequest.getPageSize(), sortRequest.getSort())).thenReturn(getPagedUsersForProject());
+		// Make sure no errors are thrown
+		service.getProjectMembers(PROJECT_ID, sortRequest);
 	}
 
 	@Test
