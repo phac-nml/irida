@@ -1,4 +1,7 @@
 # Changelog
+
+# [23.10.1] = 2023/12/07
+* [UI]: Fixed issue where filter inputs required focus when they are opened on the project samples page. See [PR 1503](https://github.com/phac-nml/irida/pull/1503)
  
 ## [23.10] - 2023/10/15
 * [Developer]: Added functionality to delete sequence files from file system when a sequence run is removed. [See PR 1468](https://github.com/phac-nml/irida/pull/1468)
