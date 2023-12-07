@@ -1,4 +1,7 @@
 # Changelog
+
+# [23.10.1] = 2023/12/07
+* [UI]: Fixed issue where filter inputs required focus when they are opened on the project samples page. See [PR 1503](https://github.com/phac-nml/irida/pull/1503)
  
 ## [23.10] - 2023/10/15
 * [Developer]: Added functionality to delete sequence files from file system when a sequence run is removed. [See PR 1468](https://github.com/phac-nml/irida/pull/1468)
@@ -8,7 +11,6 @@
 * [Developer]: Added override flag that determines if files should be deleted from file storage. [See PR 1486](https://github.com/phac-nml/irida/pull/1486)
 * [Developer]: Fixed flaky text in `PipelinesPhylogenomicsPageIT#testPageSetup` test. See [PR 1490](https://github.com/phac-nml/irida/pull/1492)
 * [ALL]: Added LDAP/ADLDAP support.
-* [UI]: Fixed issue where filter inputs required focus when they are opened on the project samples page. See [PR 1503](https://github.com/phac-nml/irida/pull/1503)
 
 ## [23.01.3] - 2023/05/09
 * [Developer]: Fixed issue with metadata uploader removing existing data. See [PR 1489](https://github.com/phac-nml/irida/pull/1489)
