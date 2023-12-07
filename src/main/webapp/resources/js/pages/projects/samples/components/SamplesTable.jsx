@@ -32,6 +32,12 @@ const { RangePicker } = DatePicker;
  * @constructor
  */
 export function SamplesTable() {
+  const nameInputRef = React.useRef(null);
+  const organismInputRef = React.useRef(null);
+  const collectedByInputRef = React.useRef(null);
+  const createdInputRef = React.useRef(null);
+  const modifiedInputRef = React.useRef(null);
+
   const dispatch = useDispatch();
   const {
     projectId,
@@ -115,106 +121,141 @@ export function SamplesTable() {
     confirm({ closeDropdown: false });
   };
 
+  function determineCurrentRef(filterName) {
+    console.log(filterName);
+
+    return filterName === "t-organism-select"
+      ? organismInputRef
+      : filterName === "t-name-select"
+      ? nameInputRef
+      : filterName === "t-collectedBy-select"
+      ? collectedByInputRef
+      : filterName === "t-created-filter"
+      ? createdInputRef
+      : filterName === "t-modified-filter"
+      ? modifiedInputRef
+      : null;
+  }
   const getColumnSearchProps = (
     dataIndex,
     filterName = "",
     placeholder = ""
-  ) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }) => (
-      <div style={{ padding: 8 }}>
-        <Select
-          className={filterName}
-          mode="tags"
-          placeholder={placeholder}
-          value={selectedKeys[0]}
-          onChange={(e) => {
-            const values = Array.isArray(e) && e.length > 0 ? [e] : e;
-            setSelectedKeys(values);
-            confirm({ closeDropdown: false });
-          }}
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            disabled={selectedKeys.length === 0 || selectedKeys[0].length === 0}
-            onClick={() => handleClearSearch(clearFilters, confirm)}
-            size="small"
-            style={{ width: 89 }}
-          >
-            {i18n("Filter.clear")}
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm)}
-            icon={<IconSearch />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            {i18n("Filter.search")}
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered) => (
-      <IconSearch style={{ color: filtered ? blue6 : undefined }} />
-    ),
-  });
-
-  const getDateColumnSearchProps = (filterName) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }) => (
-      <div style={{ padding: 8 }} className={filterName}>
-        <div style={{ marginBottom: 8, display: "block" }}>
-          <RangePicker
+  ) => {
+    const currentRef = determineCurrentRef(filterName);
+    return {
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => currentRef.current?.focus(), 100);
+        }
+      },
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }) => (
+        <div style={{ padding: 8 }}>
+          <Select
+            className={filterName}
+            mode="tags"
+            placeholder={placeholder}
             value={selectedKeys[0]}
-            onChange={(dates) => {
-              if (dates !== null) {
-                setSelectedKeys([
-                  [dates[0].startOf("day"), dates[1].endOf("day")],
-                ]);
-                confirm({ closeDropdown: false });
-              } else {
-                handleClearSearch(clearFilters, confirm);
-              }
+            onChange={(e) => {
+              const values = Array.isArray(e) && e.length > 0 ? [e] : e;
+              setSelectedKeys(values);
+              confirm({ closeDropdown: false });
             }}
+            style={{ marginBottom: 8, display: "block" }}
+            ref={currentRef}
           />
+          <Space>
+            <Button
+              disabled={
+                selectedKeys.length === 0 || selectedKeys[0].length === 0
+              }
+              onClick={() => handleClearSearch(clearFilters, confirm)}
+              size="small"
+              style={{ width: 89 }}
+            >
+              {i18n("Filter.clear")}
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => handleSearch(selectedKeys, confirm)}
+              icon={<IconSearch />}
+              size="small"
+              style={{ width: 90 }}
+            >
+              {i18n("Filter.search")}
+            </Button>
+          </Space>
         </div>
-        <Space>
-          <Button
-            disabled={selectedKeys.length === 0}
-            onClick={() => handleClearSearch(clearFilters, confirm)}
-            size="small"
-            style={{ width: 89 }}
-            className="t-clear-btn"
-          >
-            {i18n("Filter.clear")}
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm)}
-            icon={<IconSearch />}
-            size="small"
-            style={{ width: 90 }}
-            className="t-search-btn"
-          >
-            {i18n("Filter.search")}
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered) => (
-      <IconSearch style={{ color: filtered ? blue6 : undefined }} />
-    ),
-  });
+      ),
+      filterIcon: (filtered) => (
+        <IconSearch style={{ color: filtered ? blue6 : undefined }} />
+      ),
+    };
+  };
+
+  const getDateColumnSearchProps = (filterName) => {
+    const currentRef = determineCurrentRef(filterName);
+    return {
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => currentRef.current?.focus(), 100);
+        }
+      },
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }) => (
+        <div style={{ padding: 8 }} className={filterName}>
+          <div style={{ marginBottom: 8, display: "block" }}>
+            <RangePicker
+              ref={currentRef}
+              value={selectedKeys[0]}
+              onChange={(dates) => {
+                if (dates !== null) {
+                  setSelectedKeys([
+                    [dates[0].startOf("day"), dates[1].endOf("day")],
+                  ]);
+                  confirm({ closeDropdown: false });
+                } else {
+                  handleClearSearch(clearFilters, confirm);
+                }
+              }}
+            />
+          </div>
+          <Space>
+            <Button
+              disabled={selectedKeys.length === 0}
+              onClick={() => handleClearSearch(clearFilters, confirm)}
+              size="small"
+              style={{ width: 89 }}
+              className="t-clear-btn"
+            >
+              {i18n("Filter.clear")}
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => handleSearch(selectedKeys, confirm)}
+              icon={<IconSearch />}
+              size="small"
+              style={{ width: 90 }}
+              className="t-search-btn"
+            >
+              {i18n("Filter.search")}
+            </Button>
+          </Space>
+        </div>
+      ),
+      filterIcon: (filtered) => (
+        <IconSearch style={{ color: filtered ? blue6 : undefined }} />
+      ),
+    };
+  };
 
   const columns = [
     {
@@ -298,7 +339,10 @@ export function SamplesTable() {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
       sorter: true,
-      ...getColumnSearchProps(["sample", "collectedBy"]),
+      ...getColumnSearchProps(
+        ["sample", "collectedBy"],
+        "t-collectedBy-select"
+      ),
     },
     {
       title: i18n("SamplesTable.Column.created"),
