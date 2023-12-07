@@ -122,8 +122,6 @@ export function SamplesTable() {
   };
 
   function determineCurrentRef(filterName) {
-    console.log(filterName);
-
     return filterName === "t-organism-select"
       ? organismInputRef
       : filterName === "t-name-select"
