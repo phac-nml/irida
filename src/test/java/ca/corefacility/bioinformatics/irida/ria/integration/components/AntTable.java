@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -28,6 +29,15 @@ public class AntTable {
 
 	@FindBy(className = "ant-table-row")
 	List<WebElement> rows;
+
+	@FindBy(css = ".ant-pagination-next button")
+	WebElement nextButton;
+
+	@FindBy(css = ".ant-pagination-prev button")
+	WebElement prevButton;
+
+	@FindBy(css = ".t-search input")
+	WebElement searchInput;
 
 	public static AntTable getTable(WebDriver driver) {
 		return PageFactory.initElements(driver, AntTable.class);
@@ -89,4 +99,19 @@ public class AntTable {
 		}
 	}
 
+	public void goToNextPage() {
+		nextButton.click();
+	}
+
+	public void goToPrevPage() {
+		prevButton.click();
+	}
+
+	public void search(String text) {
+		if (!Strings.isNullOrEmpty(text)) {
+			searchInput.sendKeys(Keys.chord(Keys.CONTROL, "a"), text, Keys.ENTER);
+		} else {
+			searchInput.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.BACK_SPACE, Keys.ENTER);
+		}
+	}
 }
