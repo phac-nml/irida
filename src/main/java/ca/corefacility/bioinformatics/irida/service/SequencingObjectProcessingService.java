@@ -72,7 +72,7 @@ public class SequencingObjectProcessingService {
 
 		while (queueSpace > 0 && iterator.hasNext()) {
 			SequencingObject sequencingObject = iterator.next();
-//			logger.info("HERE*************************************");
+
 			if (
 					(sequencingObject.getSequencingRun() != null) &&
 					(!sequencingObject.getSequencingRun().getUploadStatus().equals(SequencingRunUploadStatus.COMPLETE))
