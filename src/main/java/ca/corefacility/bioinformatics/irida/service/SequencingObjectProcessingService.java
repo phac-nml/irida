@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileProcessorLauncher;
@@ -71,11 +72,13 @@ public class SequencingObjectProcessingService {
 
 		while (queueSpace > 0 && iterator.hasNext()) {
 			SequencingObject sequencingObject = iterator.next();
-
-			if (!sequencingObject.getSequencingRun().getUploadStatus().equals(SequencingRunUploadStatus.COMPLETE)) {
-				logger.trace("Skipping file " + sequencingObject.getId() + " as is not on a COMPLETE sequencing run.")
+//			logger.info("HERE*************************************");
+			if (
+					(sequencingObject.getSequencingRun() != null) &&
+					(!sequencingObject.getSequencingRun().getUploadStatus().equals(SequencingRunUploadStatus.COMPLETE))
+			) {
+				logger.trace("Skipping file " + sequencingObject.getId() + " as is not on a COMPLETE sequencing run.");
 				continue;
-				// must test this works on files uploaded via API and via Web
 			}
 
 			logger.trace("File processor " + machineString + " is processing file " + sequencingObject.getId());
