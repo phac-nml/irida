@@ -67,19 +67,17 @@ public class SequencingObjectProcessingService {
 		List<SequencingObject> toProcess = sequencingObjectRepository
 				.getSequencingObjectsWithProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
 
+		// filter out sequencing objects on a SequencingRun that is not in a COMPLETE state
+		toProcess.removeIf(seqObj -> (
+				(seqObj.getSequencingRun() != null) &&
+				(!seqObj.getSequencingRun().getUploadStatus().equals(SequencingRunUploadStatus.COMPLETE))
+		));
+
 		// individually loop through and mark the ones we're going to process.  Looping individually so 2 processes are less likely to write at the same time.
 		Iterator<SequencingObject> iterator = toProcess.iterator();
 
 		while (queueSpace > 0 && iterator.hasNext()) {
 			SequencingObject sequencingObject = iterator.next();
-
-			if (
-					(sequencingObject.getSequencingRun() != null) &&
-					(!sequencingObject.getSequencingRun().getUploadStatus().equals(SequencingRunUploadStatus.COMPLETE))
-			) {
-				logger.trace("Skipping file " + sequencingObject.getId() + " as is not on a COMPLETE sequencing run.");
-				continue;
-			}
 
 			logger.trace("File processor " + machineString + " is processing file " + sequencingObject.getId());
 
