@@ -72,6 +72,12 @@ public class SequencingObjectProcessingService {
 		while (queueSpace > 0 && iterator.hasNext()) {
 			SequencingObject sequencingObject = iterator.next();
 
+			if (!sequencingObject.getSequencingRun().getUploadStatus().equals(SequencingRunUploadStatus.COMPLETE)) {
+				logger.trace("Skipping file " + sequencingObject.getId() + " as is not on a COMPLETE sequencing run.")
+				continue;
+				// must test this works on files uploaded via API and via Web
+			}
+
 			logger.trace("File processor " + machineString + " is processing file " + sequencingObject.getId());
 
 			try {
