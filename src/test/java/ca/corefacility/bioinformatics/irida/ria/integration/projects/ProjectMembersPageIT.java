@@ -31,29 +31,42 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectMembersPage page = ProjectMembersPage.goTo(driver());
 		assertEquals("Members", page.getPageHeaderTitle(), "Check for proper translation in title");
-		assertEquals(3, page.getNumberOfMembers(), "Should be 3 members in the project");
+		assertEquals(10, page.getNumberOfMembers(), "Should be 10 members in the project");
 		assertTrue(page.isAddMemberBtnVisible(), "Add Members button should be visible");
+
+		// Ensure that paging works.
+		page.goToNextTablePage();
+		assertEquals(1, page.getNumberOfMembers(), "Should be on page 1 of the table");
+
+		page.goToPreviousTablePage();
+		assertEquals(10, page.getNumberOfMembers(), "Should be on page 10 of the table");
 
 		// Test remove user from project
 		page.removeUser(1);
 		assertTrue(page.isNotificationDisplayed());
-		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
+		page.removeUser(3);
+		assertEquals(9, page.getNumberOfMembers(), "Should be 9 members in the project");
+
+		// Test sorting by name
+		page.sortByNameColumn();
+		assertEquals(9, page.getNumberOfMembers(), "Should be 9 members in the project");
 
 		// Should not be able to remove the manager so the remove button should be disabled
+		page.searchByUsername("Mr. Manager");
+		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member after filtering");
+		// A manager has a metadata role of Level 4 and cannot be modified
+		assertFalse(page.userMetadataRoleSelectEnabled(0));
 		assertFalse(page.lastManagerRemoveButtonEnabled(0));
-		assertEquals(2, page.getNumberOfMembers(), "Should be 2 member in the project");
+		page.searchByUsername("");
+		assertEquals(9, page.getNumberOfMembers(), "Should be 9 members in the project");
 
 		// Test Add user to project
-		page.addUserToProject("test", ProjectRole.PROJECT_USER.toString());
-		page.isNotificationDisplayed();
-		assertEquals(3, page.getNumberOfMembers(), "Should be 3 members in the project");
+		page.addUserToProject("twelfth", ProjectRole.PROJECT_USER.toString());
+		assertEquals(10, page.getNumberOfMembers(), "Should be 10 members in the project");
 
 		// Try updating the users role to owner
 		page.updateUserRole(1, ProjectRole.PROJECT_OWNER.toString());
 		assertTrue(page.isNotificationDisplayed());
-
-		// A manager has a metadata role of Level 4 and cannot be modified
-		assertFalse(page.userMetadataRoleSelectEnabled(0));
 
 		// Change first manager back to a collaborator
 		page.updateUserRole(1, ProjectRole.PROJECT_USER.toString());

@@ -80,6 +80,7 @@ export function ProjectMembersTable({ projectId }) {
       },
       sorter: stringSorter("name"),
       defaultSortOrder: "ascend",
+      className: "t-user-name",
     },
     {
       title: i18n("ProjectMembersTable.projectRole"),

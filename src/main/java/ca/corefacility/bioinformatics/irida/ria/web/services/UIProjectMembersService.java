@@ -55,6 +55,14 @@ public class UIProjectMembersService {
 	 */
 	public TableResponse<ProjectMemberTableModel> getProjectMembers(Long projectId, TableRequest tableRequest) {
 		Project project = projectService.read(projectId);
+
+		// Special case with the sort column on the name column.  Front end sends "name" which is a combination of first and last name.
+		// Needs to get the name from the User in the ProjectUserJoin, and sort by the first name since that is what is
+		// displayed in the table.
+		if (tableRequest.getSortColumn().equals("name")) {
+			tableRequest.setSortColumn("user.firstName");
+		}
+
 		Page<Join<Project, User>> usersForProject = userService.searchUsersForProject(project, tableRequest.getSearch(),
 				tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort());
 		List<ProjectMemberTableModel> members = usersForProject.get().map(join -> {
