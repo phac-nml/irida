@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileProcessorLauncher;
@@ -65,6 +66,12 @@ public class SequencingObjectProcessingService {
 		//check for any unprocessed files
 		List<SequencingObject> toProcess = sequencingObjectRepository
 				.getSequencingObjectsWithProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
+
+		// filter out sequencing objects on a SequencingRun that is not in a COMPLETE state
+		toProcess.removeIf(seqObj -> (
+				(seqObj.getSequencingRun() != null) &&
+				(!seqObj.getSequencingRun().getUploadStatus().equals(SequencingRunUploadStatus.COMPLETE))
+		));
 
 		// individually loop through and mark the ones we're going to process.  Looping individually so 2 processes are less likely to write at the same time.
 		Iterator<SequencingObject> iterator = toProcess.iterator();

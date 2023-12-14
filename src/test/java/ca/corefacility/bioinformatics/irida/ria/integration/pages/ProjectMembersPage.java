@@ -81,6 +81,7 @@ public class ProjectMembersPage extends AbstractPage {
 
 	public void removeUser(int row) {
 		removeMember(row);
+		waitForTime(500);
 	}
 
 	public void removeManager(int row) {
@@ -110,9 +111,17 @@ public class ProjectMembersPage extends AbstractPage {
 	public boolean isNotificationDisplayed() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(antNotification));
-		antNotificationClose.click();
-		wait.until(ExpectedConditions.invisibilityOf(antNotification));
 		return true;
+	}
+
+	public void goToNextTablePage() {
+		table.goToNextPage();
+		waitForTime(500);
+	}
+
+	public void goToPreviousTablePage() {
+		table.goToPrevPage();
+		waitForTime(500);
 	}
 
 	public void addUserToProject(String name, String role) {
@@ -139,6 +148,15 @@ public class ProjectMembersPage extends AbstractPage {
 		WebElement roleSelect = metadataRoleSelect.get(row);
 		roleSelect.click();
 		driver.findElement(By.className("t-" + role)).click();
+	}
+
+	public void sortByNameColumn() {
+		table.sortColumn("t-user-name");
+	}
+
+	public void searchByUsername(String username) {
+		table.search(username);
+		waitForTime(500);
 	}
 
 	public boolean userMetadataRoleSelectEnabled(int row) {
