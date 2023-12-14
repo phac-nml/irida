@@ -67,12 +67,12 @@ public class UIProjectMembersServiceTest {
 		when(userService.read(USER_3.getId())).thenReturn(USER_3);
 
 		when(userService.searchUsersForProject(PROJECT, TABLE_REQUEST.getSearch(), TABLE_REQUEST.getCurrent(),
-				TABLE_REQUEST.getPageSize(), TABLE_REQUEST.getSort())).thenReturn(getPagedUsersForProject());
+				TABLE_REQUEST.getPageSize(), TABLE_REQUEST.getSort())).thenReturn(PAGE_USERS_FOR_PROJECT);
 
-		when(messageSource.getMessage("projectRole." + ProjectRole.PROJECT_OWNER.toString(), new Object[] {}, LOCALE))
-				.thenReturn("Manager");
-		when(messageSource.getMessage("projectRole." + ProjectRole.PROJECT_USER.toString(), new Object[] {}, LOCALE))
-				.thenReturn("Collaborator");
+		when(messageSource.getMessage("projectRole." + ProjectRole.PROJECT_OWNER, new Object[] {}, LOCALE)).thenReturn(
+				"Manager");
+		when(messageSource.getMessage("projectRole." + ProjectRole.PROJECT_USER, new Object[] {}, LOCALE)).thenReturn(
+				"Collaborator");
 
 		doThrow(ProjectWithoutOwnerException.class).when(projectService).removeUserFromProject(PROJECT, USER_3);
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
@@ -88,6 +88,13 @@ public class UIProjectMembersServiceTest {
 		assertNotNull(response.getDataSource());
 		List<ProjectMemberTableModel> members = response.getDataSource();
 		assertEquals(2, members.size(), "Should have 2 members");
+
+		// Test that the members are sorted by name (special case since name is not a property of the ProjectUserJoin)
+		TableRequest sortRequest = new TableRequest(0, 10, "user.firstName", "asc", "");
+		when(userService.searchUsersForProject(PROJECT, sortRequest.getSearch(), sortRequest.getCurrent(),
+				sortRequest.getPageSize(), sortRequest.getSort())).thenReturn(PAGE_USERS_FOR_PROJECT);
+		// Make sure no errors are thrown
+		service.getProjectMembers(PROJECT_ID, sortRequest);
 	}
 
 	@Test
@@ -138,87 +145,85 @@ public class UIProjectMembersServiceTest {
 				ProjectMetadataRole.LEVEL_1);
 	}
 
-	private Page<Join<Project, User>> getPagedUsersForProject() {
-		return new Page<Join<Project, User>>() {
-			@Override
-			public int getTotalPages() {
-				return 0;
-			}
+	private final Page<Join<Project, User>> PAGE_USERS_FOR_PROJECT = new Page<Join<Project, User>>() {
+		@Override
+		public int getTotalPages() {
+			return 0;
+		}
 
-			@Override
-			public long getTotalElements() {
-				return 2;
-			}
+		@Override
+		public long getTotalElements() {
+			return 2;
+		}
 
-			@Override
-			public <U> Page<U> map(Function<? super Join<Project, User>, ? extends U> converter) {
-				return null;
-			}
+		@Override
+		public <U> Page<U> map(Function<? super Join<Project, User>, ? extends U> converter) {
+			return null;
+		}
 
-			@Override
-			public int getNumber() {
-				return 0;
-			}
+		@Override
+		public int getNumber() {
+			return 0;
+		}
 
-			@Override
-			public int getSize() {
-				return 0;
-			}
+		@Override
+		public int getSize() {
+			return 0;
+		}
 
-			@Override
-			public int getNumberOfElements() {
-				return 0;
-			}
+		@Override
+		public int getNumberOfElements() {
+			return 0;
+		}
 
-			@Override
-			public List<Join<Project, User>> getContent() {
-				return projectUserJoins;
-			}
+		@Override
+		public List<Join<Project, User>> getContent() {
+			return projectUserJoins;
+		}
 
-			@Override
-			public boolean hasContent() {
-				return false;
-			}
+		@Override
+		public boolean hasContent() {
+			return false;
+		}
 
-			@Override
-			public Sort getSort() {
-				return null;
-			}
+		@Override
+		public Sort getSort() {
+			return null;
+		}
 
-			@Override
-			public boolean isFirst() {
-				return false;
-			}
+		@Override
+		public boolean isFirst() {
+			return false;
+		}
 
-			@Override
-			public boolean isLast() {
-				return false;
-			}
+		@Override
+		public boolean isLast() {
+			return false;
+		}
 
-			@Override
-			public boolean hasNext() {
-				return false;
-			}
+		@Override
+		public boolean hasNext() {
+			return false;
+		}
 
-			@Override
-			public boolean hasPrevious() {
-				return false;
-			}
+		@Override
+		public boolean hasPrevious() {
+			return false;
+		}
 
-			@Override
-			public Pageable nextPageable() {
-				return null;
-			}
+		@Override
+		public Pageable nextPageable() {
+			return null;
+		}
 
-			@Override
-			public Pageable previousPageable() {
-				return null;
-			}
+		@Override
+		public Pageable previousPageable() {
+			return null;
+		}
 
-			@Override
-			public Iterator<Join<Project, User>> iterator() {
-				return projectUserJoins.iterator();
-			}
-		};
-	}
+		@Override
+		public Iterator<Join<Project, User>> iterator() {
+			return projectUserJoins.iterator();
+		}
+	};
 }

@@ -36,6 +36,7 @@ export function PagedTable({ search = true, buttons, ...props }) {
         {search ? (
           <div>
             <Input
+              className="t-search"
               prefix={<IconSearch style={{ color: grey5 }} />}
               onChange={(e) => onSearch(e.target.value)}
             />
