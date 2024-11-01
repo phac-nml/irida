@@ -205,7 +205,7 @@ dependencies {
     implementation(files("${projectDir}/lib/blend4j-0.2.1-2201df9.jar"))
 
     // Runtime dependencies
-    runtimeOnly("mysql:mysql-connector-java")
+    runtimeOnly("com.mysql:mysql-connector-j")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 
     // Testing dependencies
