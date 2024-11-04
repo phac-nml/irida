@@ -205,7 +205,7 @@ dependencies {
     implementation(files("${projectDir}/lib/blend4j-0.2.1-2201df9.jar"))
 
     // Runtime dependencies
-    runtimeOnly("mysql:mysql-connector-java")
+    runtimeOnly("com.mysql:mysql-connector-j")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 
     // Testing dependencies
@@ -435,8 +435,14 @@ task<JavaExec>("toolsListExport") {
     args("${buildDir}/tools-list.yml")
 }
 
-tasks.named<BootRun>("bootRun") {
-    if (project.gradle.taskGraph.hasTask(":generateOpenApiDocs")) {
+task<Exec>("generateJWKKeyStore") {
+    workingDir(file("${projectDir}/src/main/resources"))
+    commandLine(listOf("keytool", "-genkeypair", "-alias", "JWK", "-keyalg", "RSA", "-noprompt", "-dname", "CN=irida.bioinformatics.corefacility.ca, OU=ID, O=IRIDA, L=IRIDA, S=IRIDA, C=CA", "-keystore", "jwk-key-store.jks", "-validity", "3650", "-storepass", "SECRET", "-keypass", "SECRET", "-storetype", "PKCS12"))
+    outputs.file(file("${projectDir}/src/main/resources/jwk-key-store.jks"))
+}
+
+openApi {
+    customBootRun {
         val defaultSystemProperties = mapOf(
             "spring.profiles.active" to "dev,swagger",
             "liquibase.update.database.schema" to "false",
@@ -445,17 +451,8 @@ tasks.named<BootRun>("bootRun") {
         )
         val providedSystemProperties = System.getProperties().mapKeys { it.key as String }
         val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it in defaultSystemProperties}
-        systemProperties(defaultSystemProperties + filteredProvidedSystemProperties)
+        systemProperties.set(defaultSystemProperties + filteredProvidedSystemProperties)
     }
-}
-
-task<Exec>("generateJWKKeyStore") {
-    workingDir(file("${projectDir}/src/main/resources"))
-    commandLine(listOf("keytool", "-genkeypair", "-alias", "JWK", "-keyalg", "RSA", "-noprompt", "-dname", "CN=irida.bioinformatics.corefacility.ca, OU=ID, O=IRIDA, L=IRIDA, S=IRIDA, C=CA", "-keystore", "jwk-key-store.jks", "-validity", "3650", "-storepass", "SECRET", "-keypass", "SECRET", "-storetype", "PKCS12"))
-    outputs.file(file("${projectDir}/src/main/resources/jwk-key-store.jks"))
-}
-
-openApi {
     outputDir.set(file("${projectDir}/doc/swagger-ui"))
     outputFileName.set("open-api.json")
     waitTimeInSeconds.set(60)
