@@ -172,7 +172,7 @@ dependencies {
     implementation("org.biojava:biojava3-core:3.0")
     implementation("com.google.code.gson:gson")
     implementation("com.github.pjfanning:excel-streaming-reader:4.0.4")
-    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.11") {
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.8.0") {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
     }
