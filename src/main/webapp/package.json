@@ -38,7 +38,7 @@
     "ag-grid-community": "^27.1.0",
     "ag-grid-react": "^27.1.0",
     "antd": "4.19.5",
-    "axios": "^0.26.1",
+    "axios": "^1.7.7",
     "clipboard": "^1.7.1",
     "dayjs": "^1.11.1",
     "deck.gl": "^8.7.12",
