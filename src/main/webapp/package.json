@@ -72,7 +72,7 @@
     "tslib": "^2.3.1",
     "uniqolor": "^1.0.2",
     "uuid": "^8.3.2",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
