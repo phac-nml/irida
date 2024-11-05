@@ -19,8 +19,8 @@ importers:
   .:
     dependencies:
       '@ag-grid-community/csv-export':
-        specifier: ^27.1.0
-        version: 27.3.0
+        specifier: ^29.3.5
+        version: 29.3.5
       '@ant-design/icons':
         specifier: ^4.7.0
         version: 4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
@@ -70,11 +70,11 @@ importers:
         specifier: 1.8.5
         version: 1.8.5(react-redux@7.2.9(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
       ag-grid-community:
-        specifier: ^27.1.0
-        version: 27.3.0
+        specifier: ^29.3.5
+        version: 29.3.5
       ag-grid-react:
-        specifier: ^27.1.0
-        version: 27.3.0(ag-grid-community@27.3.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+        specifier: ^29.3.5
+        version: 29.3.5(ag-grid-community@29.3.5)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       antd:
         specifier: 4.19.5
         version: 4.19.5(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
@@ -331,11 +331,11 @@ importers:
 
 packages:
 
-  '@ag-grid-community/core@27.3.0':
-    resolution: {integrity: sha512-77/bE2KdFlFI/ywEP46aSspXtgBteY/OPQyzU/lWqYrG2wC6cLfPSUB60t9e0FiqElwM/Vdcjz0TAjRwhZOPkw==}
+  '@ag-grid-community/core@29.3.5':
+    resolution: {integrity: sha512-r86bOCscnKVtaYyKqlN2UCtfbjf4UcmxHfVuXzJ94iN8Jy3iiQVrbQnbNArnjR589Bt/1VR/m+SdAMsOLcdpag==}
 
-  '@ag-grid-community/csv-export@27.3.0':
-    resolution: {integrity: sha512-7pR05jEqTdUPAoqEMHxXGh6j0KViGmqLa4uwKmriKzfZOvwlq6umjDmXvPFCRCWfswb9KOqS1iZlGhcWufKApQ==}
+  '@ag-grid-community/csv-export@29.3.5':
+    resolution: {integrity: sha512-8NOAmioHhapqvYdu1QjAzwQH5jihuOlaKk6FpF/8ECvLQePhoIK6rOyhcktOot4ZWo5f8q/4Ph5LGK3oFzdU9g==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -2047,13 +2047,13 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  ag-grid-community@27.3.0:
-    resolution: {integrity: sha512-R5oZMXEHXnOLrmhn91J8lR0bv6IAnRcU6maO+wKLMJxffRWaAYFAuw1jt7bdmcKCv8c65F6LEBx4ykSOALa9vA==}
+  ag-grid-community@29.3.5:
+    resolution: {integrity: sha512-LxUo21f2/CH31ACEs1C7Q/ggGGI1fQPSTB4aY5OThmM+lBkygZ7QszBE8jpfgWOIjvjdtcdIeQbmbjkHeMsA7A==}
 
-  ag-grid-react@27.3.0:
-    resolution: {integrity: sha512-2bs9YfJ/shvBZQLLjny4NFvht+ic6VtpTPO0r3bHHOhlL3Fjx2rGvS6AHSwfvu+kJacHCta30PjaEbX8T3UDyw==}
+  ag-grid-react@29.3.5:
+    resolution: {integrity: sha512-Eg0GJ8hEBuxdVaN5g+qITOzhw0MGL9avL0Oaajr+p7QRtq2pIFHLZSknWsCBzUTjidiu75WZMKwlZjtGEuafdQ==}
     peerDependencies:
-      ag-grid-community: ~27.3.0
+      ag-grid-community: ~29.3.5
       react: ^16.3.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.3.0 || ^17.0.0 || ^18.0.0
 
@@ -5816,11 +5816,11 @@ packages:
 
 snapshots:
 
-  '@ag-grid-community/core@27.3.0': {}
+  '@ag-grid-community/core@29.3.5': {}
 
-  '@ag-grid-community/csv-export@27.3.0':
+  '@ag-grid-community/csv-export@29.3.5':
     dependencies:
-      '@ag-grid-community/core': 27.3.0
+      '@ag-grid-community/core': 29.3.5
 
   '@ampproject/remapping@2.3.0':
     dependencies:
@@ -8153,11 +8153,11 @@ snapshots:
 
   acorn@8.14.0: {}
 
-  ag-grid-community@27.3.0: {}
+  ag-grid-community@29.3.5: {}
 
-  ag-grid-react@27.3.0(ag-grid-community@27.3.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
+  ag-grid-react@29.3.5(ag-grid-community@29.3.5)(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
     dependencies:
-      ag-grid-community: 27.3.0
+      ag-grid-community: 29.3.5
       prop-types: 15.8.1
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)

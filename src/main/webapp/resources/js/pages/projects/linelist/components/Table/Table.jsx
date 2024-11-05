@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { Button, notification, Spin } from "antd";
 import isEqual from "lodash/isEqual";
 import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-material.css";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-material.css";
 import { CsvExportModule } from "@ag-grid-community/csv-export";
 import LoadingOverlay from "./LoadingOverlay";
 import {
