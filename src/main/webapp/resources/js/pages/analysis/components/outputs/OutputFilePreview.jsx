@@ -67,7 +67,8 @@ export default function OutputFilePreview() {
     let excelOutput = [];
 
     for (const output of analysisOutputsContext.outputs) {
-      if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
+      if (!Object.prototype.hasOwnProperty.call(output, "fileExt") || 
+          !Object.prototype.hasOwnProperty.call(output, "id")) {
         continue;
       }
 
@@ -90,7 +91,8 @@ export default function OutputFilePreview() {
     let htmlOutput = [];
 
     for (const output of analysisOutputsContext.outputs) {
-      if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
+      if (!Object.prototype.hasOwnProperty.call(output, "fileExt") || 
+          !Object.prototype.hasOwnProperty.call(output, "id")) {
         continue;
       }
 
@@ -112,7 +114,8 @@ export default function OutputFilePreview() {
     let imageOutput = [];
 
     for (const output of analysisOutputsContext.outputs) {
-      if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
+      if (!Object.prototype.hasOwnProperty.call(output, "fileExt") || 
+          !Object.prototype.hasOwnProperty.call(output, "id")) {
         continue;
       }
 
@@ -134,7 +137,8 @@ export default function OutputFilePreview() {
     let jsonOutput = [];
 
     for (const output of analysisOutputsContext.outputs) {
-      if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
+      if (!Object.prototype.hasOwnProperty.call(output, "fileExt") || 
+          !Object.prototype.hasOwnProperty.call(output, "id")) {
         continue;
       }
 
@@ -157,7 +161,8 @@ export default function OutputFilePreview() {
     let tabularOutput = [];
 
     for (const output of analysisOutputsContext.outputs) {
-      if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
+      if (!Object.prototype.hasOwnProperty.call(output, "fileExt") || 
+          !Object.prototype.hasOwnProperty.call(output, "id")) {
         continue;
       }
 
@@ -180,7 +185,8 @@ export default function OutputFilePreview() {
     let textOutput = [];
 
     for (const output of analysisOutputsContext.outputs) {
-      if (!output.hasOwnProperty("fileExt") || !output.hasOwnProperty("id")) {
+      if (!Object.prototype.hasOwnProperty.call(output, "fileExt") || 
+          !Object.prototype.hasOwnProperty.call(output, "id")) {
         continue;
       }
 
