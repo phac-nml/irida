@@ -5,6 +5,7 @@ import React from "react";
  */
 export function FilteredCounts(props) {
   return (
+    // eslint-disable-next-line react/no-unknown-property
     <span tour="tour-filter-counts">
       {i18n(
         "linelist.infobar.filterCounts",
