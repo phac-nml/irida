@@ -235,7 +235,7 @@ export default function CreateNewUser() {
                 label={i18n("CreateNewUser.form.password.label")}
                 name="password"
                 rules={[
-                  ({}) => ({
+                  () => ({
                     validator(_, value) {
                       return validatePassword(value);
                     },
