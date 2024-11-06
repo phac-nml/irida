@@ -79,10 +79,14 @@ export default function SequencingRunDetailsPage() {
       ];
 
   const optionalPropertiesList = [];
-  run.optionalProperties &&
-    Object.entries(run.optionalProperties).map(([key, value]) =>
-      optionalPropertiesList.push({ title: key, desc: value })
+  if (run.optionalProperties) {
+    optionalPropertiesList.push(
+      ...Object.entries(run.optionalProperties).map(([key, value]) => ({
+        title: key,
+        desc: value,
+      }))
     );
+  }
 
   const columns = [
     {
