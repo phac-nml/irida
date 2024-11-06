@@ -82,7 +82,9 @@ export function AddClientModal({ children, onComplete, existing = null }) {
       const { message } = await onComplete(values);
       notification.success({ message });
       updateTable();
-      !existing && form.resetFields();
+      if (!existing) {
+        form.resetFields();
+      }
       setVisible(false);
     } catch (errors) {
       // Re-enforce the error to the user
