@@ -160,7 +160,7 @@ function PasswordResetForm() {
               <Item
                 name="password"
                 rules={[
-                  ({}) => ({
+                  () => ({
                     validator(_, value) {
                       let validationResult = validatePassword(value);
                       validationResult
