@@ -13,7 +13,7 @@ import { isAdmin } from "../../utilities/role-utilities";
  * @returns {*}
  * @constructor
  */
-export function RemoteApiPage({}) {
+export function RemoteApiPage() {
   return (
     <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
       <PageWrapper
