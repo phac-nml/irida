@@ -183,11 +183,10 @@ export default function AnalysisProvenance() {
       analysisOutputsContext.outputs.length > 0
     ) {
       for (let output of analysisOutputsContext.outputs) {
-        {
-          provenance !== null && currFileName === output.filename
-            ? getPreviousExecutionTools(provenance.data.createdByTool, 0)
-            : "";
+        if (provenance !== null && currFileName === output.filename) {
+          getPreviousExecutionTools(provenance.data.createdByTool, 0);
         }
+        
         panels.push(
           <Panel
             header={output.filename}
