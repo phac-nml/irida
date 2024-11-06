@@ -37,6 +37,7 @@ export const store = configureStore({
       projectApi.middleware,
       associatedProjectsApi.middleware
     ),
+  // eslint-disable-next-line no-undef
   devTools: process.env.NODE_ENV !== "production",
 });
 setupListeners(store.dispatch);
