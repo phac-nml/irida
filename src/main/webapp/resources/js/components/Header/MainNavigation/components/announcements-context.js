@@ -24,6 +24,7 @@ export const TYPES = {
 const reducer = (state, action) => {
   switch (action.type) {
     case TYPES.LOADED:
+      // eslint-disable-next-line no-case-declarations
       const isPriority =
         action.payload.announcements.filter((a) => a.priority).length > 0;
       return {
@@ -49,6 +50,7 @@ const reducer = (state, action) => {
         announcements: state.announcements.filter((a) => !a.read),
       };
     case TYPES.READ_AND_NEXT:
+      // eslint-disable-next-line no-case-declarations
       const newNextAnnouncements = [...state.announcements];
       newNextAnnouncements[state.index] = action.payload.announcement;
       return {
@@ -57,6 +59,7 @@ const reducer = (state, action) => {
         announcements: newNextAnnouncements,
       };
     case TYPES.READ_AND_PREVIOUS:
+      // eslint-disable-next-line no-case-declarations
       const newPreviousAnnouncements = [...state.announcements];
       newPreviousAnnouncements[state.index] = action.payload.announcement;
       return {
@@ -65,6 +68,7 @@ const reducer = (state, action) => {
         announcements: newPreviousAnnouncements,
       };
     case TYPES.READ_AND_CLOSE:
+      // eslint-disable-next-line no-case-declarations
       const newCloseAnnouncements = [...state.announcements];
       newCloseAnnouncements[state.index] = action.payload.announcement;
       return {
