@@ -126,7 +126,7 @@ dependencies {
     implementation("org.springframework.ldap:spring-ldap-core")
     implementation("org.springframework.security:spring-security-ldap")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.3")
-    implementation("com.nimbusds:oauth2-oidc-sdk:10.1")
+    implementation("com.nimbusds:oauth2-oidc-sdk:11.20.1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.data:spring-data-envers") {
         exclude(group = "org.slf4j")
