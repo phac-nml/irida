@@ -52,32 +52,32 @@ export default class Pipeline extends React.Component {
       pipelineUrl = `${pipelineUrl}&automatedProject=${this.props.automatedProject}`;
     }
     return (
-      (<PipelineCard
-                                  cover={
-                                    <Heading className={this.props.styleName} title={this.props.name}>
-                                      {this.props.name}
-                                    </Heading>
-                                  }
-                                  className={`t-pipeline-card`}
-                                  actions={
-                                    this.props.displaySelect
-                                      ? [
-                                          <Button
-                                            type="link"
-                                            className={`t-${this.props.name.replace(
-                                              /\s/g,
-                                              "_"
-                                            )}_btn t-select-pipeline`}
-                                            href={pipelineUrl}
-                                          >
-                                            {i18n("pipelines.cart.select")}
-                                          </Button>,
-                                        ]
-                                      : []
-                                  }
-                                >
+      <PipelineCard
+        cover={
+          <Heading className={this.props.styleName} title={this.props.name}>
+            {this.props.name}
+          </Heading>
+        }
+        className={`t-pipeline-card`}
+        actions={
+          this.props.displaySelect
+            ? [
+                <Button
+                  type="link"
+                  className={`t-${this.props.name.replace(
+                    /\s/g,
+                    "_"
+                  )}_btn t-select-pipeline`}
+                  href={pipelineUrl}
+                >
+                  {i18n("pipelines.cart.select")}
+                </Button>,
+              ]
+            : []
+        }
+      >
         {this.props.description}
-      </PipelineCard>)
+      </PipelineCard>
     );
   }
 }

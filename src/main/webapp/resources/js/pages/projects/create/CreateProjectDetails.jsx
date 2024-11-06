@@ -35,52 +35,54 @@ export function CreateProjectDetails({ form }) {
     form.setFieldsValue({ organism: value });
   };
 
-  return (<>
-    <Form.Item
-      name="name"
-      label={i18n("CreateProjectDetails.name")}
-      required
-      rules={[
-        {
-          required: true,
-          message: i18n("CreateProjectDetails.name-required"),
-        },
-        {
-          pattern: /^[a-zA-Z0-9\s_-]+$/,
-          message: i18n("CreateProjectDetails.name-characters"),
-        },
-        {
-          type: "string",
-          min: 5,
-          message: i18n("CreateProjectDetails.length"),
-        },
-      ]}
-    >
-      <Input className="t-name-input" type={"text"} ref={nameRef} />
-    </Form.Item>
-    <Form.Item
-      name={"organism"}
-      label={i18n("projects.create.form.organism")}
-    >
-      <OntologyInput
-        term={organism}
-        onTermSelected={setFormOrganism}
-        ontology={TAXONOMY}
-        autofocus={false}
-      />
-    </Form.Item>
-    <Form.Item
-      label={i18n("projects.create.form.description")}
-      name="description"
-    >
-      <Input.TextArea className="t-desc-input" />
-    </Form.Item>
-    <Form.Item
-      name={"remoteURL"}
-      label={i18n("projects.create.form.wiki")}
-      rules={[{ type: "url", required: false }]}
-    >
-      <Input className="t-wiki-input" type="url" />
-    </Form.Item>
-  </>);
+  return (
+    <>
+      <Form.Item
+        name="name"
+        label={i18n("CreateProjectDetails.name")}
+        required
+        rules={[
+          {
+            required: true,
+            message: i18n("CreateProjectDetails.name-required"),
+          },
+          {
+            pattern: /^[a-zA-Z0-9\s_-]+$/,
+            message: i18n("CreateProjectDetails.name-characters"),
+          },
+          {
+            type: "string",
+            min: 5,
+            message: i18n("CreateProjectDetails.length"),
+          },
+        ]}
+      >
+        <Input className="t-name-input" type={"text"} ref={nameRef} />
+      </Form.Item>
+      <Form.Item
+        name={"organism"}
+        label={i18n("projects.create.form.organism")}
+      >
+        <OntologyInput
+          term={organism}
+          onTermSelected={setFormOrganism}
+          ontology={TAXONOMY}
+          autofocus={false}
+        />
+      </Form.Item>
+      <Form.Item
+        label={i18n("projects.create.form.description")}
+        name="description"
+      >
+        <Input.TextArea className="t-desc-input" />
+      </Form.Item>
+      <Form.Item
+        name={"remoteURL"}
+        label={i18n("projects.create.form.wiki")}
+        rules={[{ type: "url", required: false }]}
+      >
+        <Input className="t-wiki-input" type="url" />
+      </Form.Item>
+    </>
+  );
 }
