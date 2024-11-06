@@ -20,7 +20,7 @@ export default function ProjectUserGroups() {
       url={setBaseUrl(`/ajax/projects/groups?projectId=${projectId}`)}
     >
       <Title level={2}>{i18n("ProjectUserGroups.title")}</Title>
-      <ProjectUserGroupsTable projectId={projectId}/>
+      <ProjectUserGroupsTable projectId={projectId} />
     </PagedTableProvider>
   );
 }

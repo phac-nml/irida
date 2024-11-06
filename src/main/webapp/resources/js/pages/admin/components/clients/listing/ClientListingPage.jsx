@@ -1,8 +1,6 @@
 import React from "react";
 import { createClient } from "../../../../../apis/clients/clients";
-import {
-  PagedTableProvider
-} from "../../../../../components/ant.design/PagedTable";
+import { PagedTableProvider } from "../../../../../components/ant.design/PagedTable";
 import { AddNewButton } from "../../../../../components/Buttons/AddNewButton";
 import { PageWrapper } from "../../../../../components/page/PageWrapper";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";

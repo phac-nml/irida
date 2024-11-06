@@ -16,7 +16,7 @@ import {
   IconLinkOut,
   IconOrderedList,
   IconStrikeThrough,
-  IconUnorderedList
+  IconUnorderedList,
 } from "../icons/Icons";
 
 const StyledMde = styled(ReactMde)`
@@ -57,7 +57,7 @@ export const MarkdownEditor = forwardRef(({ markdown }, ref) => {
   useImperativeHandle(ref, () => ({
     getMarkdown() {
       return value;
-    }
+    },
   }));
 
   function formatIcon(cmd) {

@@ -4,7 +4,7 @@ import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
 import { Popover } from "antd";
 import {
   IconExclamationCircle,
-  IconInfoCircle
+  IconInfoCircle,
 } from "../../../../../../components/icons/Icons";
 import { grey1 } from "../../../../../../styles/colors";
 import { SPACE_XS } from "../../../../../../styles/spacing";

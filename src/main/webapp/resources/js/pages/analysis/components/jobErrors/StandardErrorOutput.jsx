@@ -9,7 +9,7 @@ import { SPACE_MD, SPACE_XS } from "../../../../styles/spacing";
 
 import {
   IconSortAscending,
-  IconSortDescending
+  IconSortDescending,
 } from "../../../../components/icons/Icons";
 
 export function StandardErrorOutput({ galaxyError }) {
@@ -24,7 +24,7 @@ export function StandardErrorOutput({ galaxyError }) {
           style={{
             display: "flex",
             justifyContent: "flex-end",
-            marginBottom: SPACE_MD
+            marginBottom: SPACE_MD,
           }}
         >
           <Button type="default" onClick={() => setReversed(!reversed)}>

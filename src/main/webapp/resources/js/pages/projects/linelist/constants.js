@@ -3,9 +3,9 @@ export const FIELDS = {
   sampleId: "irida-static-sample-id",
   projectName: "irida-static-project-name",
   projectId: "irida-static-project-id",
-  icons: "icons"
+  icons: "icons",
 };
 
 export const TYPES = {
-  date: "date"
+  date: "date",
 };

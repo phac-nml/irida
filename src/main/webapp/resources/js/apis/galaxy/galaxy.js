@@ -12,8 +12,8 @@ const GALAXY_AJAX_URL = setBaseUrl(`ajax/galaxy-export`);
 export function validateOauthClient() {
   const redirect = `${window.PAGE.galaxyRedirect}`;
   return authenticateOauthClient(window.GALAXY.CLIENT_ID, redirect)
-    .then(code => code)
-    .catch(response => response);
+    .then((code) => code)
+    .catch((response) => response);
 }
 
 /**

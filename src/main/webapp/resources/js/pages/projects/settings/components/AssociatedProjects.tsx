@@ -17,7 +17,9 @@ export default function AssociatedProjects(): JSX.Element {
         <Typography.Text type="secondary">
           {i18n("AssociatedProjects.subTitle")}
         </Typography.Text>
-        { projectId && <ViewAssociatedProjects projectId={parseInt(projectId)} />}
+        {projectId && (
+          <ViewAssociatedProjects projectId={parseInt(projectId)} />
+        )}
       </Space>
     </>
   );

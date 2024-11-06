@@ -12,9 +12,8 @@ import { useParams } from "react-router-dom";
 export default function MetadataFieldsListMember() {
   const { projectId } = useParams();
 
-  const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
-    projectId
-  );
+  const { data: fields, isLoading } =
+    useGetMetadataFieldsForProjectQuery(projectId);
 
   const columns = [
     {

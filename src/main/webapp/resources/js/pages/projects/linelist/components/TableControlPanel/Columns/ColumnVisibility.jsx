@@ -25,7 +25,6 @@ const ColumnItemText = styled.span`
 `;
 
 export default class ColumnVisibility extends React.Component {
-
   /**
    * Handle togging of a check box.
    * @param {object} item - Metadata Field selected
@@ -47,7 +46,7 @@ export default class ColumnVisibility extends React.Component {
       columns = [
         ...(template.modified.length === 0
           ? template.fields
-          : template.modified)
+          : template.modified),
       ];
     }
 
@@ -57,19 +56,19 @@ export default class ColumnVisibility extends React.Component {
           <div style={{ overflowY: "auto", height: this.props.height - 77 }}>
             <List
               dataSource={columns.filter(
-                f => f.field !== FIELDS.sampleName && f.field !== FIELDS.icons
+                (f) => f.field !== FIELDS.sampleName && f.field !== FIELDS.icons
               )}
-              renderItem={item => (
+              renderItem={(item) => (
                 <ColumnItem
                   actions={[
                     <Switch
                       size="small"
                       className="t-field-switch"
                       checked={!item.hide}
-                      onChange={checked =>
+                      onChange={(checked) =>
                         this.fieldUpdated(item, checked, columns)
                       }
-                    />
+                    />,
                   ]}
                 >
                   <ColumnItemText>{item.headerName}</ColumnItemText>

@@ -15,7 +15,9 @@ export interface ActivateAccountProps {
  * @param updateDisplayLoginPage Function to update whether to display login page
  * @constructor
  */
-export function ActivateAccount({ updateDisplayLoginPage }: ActivateAccountProps): JSX.Element {
+export function ActivateAccount({
+  updateDisplayLoginPage,
+}: ActivateAccountProps): JSX.Element {
   const [loading, setLoading] = React.useState(false);
   const [activateAccount] = useActivateAccountMutation();
   const [activateAccountForm] = Form.useForm();

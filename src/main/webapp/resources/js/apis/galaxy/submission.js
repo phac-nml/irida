@@ -16,7 +16,7 @@ export const exportToGalaxy = ({
   includeFast5,
   oauthCode,
   oauthRedirect,
-  samples
+  samples,
 }) => {
   const name = `IRIDA-${Date.now()}`;
 
@@ -33,10 +33,10 @@ export const exportToGalaxy = ({
       includeFast5,
       oauth2: {
         code: oauthCode,
-        redirect: oauthRedirect
+        redirect: oauthRedirect,
       },
-      samples
-    }
+      samples,
+    },
   };
 
   /*

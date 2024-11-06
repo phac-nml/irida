@@ -37,9 +37,8 @@ export function AnalysisSampleRenderer() {
   }, []);
 
   const [filteredSamples, setFilteredSamples] = useState(null);
-  const [filteredSingleEndSamples, setSingleEndFilteredSamples] = useState(
-    null
-  );
+  const [filteredSingleEndSamples, setSingleEndFilteredSamples] =
+    useState(null);
   const SEQ_FILES_BASE_URL = setBaseUrl("sequenceFiles");
 
   const getProjectId = (sampleId) => {
@@ -90,6 +89,7 @@ export function AnalysisSampleRenderer() {
                       <a
                         href={`${SEQ_FILES_BASE_URL}/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
                         target="_blank"
+                        rel="noreferrer"
                       >
                         {item.forward.fileName}
                       </a>
@@ -98,6 +98,7 @@ export function AnalysisSampleRenderer() {
                       <a
                         href={`${SEQ_FILES_BASE_URL}/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
                         target="_blank"
+                        rel="noreferrer"
                       >
                         {item.reverse.fileName}
                       </a>
@@ -153,6 +154,7 @@ export function AnalysisSampleRenderer() {
                       <a
                         href={`${SEQ_FILES_BASE_URL}/${item.fileId}/file/${item.sequenceFile.identifier}/summary`}
                         target="_blank"
+                        rel="noreferrer"
                       >
                         {item.sequenceFile.fileName}
                       </a>
@@ -181,19 +183,21 @@ export function AnalysisSampleRenderer() {
       setSingleEndFilteredSamples(analysisSamplesContext.singleEndSamples);
     } else {
       searchStr = String(searchStr).toLowerCase();
-      const samplesContainingSearchValue = analysisSamplesContext.samples.filter(
-        (sample) =>
-          sample.sampleName.toLowerCase().includes(searchStr) ||
-          sample.forward.fileName.toLowerCase().includes(searchStr) ||
-          sample.reverse.fileName.toLowerCase().includes(searchStr)
-      );
+      const samplesContainingSearchValue =
+        analysisSamplesContext.samples.filter(
+          (sample) =>
+            sample.sampleName.toLowerCase().includes(searchStr) ||
+            sample.forward.fileName.toLowerCase().includes(searchStr) ||
+            sample.reverse.fileName.toLowerCase().includes(searchStr)
+        );
 
-      const singleEndSamplesContainingSearchValue = analysisSamplesContext.singleEndSamples.filter(
-        (sample) =>
-          sample.sampleName.toLowerCase().includes(searchStr) ||
-          sample.forward.fileName.toLowerCase().includes(searchStr) ||
-          sample.reverse.fileName.toLowerCase().includes(searchStr)
-      );
+      const singleEndSamplesContainingSearchValue =
+        analysisSamplesContext.singleEndSamples.filter(
+          (sample) =>
+            sample.sampleName.toLowerCase().includes(searchStr) ||
+            sample.forward.fileName.toLowerCase().includes(searchStr) ||
+            sample.reverse.fileName.toLowerCase().includes(searchStr)
+        );
 
       setFilteredSamples(samplesContainingSearchValue);
       setSingleEndFilteredSamples(singleEndSamplesContainingSearchValue);

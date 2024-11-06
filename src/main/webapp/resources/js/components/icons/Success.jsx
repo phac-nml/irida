@@ -19,7 +19,7 @@ import { IconCheckCircle } from "./Icons";
 export function Success({ message }) {
   return (
     <span>
-      <IconCheckCircle style={{color: green6, marginRight: SPACE_XS}} />
+      <IconCheckCircle style={{ color: green6, marginRight: SPACE_XS }} />
       {message}
     </span>
   );

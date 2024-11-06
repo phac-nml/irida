@@ -8,7 +8,7 @@
     "clean": "run-z --then rm -rf dist/ pages/templates/i18n/",
     "test": "run-z --then jest resources/js/**/*.test.js",
     "test_watch": "run-z --then jest --watch resources/js/**/*.test.js",
-    "lint": "run-z --then eslint --ext 'resources/js/**/*.{js,jsx,ts,tsx}'"
+    "lint": "run-z --then eslint 'resources/js/**/*.{js,jsx,ts,tsx}'"
   },
   "browserslist": [
     "last 2 Chrome versions",

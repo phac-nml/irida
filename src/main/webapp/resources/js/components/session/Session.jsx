@@ -3,7 +3,7 @@ import SessionModal from "./SessionModal";
 
 function interceptHTTP(handler) {
   // Capture all ajax requests, these will indicate a need to reset the timeout.
-  const open = window.XMLHttpRequest.prototype.open;
+  const { open } = window.XMLHttpRequest.prototype;
 
   function openReplacement() {
     // Restart the timeout

@@ -11,10 +11,8 @@ import { PageWrapper } from "../../../../components/page/PageWrapper";
  */
 
 export default function UserSingleSampleAnalysisOutputs() {
-  const {
-    data: userSingleSampleAnalysisOutputs = {},
-    isLoading,
-  } = useGetUserSingleSampleAnalysisOutputsQuery();
+  const { data: userSingleSampleAnalysisOutputs = {}, isLoading } =
+    useGetUserSingleSampleAnalysisOutputsQuery();
 
   return (
     <PageWrapper title={i18n("UserSingleSampleAnalysisOutputs.title")}>

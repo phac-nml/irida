@@ -25,9 +25,8 @@ const { Paragraph, Text } = Typography;
 export default function MetadataTemplateMember() {
   const navigate = useNavigate();
   const { id, projectId } = useParams();
-  const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
-    projectId
-  );
+  const { data: templates, isLoading } =
+    useGetTemplatesForProjectQuery(projectId);
   const [template, setTemplate] = React.useState({});
 
   React.useEffect(() => {

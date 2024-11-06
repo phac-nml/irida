@@ -5,14 +5,19 @@ import {
   IconExperiment,
   IconShare,
 } from "../../../components/icons/Icons";
-import { fetchUserStatistics, UserStatistics } from "../../../apis/dashboard/dashboard";
+import {
+  fetchUserStatistics,
+  UserStatistics,
+} from "../../../apis/dashboard/dashboard";
 import { blue6 } from "../../../styles/colors";
 
 declare let window: IridaWindow;
 
 const userId = window.TL._USER.identifier;
 
-const StatCol = ({ children }: {children: React.ReactNode}): JSX.Element => <Col span={8}>{children}</Col>;
+const StatCol = ({ children }: { children: React.ReactNode }): JSX.Element => (
+  <Col span={8}>{children}</Col>
+);
 
 /**
  * Component to display user statistics

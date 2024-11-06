@@ -1,7 +1,10 @@
 /**
  * @file API the ProjectSettingsAssociatedProjectsController
  */
-import { buildCreateApi, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const BASE_URL = setBaseUrl(`/ajax/projects/associated`);
@@ -19,8 +22,8 @@ export type AssociatedProjectsResponse = AssociatedProject[];
 export type ListAssociatedProjectsResponse = object[];
 
 export interface AssociatedProjectsParams {
-  projectId: number, 
-  associatedProjectId: number
+  projectId: number;
+  associatedProjectId: number;
 }
 
 /**
@@ -30,81 +33,116 @@ export interface AssociatedProjectsParams {
 export const associatedProjectsApi = createApi({
   reducerPath: `associatedProjectsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL
+    baseUrl: BASE_URL,
   }),
   tagTypes: ["AssociatedProject"],
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     getAssociatedProjects: builder.query<AssociatedProjectsResponse, number>({
-      query: projectId => ({ url: "", params: { projectId } }),
-      providesTags: result =>
+      query: (projectId) => ({ url: "", params: { projectId } }),
+      providesTags: (result) =>
         result
           ? result.map(({ id }) => ({
               type: "AssociatedProject",
-              id
+              id,
             }))
-          : []
+          : [],
     }),
-    addAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
+    addAssociatedProject: builder.mutation<
+      AssociatedProjectsResponse,
+      AssociatedProjectsParams
+    >({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
-        method: "POST"
+        method: "POST",
       }),
-      async onQueryStarted({projectId, associatedProjectId}, { dispatch, queryFulfilled}) {
+      async onQueryStarted(
+        { projectId, associatedProjectId },
+        { dispatch, queryFulfilled }
+      ) {
         try {
           await queryFulfilled;
           dispatch(
-            associatedProjectsApi.util.updateQueryData('getAssociatedProjects', projectId, (draft) => {
-              // find and update the corresponding associatedProject in the cache if it exists
-              const draftAssociatedProject = draft.find((_draftAssociatedProject) => _draftAssociatedProject.id === associatedProjectId);
-              if (!draftAssociatedProject) return;
-              const updatedAssociatedProject = {...draftAssociatedProject, associated: true};
-              Object.assign(draftAssociatedProject, updatedAssociatedProject);
-            })
-          )
+            associatedProjectsApi.util.updateQueryData(
+              "getAssociatedProjects",
+              projectId,
+              (draft) => {
+                // find and update the corresponding associatedProject in the cache if it exists
+                const draftAssociatedProject = draft.find(
+                  (_draftAssociatedProject) =>
+                    _draftAssociatedProject.id === associatedProjectId
+                );
+                if (!draftAssociatedProject) return;
+                const updatedAssociatedProject = {
+                  ...draftAssociatedProject,
+                  associated: true,
+                };
+                Object.assign(draftAssociatedProject, updatedAssociatedProject);
+              }
+            )
+          );
         } catch {
           //do nothing
         }
-      }
+      },
     }),
-    removeAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
+    removeAssociatedProject: builder.mutation<
+      AssociatedProjectsResponse,
+      AssociatedProjectsParams
+    >({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
-        method: "DELETE"
+        method: "DELETE",
       }),
-      async onQueryStarted({projectId, associatedProjectId}, { dispatch, queryFulfilled}) {
+      async onQueryStarted(
+        { projectId, associatedProjectId },
+        { dispatch, queryFulfilled }
+      ) {
         try {
           await queryFulfilled;
           dispatch(
-            associatedProjectsApi.util.updateQueryData('getAssociatedProjects', projectId, (draft) => {
-              // find and update the corresponding associatedProject in the cache if it exists
-              const draftAssociatedProject = draft.find((_draftAssociatedProject) => _draftAssociatedProject.id === associatedProjectId);
-              if (!draftAssociatedProject) return;
-              const updatedAssociatedProject = {...draftAssociatedProject, associated: false};
-              Object.assign(draftAssociatedProject, updatedAssociatedProject);
-            })
-          )
+            associatedProjectsApi.util.updateQueryData(
+              "getAssociatedProjects",
+              projectId,
+              (draft) => {
+                // find and update the corresponding associatedProject in the cache if it exists
+                const draftAssociatedProject = draft.find(
+                  (_draftAssociatedProject) =>
+                    _draftAssociatedProject.id === associatedProjectId
+                );
+                if (!draftAssociatedProject) return;
+                const updatedAssociatedProject = {
+                  ...draftAssociatedProject,
+                  associated: false,
+                };
+                Object.assign(draftAssociatedProject, updatedAssociatedProject);
+              }
+            )
+          );
         } catch {
           //do nothing
         }
-      }
+      },
     }),
-    listAssociatedProjects: builder.query<ListAssociatedProjectsResponse, string>({
-      query: projectId => ({ url: "/list", params: { projectId } }),
+    listAssociatedProjects: builder.query<
+      ListAssociatedProjectsResponse,
+      string
+    >({
+      query: (projectId) => ({ url: "/list", params: { projectId } }),
       transformResponse: (response: AssociatedProjectsResponse) => {
-        return response.map(item => ({
+        return response.map((item) => ({
           text: item.label,
-          value: item.id
+          value: item.id,
         }));
-      }
-    })
-  })
+      },
+    }),
+  }),
 });
 
 export const {
   useGetAssociatedProjectsQuery,
   useAddAssociatedProjectMutation,
   useRemoveAssociatedProjectMutation,
-  useListAssociatedProjectsQuery
+  useListAssociatedProjectsQuery,
 } = associatedProjectsApi;

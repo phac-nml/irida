@@ -1,5 +1,5 @@
 export const types = {
-  INIT_APP: "APP/INIT"
+  INIT_APP: "APP/INIT",
 };
 
 const initialState = {};
@@ -14,5 +14,5 @@ export const reducer = (state = initialState, action = {}) => {
 };
 
 export const actions = {
-  initialize: payload => ({ type: types.INIT_APP, payload })
+  initialize: (payload) => ({ type: types.INIT_APP, payload }),
 };

@@ -1,7 +1,10 @@
 import { notification } from "antd";
 import React from "react";
 import { addKeysToList } from "../../../utilities/http-utilities";
-import { Activity, getAllRecentActivities } from "../../../apis/activities/activities";
+import {
+  Activity,
+  getAllRecentActivities,
+} from "../../../apis/activities/activities";
 import { RecentActivityList } from "./RecentActivityList";
 
 /**
@@ -34,7 +37,7 @@ export function RecentActivityAllProjects(): JSX.Element {
     getAllRecentActivities(page)
       .then((data) => {
         const list = addKeysToList(data.content, "activity", "date");
-        setActivities((prevState) => ([...prevState, ...list]));
+        setActivities((prevState) => [...prevState, ...list]);
         setTotal(data.total);
         setLoading(false);
       })

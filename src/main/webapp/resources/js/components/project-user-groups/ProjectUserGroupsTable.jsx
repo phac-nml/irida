@@ -25,10 +25,8 @@ export function ProjectUserGroupsTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { roles: projectRoles, getRoleFromKey } = useProjectRoles(projectId);
-  const {
-    roles: metadataRoles,
-    getRoleFromKey: getMetadataRoleFromKey,
-  } = useMetadataRoles();
+  const { roles: metadataRoles, getRoleFromKey: getMetadataRoleFromKey } =
+    useMetadataRoles();
 
   const updateProjectRole = (updatedRole, details) => (role) => {
     return updateUserGroupProjectRole({

@@ -10,21 +10,31 @@ import { uniqBy } from "lodash";
  * @param attr attribute to filter by.
  * @returns {{text: *, value: *}[]}
  */
-export function createListFilterByUniqueAttribute({ list, attr }: {list: any[], attr: string}): ColumnFilterItem[] {
+export function createListFilterByUniqueAttribute({
+  list,
+  attr,
+}: {
+  list: any[];
+  attr: string;
+}): ColumnFilterItem[] {
   // Filter to ensure that all the keys captured are not `undefined`
-  const filtered = list.filter(p => p[attr]);
+  const filtered = list.filter((p) => p[attr]);
 
   // Get 1 of each object containing the attribute
   const unique = uniqBy(filtered, attr);
 
   // Convert it into the format for the ant.design column filter
-  const converted: ColumnFilterItem[] = unique.map((item: Record<string, string>) => ({
-    text: item[attr],
-    value: item[attr]
-  }));
+  const converted: ColumnFilterItem[] = unique.map(
+    (item: Record<string, string>) => ({
+      text: item[attr],
+      value: item[attr],
+    })
+  );
 
   // Sort new list alphabetically so users can quickly find what they are looking for.
-  converted.sort((a: ColumnFilterItem, b: ColumnFilterItem) => ("" + a.text).localeCompare("" + b.text));
+  converted.sort((a: ColumnFilterItem, b: ColumnFilterItem) =>
+    ("" + a.text).localeCompare("" + b.text)
+  );
 
   // Add a generic element for filtering on items that do not have this attribute.
   converted.push({ text: "Unknown", value: "unknown" } as ColumnFilterItem);

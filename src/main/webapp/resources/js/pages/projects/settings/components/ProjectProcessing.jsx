@@ -2,9 +2,7 @@ import { Divider, Space, Typography } from "antd";
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
-import {
-  ProcessingAutomatedPipelines
-} from "./processing/ProcessingAutomatedPipelines";
+import { ProcessingAutomatedPipelines } from "./processing/ProcessingAutomatedPipelines";
 import { ProcessingCoverage } from "./processing/ProcessingCoverage";
 
 /**
@@ -24,7 +22,7 @@ export default function ProjectProcessing() {
           projectId={projectId}
           canManage={project.canManage}
         />
-        <Divider/>
+        <Divider />
         <ProcessingAutomatedPipelines
           projectId={projectId}
           canManage={project.canManage}

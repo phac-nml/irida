@@ -19,7 +19,7 @@ import { IconClock } from "../icons/Icons";
 export default function SessionModal({
   displayTime,
   resetTimeout,
-  visibility
+  visibility,
 }) {
   const [remainingTime, setRemainingTime] = useState(displayTime / 1000);
 
@@ -41,7 +41,7 @@ export default function SessionModal({
   const keepSession = () =>
     axios.head(window.location.href).then(() => resetTimeout());
 
-  const format = time => {
+  const format = (time) => {
     let seconds = time % 60;
     let minutes = Math.floor(time / 60);
     minutes = minutes === 1 ? `1 min ` : minutes > 1 ? `${minutes} mins` : "";
@@ -66,13 +66,13 @@ export default function SessionModal({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: `0 ${SPACE_SM}`
+          padding: `0 ${SPACE_SM}`,
         }}
       >
         <span
           style={{
             display: "flex",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <IconClock style={{ fontSize: 30, color: red6 }} />
@@ -86,7 +86,7 @@ export default function SessionModal({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          fontSize: 40
+          fontSize: 40,
         }}
       >
         {format(remainingTime)}
@@ -112,7 +112,7 @@ export default function SessionModal({
         style={{
           display: "flex",
           alignItems: "center",
-          padding: `0 ${SPACE_SM}`
+          padding: `0 ${SPACE_SM}`,
         }}
       >
         <IconClock style={{ fontSize: 55, color: red6 }} />

@@ -48,9 +48,8 @@ export default function AnalysisTextPreview({ output }) {
       setSavedText(data.text);
       setFilePointer(data.filePointer);
       setFileRows(data.text);
-      document.getElementById(
-        `${output.filename}-preview-status`
-      ).innerText = fileSizeLoaded(data.filePointer, output.fileSizeBytes);
+      document.getElementById(`${output.filename}-preview-status`).innerText =
+        fileSizeLoaded(data.filePointer, output.fileSizeBytes);
       setLoading(false);
     });
   }, []);

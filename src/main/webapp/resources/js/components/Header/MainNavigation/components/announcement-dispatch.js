@@ -1,6 +1,4 @@
-import {
-  markAnnouncementRead
-} from "../../../../apis/announcements/announcements";
+import { markAnnouncementRead } from "../../../../apis/announcements/announcements";
 import { TYPES } from "./announcements-context";
 
 /**

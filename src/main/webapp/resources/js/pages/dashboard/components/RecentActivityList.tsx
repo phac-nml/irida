@@ -5,11 +5,11 @@ import { ActivityListItem } from "../../../components/activities/ActivityListIte
 import { BORDERED_LIGHT } from "../../../styles/borders";
 
 export interface RecentActivityListProps {
-  activities: Activity[],
-  total: number,
-  page: number,
-  setPage: (value: number) => void,
-  loading: boolean,
+  activities: Activity[];
+  total: number;
+  page: number;
+  setPage: (value: number) => void;
+  loading: boolean;
 }
 
 /**

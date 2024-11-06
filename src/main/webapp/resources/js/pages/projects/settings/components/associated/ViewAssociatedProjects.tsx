@@ -26,10 +26,16 @@ export interface ViewAssociatedProjectsProps {
   projectId: number;
 }
 
-export function ViewAssociatedProjects({ projectId }: ViewAssociatedProjectsProps): JSX.Element {
-  const [organismFilters, setOrganismFilters] = React.useState<ColumnFilterItem[]>([] as ColumnFilterItem[]);
+export function ViewAssociatedProjects({
+  projectId,
+}: ViewAssociatedProjectsProps): JSX.Element {
+  const [organismFilters, setOrganismFilters] = React.useState<
+    ColumnFilterItem[]
+  >([] as ColumnFilterItem[]);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  const [switches, setSwitches] = React.useState<Record<string, boolean>>({} as Record<string, boolean>);
+  const [switches, setSwitches] = React.useState<Record<string, boolean>>(
+    {} as Record<string, boolean>
+  );
   const [total, setTotal] = React.useState<number>(0);
 
   const {
@@ -37,14 +43,10 @@ export function ViewAssociatedProjects({ projectId }: ViewAssociatedProjectsProp
     isLoading,
     error: loadingAssociatedError,
   } = useGetAssociatedProjectsQuery(projectId);
-  const [
-    addAssociatedProject,
-    { error: addError },
-  ] = useAddAssociatedProjectMutation();
-  const [
-    removeAssociatedProject,
-    { error: removeError },
-  ] = useRemoveAssociatedProjectMutation();
+  const [addAssociatedProject, { error: addError }] =
+    useAddAssociatedProjectMutation();
+  const [removeAssociatedProject, { error: removeError }] =
+    useRemoveAssociatedProjectMutation();
 
   React.useEffect(() => {
     if (associatedProjects?.length) {
@@ -59,10 +61,14 @@ export function ViewAssociatedProjects({ projectId }: ViewAssociatedProjectsProp
   }, [associatedProjects]);
 
   React.useEffect(() => {
-    if (removeError && 'data' in removeError) {
-      notification.error({message: (removeError.data as AjaxErrorResponse).error});
-    } else if (addError && 'data' in addError) {
-      notification.error({message: (addError.data as AjaxErrorResponse).error});
+    if (removeError && "data" in removeError) {
+      notification.error({
+        message: (removeError.data as AjaxErrorResponse).error,
+      });
+    } else if (addError && "data" in addError) {
+      notification.error({
+        message: (addError.data as AjaxErrorResponse).error,
+      });
     }
   }, [removeError, addError]);
 

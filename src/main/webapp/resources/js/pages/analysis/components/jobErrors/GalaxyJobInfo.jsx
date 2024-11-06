@@ -25,70 +25,70 @@ export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
       {
         title: i18n("AnalysisError.createdDate"),
         desc: formatDate({
-          date: jobError.createdDate
-        })
+          date: jobError.createdDate,
+        }),
       },
       {
         title: i18n("AnalysisError.updatedDate"),
         desc: formatDate({
-          date: jobError.updatedDate
-        })
+          date: jobError.updatedDate,
+        }),
       },
       {
         title: i18n("AnalysisError.commandLine"),
-        desc: <Text code>{jobError.commandLine.trim()}</Text>
+        desc: <Text code>{jobError.commandLine.trim()}</Text>,
       },
       {
         title: i18n("AnalysisError.exitCode"),
-        desc: <Monospace>{jobError.exitCode}</Monospace>
+        desc: <Monospace>{jobError.exitCode}</Monospace>,
       },
       {
         title: i18n("AnalysisError.toolId"),
-        desc: jobError.toolId
+        desc: jobError.toolId,
       },
       {
         title: i18n("AnalysisError.toolName"),
-        desc: jobError.toolName
+        desc: jobError.toolName,
       },
       {
         title: i18n("AnalysisError.toolVersion"),
-        desc: <Monospace>{jobError.toolVersion}</Monospace>
+        desc: <Monospace>{jobError.toolVersion}</Monospace>,
       },
       {
         title: i18n("AnalysisError.toolDescription"),
-        desc: jobError.toolDescription
+        desc: jobError.toolDescription,
       },
       {
         title: i18n("AnalysisError.provenanceId"),
-        desc: <Monospace>{jobError.provenanceId}</Monospace>
+        desc: <Monospace>{jobError.provenanceId}</Monospace>,
       },
       {
         title: i18n("AnalysisError.provenanceUUID"),
-        desc: <Monospace>{jobError.provenanceUUID}</Monospace>
+        desc: <Monospace>{jobError.provenanceUUID}</Monospace>,
       },
       {
         title: i18n("AnalysisError.historyId"),
-        desc: (
-          analysisContext.isAdmin ?
-            <Button
-              type="link"
-              style={{ paddingLeft: 0 }}
-              href={`${galaxyUrl}/histories/view?id=${jobError.historyId}`}
-              target="_blank"
-            >
-              <Monospace>{jobError.historyId}</Monospace>
-            </Button>
-            : <Monospace>{jobError.historyId}</Monospace>
-        )
+        desc: analysisContext.isAdmin ? (
+          <Button
+            type="link"
+            style={{ paddingLeft: 0 }}
+            href={`${galaxyUrl}/histories/view?id=${jobError.historyId}`}
+            target="_blank"
+          >
+            <Monospace>{jobError.historyId}</Monospace>
+          </Button>
+        ) : (
+          <Monospace>{jobError.historyId}</Monospace>
+        ),
       },
       {
         title: i18n("AnalysisError.jobId"),
-        desc: <Monospace>{jobError.jobId}</Monospace>
+        desc: <Monospace>{jobError.jobId}</Monospace>,
       },
       {
         title: i18n("AnalysisError.identifier"),
-        desc: <Monospace>{jobError.identifier}</Monospace>
-      }
+        desc: <Monospace>{jobError.identifier}</Monospace>,
+      },
     ];
   }
 

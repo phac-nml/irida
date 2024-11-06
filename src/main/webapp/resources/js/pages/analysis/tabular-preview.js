@@ -26,7 +26,7 @@ function parseCsvLine(line) {
       cells.push(currCell);
       break;
     }
-    const value = next.value;
+    const { value } = next;
     switch (value) {
       case ",":
         if (isInQuote) {
@@ -76,7 +76,7 @@ export function parseHeader(firstLine, isCSV = false) {
       title: col,
       dataIndex: i,
       key: col,
-      scrollX: true
+      scrollX: true,
     });
   }
   return headers;
@@ -108,6 +108,8 @@ export function parseRows(lines, offset = 0, isCSV = false) {
 
 export function autoSizeAll({ columnApi }) {
   const allColumnIds = [];
-  columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
+  columnApi
+    .getAllColumns()
+    .forEach((column) => allColumnIds.push(column.colId));
   columnApi.autoSizeColumns(allColumnIds);
 }

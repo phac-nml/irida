@@ -17,7 +17,9 @@ export interface ForgotPasswordProps {
  * @param updateDisplayLoginPage Function to update whether to display login page
  * @constructor
  */
-export function ForgotPassword({ updateDisplayLoginPage }: ForgotPasswordProps): JSX.Element {
+export function ForgotPassword({
+  updateDisplayLoginPage,
+}: ForgotPasswordProps): JSX.Element {
   const [forgotPassword] = useCreatePasswordResetEmailMutation();
   const [forgotPasswordForm] = Form.useForm();
   const [loading, setLoading] = React.useState(false);

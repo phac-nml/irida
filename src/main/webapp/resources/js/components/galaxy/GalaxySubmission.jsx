@@ -6,7 +6,7 @@ import { actions } from "./reducer";
 import {
   getGalaxySamples,
   removeGalaxySession,
-  validateOauthClient
+  validateOauthClient,
 } from "../../apis/galaxy/galaxy";
 import { exportToGalaxy } from "../../apis/galaxy/submission";
 
@@ -16,12 +16,20 @@ import { exportToGalaxy } from "../../apis/galaxy/submission";
  */
 export function GalaxySubmission() {
   const [
-    { submittable, submitted, email, validEmail, makepairedcollection, includeAssemblies, includeFast5 },
-    dispatch
+    {
+      submittable,
+      submitted,
+      email,
+      validEmail,
+      makepairedcollection,
+      includeAssemblies,
+      includeFast5,
+    },
+    dispatch,
   ] = useStateValue();
 
   function submitToGalaxy() {
-    validateOauthClient().then(result => {
+    validateOauthClient().then((result) => {
       switch (result) {
         case "ERROR":
           dispatch(actions.submitError());
@@ -30,7 +38,7 @@ export function GalaxySubmission() {
           dispatch(actions.oauthWindowClosed());
           break;
         default:
-          getGalaxySamples().then(samples => {
+          getGalaxySamples().then((samples) => {
             // Update the UI
             dispatch(actions.submit());
 
@@ -44,7 +52,7 @@ export function GalaxySubmission() {
                 includeFast5,
                 oauthCode: result,
                 oauthRedirect: `${window.PAGE.galaxyRedirect}`,
-                samples
+                samples,
               });
             });
           });

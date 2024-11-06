@@ -10,7 +10,7 @@ const CHAR_TO_ESCAPED = {
   "'": "&#39;",
   "/": "&#x2F;",
   "`": "&#x60;",
-  "=": "&#x3D;"
+  "=": "&#x3D;",
 };
 
 /**
@@ -19,7 +19,7 @@ const CHAR_TO_ESCAPED = {
  * @returns {string} Escaped string
  */
 export function escapeHtml(htmlString) {
-  return String(htmlString).replace(/[&<>"'`=/]/g, s => CHAR_TO_ESCAPED[s]);
+  return String(htmlString).replace(/[&<>"'`=/]/g, (s) => CHAR_TO_ESCAPED[s]);
 }
 
 /**

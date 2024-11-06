@@ -6,12 +6,8 @@ import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { MainNavigation } from "./MainNavigation";
-import {
-  AnnouncementProvider
-} from "./MainNavigation/components/announcements-context";
-import {
-  AnnouncementsModal
-} from "./MainNavigation/components/AnnouncementsModal";
+import { AnnouncementProvider } from "./MainNavigation/components/announcements-context";
+import { AnnouncementsModal } from "./MainNavigation/components/AnnouncementsModal";
 
 /*
 WEBPACK PUBLIC PATH:

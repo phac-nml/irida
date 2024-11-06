@@ -20,7 +20,7 @@ export default function ProjectMembersPage() {
     >
       <>
         <Title level={2}>{i18n("project.settings.page.title.members")}</Title>
-        <ProjectMembersTable projectId={projectId}/>
+        <ProjectMembersTable projectId={projectId} />
       </>
     </PagedTableProvider>
   );

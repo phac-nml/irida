@@ -12,7 +12,11 @@ import { Alert, AlertProps } from "antd";
  * @param description - Optional description
  * @param props - remainder of props passed
  */
-export function SuccessAlert({ message, description, ...props }: AlertProps): JSX.Element {
+export function SuccessAlert({
+  message,
+  description,
+  ...props
+}: AlertProps): JSX.Element {
   return (
     <Alert
       type="success"

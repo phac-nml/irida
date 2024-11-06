@@ -19,7 +19,11 @@ export default function UserAccountNav() {
   }, [location]);
 
   return (
-    <Menu mode="inline" selectedKeys={[selectedKeys]} style={{height: "100%"}}>
+    <Menu
+      mode="inline"
+      selectedKeys={[selectedKeys]}
+      style={{ height: "100%" }}
+    >
       <Menu.Item key="details">
         <Link to="details">{i18n("UserAccountNav.menu.details")}</Link>
       </Menu.Item>

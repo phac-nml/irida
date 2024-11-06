@@ -13,7 +13,7 @@ import { IconShoppingCart } from "../../../../../components/icons/Icons";
  */
 export function AddSamplesToCartButtonComponent({
   selected,
-  addSamplesToCart
+  addSamplesToCart,
 }) {
   function addToCart() {
     addSamplesToCart(selected);
@@ -30,12 +30,12 @@ export function AddSamplesToCartButtonComponent({
   );
 }
 
-const mapStateToProps = state => ({
-  selected: state.entries.selected
+const mapStateToProps = (state) => ({
+  selected: state.entries.selected,
 });
 
-const mapDispatchToProps = dispatch => ({
-  addSamplesToCart: samples => dispatch(cartActions.add(samples))
+const mapDispatchToProps = (dispatch) => ({
+  addSamplesToCart: (samples) => dispatch(cartActions.add(samples)),
 });
 
 export const AddSamplesToCartButton = connect(

@@ -28,7 +28,7 @@ export function TextFilter({
   setSelectedKeys,
   selectedKeys,
   confirm,
-  clearFilters
+  clearFilters,
 }: FilterDropdownProps): JSX.Element {
   return (
     <div>
@@ -36,7 +36,7 @@ export function TextFilter({
         <Input
           style={{ width: 188, display: "block" }}
           value={selectedKeys[0]}
-          onChange={e =>
+          onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => confirm()}

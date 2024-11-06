@@ -54,7 +54,7 @@ export const getPipelineDetails = ({ id }) =>
   axios
     .get(`${AJAX_URL}/${id}`)
     .then(({ data }) => data)
-    .catch((error) => {
+    .catch((e) => {
       return Promise.reject(e.response.error.message);
     });
 

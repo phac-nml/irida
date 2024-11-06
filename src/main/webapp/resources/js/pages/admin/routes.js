@@ -11,12 +11,12 @@ export const ADMIN = {
   SEQUENCINGRUNS: "sequencing-runs",
   NCBIEXPORTS: "ncbi_exports",
   ANNOUNCEMENTS: "announcements",
-  STATISTICS: "statistics"
+  STATISTICS: "statistics",
 };
 
 export const ADMINSTATS = {
   ANALYSES: "analyses",
   PROJECTS: "projects",
   SAMPLES: "samples",
-  USERS: "users"
+  USERS: "users",
 };

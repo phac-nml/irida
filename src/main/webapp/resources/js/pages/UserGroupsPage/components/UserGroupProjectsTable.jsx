@@ -1,13 +1,9 @@
 import React from "react";
 import { getProjectsForUserGroup } from "../../../apis/users/groups";
 import { Button, Table } from "antd";
-import {
-  formatInternationalizedDateTime
-} from "../../../utilities/date-utilities";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import {
-  getPaginationOptions
-} from "../../../utilities/antdesign-table-utilities";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Display a table of projects the current user group is used on.

@@ -11,19 +11,25 @@ import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
  */
 export function GalaxyDetailsForm() {
   const [
-    { email, validEmail, makepairedcollection, includeAssemblies, includeFast5 },
-    dispatch
+    {
+      email,
+      validEmail,
+      makepairedcollection,
+      includeAssemblies,
+      includeFast5,
+    },
+    dispatch,
   ] = useStateValue();
 
-  const emailModified = e => dispatch(actions.setEmail(e.target.value));
+  const emailModified = (e) => dispatch(actions.setEmail(e.target.value));
 
-  const makePairedCollectionModified = e =>
+  const makePairedCollectionModified = (e) =>
     dispatch(actions.setMakePairedCollection(e.target.checked));
 
-  const includeAssembliesModified = e =>
+  const includeAssembliesModified = (e) =>
     dispatch(actions.setIncludeAssemblies(e.target.checked));
 
-  const includeFast5Modified = e =>
+  const includeFast5Modified = (e) =>
     dispatch(actions.setIncludeFast5(e.target.checked));
 
   const galaxyUrl = window
@@ -46,7 +52,7 @@ export function GalaxyDetailsForm() {
           help={i18n("ExportToGalaxyForm.email.help")}
         >
           <Input onChange={emailModified} value={email} />
-        </Form.Item>  
+        </Form.Item>
         <Form.Item help={i18n("ExportToGalaxyForm.assemblies.help")}>
           <Checkbox
             onChange={includeAssembliesModified}
@@ -56,10 +62,7 @@ export function GalaxyDetailsForm() {
           </Checkbox>
         </Form.Item>
         <Form.Item help={i18n("ExportToGalaxyForm.fast5.help")}>
-          <Checkbox
-            onChange={includeFast5Modified}
-            checked={includeFast5}
-          >
+          <Checkbox onChange={includeFast5Modified} checked={includeFast5}>
             {i18n("ExportToGalaxyForm.fast5")}
           </Checkbox>
         </Form.Item>

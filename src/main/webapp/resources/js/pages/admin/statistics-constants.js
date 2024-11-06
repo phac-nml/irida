@@ -10,16 +10,16 @@ export const chartTypes = {
   DONUT: "donut",
   LINE: "line",
   PIE: "pie",
-  TINYCOLUMN: "tinyColumn"
-}
+  TINYCOLUMN: "tinyColumn",
+};
 
 // The possible statistic types
 export const statisticTypes = {
   ANALYSES: "analyses",
   PROJECTS: "projects",
   SAMPLES: "samples",
-  USERS: "users"
-}
+  USERS: "users",
+};
 
 /* Default is to display statistics for the last week. If
  * this is changed then you will also need to update the
@@ -31,7 +31,7 @@ export const defaultTimePeriod = 7;
  * Default text for the default time period. Used by cards
  * title in basicstats component.
  */
-export const defaultTimePeriodText = "week"
+export const defaultTimePeriodText = "week";
 
 // Default is a column (bar chart)
 export const defaultChartType = chartTypes.COLUMN;

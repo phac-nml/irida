@@ -18,18 +18,20 @@ function UserGroupsProvider(props) {
    * Deletes User Group and shows confirmation notification.
    */
   function userGroupsContextDeleteUserGroup(id, url) {
-    deleteUserGroup(id).then((message) => {
-      navigate(`${url}`, { replace: true });
-      notification.success({ message });
-    }).catch((message) => {
-      notification.error({ message })
-    });
+    deleteUserGroup(id)
+      .then((message) => {
+        navigate(`${url}`, { replace: true });
+        notification.success({ message });
+      })
+      .catch((message) => {
+        notification.error({ message });
+      });
   }
 
   return (
     <UserGroupsContext.Provider
       value={{
-        userGroupsContextDeleteUserGroup
+        userGroupsContextDeleteUserGroup,
       }}
     >
       {props.children}

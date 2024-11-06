@@ -40,12 +40,12 @@ export async function removeUserFromProject({ projectId, id }) {
 export async function updateUserRoleOnProject({
   projectId,
   id,
-  projectRole = ""
+  projectRole = "",
 }) {
   const params = new URLSearchParams({
     projectRole,
     id,
-    projectId
+    projectId,
   });
   try {
     return await axios
@@ -76,8 +76,8 @@ export async function updateUserMetadataRoleOnProject({
   });
   try {
     return await axios
-        .put(`${BASE_URL}/metadata-role?${params.toString()}`)
-        .then(({ data }) => data);
+      .put(`${BASE_URL}/metadata-role?${params.toString()}`)
+      .then(({ data }) => data);
   } catch (e) {
     return Promise.reject(e.response.data);
   }

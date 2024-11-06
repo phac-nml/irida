@@ -35,7 +35,10 @@ export interface ActivityItem {
  * @param projectId - current project identifier
  * @param page - page of activities requested
  */
-export function getProjectActivities(projectId: number, page = 0): Promise<Activities> {
+export function getProjectActivities(
+  projectId: number,
+  page = 0
+): Promise<Activities> {
   try {
     return axios
       .get(`${BASE_URL}/project?projectId=${projectId}&page=${page}`)

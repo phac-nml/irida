@@ -6,6 +6,6 @@ const BASE_URL = setBaseUrl(`ajax/ngs-linker`);
 export function getNGSLinkerCode({ sampleIds, projectId }) {
   return axios.post(`${BASE_URL}/cmd`, {
     sampleIds,
-    projectId
+    projectId,
   });
 }

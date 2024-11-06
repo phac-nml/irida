@@ -19,7 +19,7 @@ import { IconCloseCircle } from "./Icons";
 export function Error({ message }) {
   return (
     <span>
-      <IconCloseCircle style={{color: red6 , marginRight: SPACE_XS}} />
+      <IconCloseCircle style={{ color: red6, marginRight: SPACE_XS }} />
       {message}
     </span>
   );

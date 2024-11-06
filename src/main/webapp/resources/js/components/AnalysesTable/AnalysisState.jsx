@@ -7,7 +7,6 @@ import { useInterval } from "../../hooks";
 
 import { AnalysesTableContext } from "../../contexts/AnalysesTableContext";
 
-
 /**
  * Display the state of an analysis
  * @param {object} state
@@ -17,27 +16,30 @@ import { AnalysesTableContext } from "../../contexts/AnalysesTableContext";
  * @constructor
  */
 export function AnalysisState({ state, analysisId, updateDelay }) {
-  const { analysesTableContext, updateRowData } = useContext(AnalysesTableContext);
+  const { analysesTableContext, updateRowData } =
+    useContext(AnalysesTableContext);
   const [currStateText, setCurrStateText] = useState(state.text);
   const [currStateValue, setCurrStateValue] = useState(state.value);
 
   // Update the analysis state using polling
   const intervalId = useInterval(() => {
-    if(state.value !== "COMPLETED" && state.value !== "ERROR") {
+    if (state.value !== "COMPLETED" && state.value !== "ERROR") {
       updateRowData(analysisId);
 
-      let rowData = analysesTableContext.rows.filter(row => row.identifier === analysisId);
+      let rowData = analysesTableContext.rows.filter(
+        (row) => row.identifier === analysisId
+      );
       let currRowData = rowData[rowData.length - 1];
-      if(typeof currRowData !== "undefined") {
-        if(currStateText !== currRowData.analysisState.text) {
+      if (typeof currRowData !== "undefined") {
+        if (currStateText !== currRowData.analysisState.text) {
           setCurrStateText(currRowData.analysisState.text);
         }
 
-        if(currStateValue !== currRowData.analysisState.value) {
+        if (currStateValue !== currRowData.analysisState.value) {
           setCurrStateValue(currRowData.analysisState.value);
         }
 
-        if(currRowData.isCompleted || currRowData.isError) {
+        if (currRowData.isCompleted || currRowData.isError) {
           clearInterval(intervalId);
         }
       }

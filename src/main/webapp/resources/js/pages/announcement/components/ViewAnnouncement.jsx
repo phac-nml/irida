@@ -59,9 +59,7 @@ function ViewAnnouncementModal({
       ),
       content: (
         <div style={{ overflowY: "auto", maxHeight: 600, paddingRight: 10 }}>
-          <ReactMarkdown>
-            {announcement.message}
-          </ReactMarkdown>
+          <ReactMarkdown>{announcement.message}</ReactMarkdown>
         </div>
       ),
     });

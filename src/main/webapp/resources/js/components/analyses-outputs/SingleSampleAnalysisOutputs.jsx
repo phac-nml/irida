@@ -101,6 +101,7 @@ export default function SingleSampleAnalysisOutputs({
           <a
             href={setBaseUrl(`/analysis/${record.analysisSubmissionId}`)}
             target="_blank"
+            rel="noreferrer"
           >
             {analysisSubmissionName}
           </a>
@@ -148,11 +149,8 @@ export default function SingleSampleAnalysisOutputs({
   const downloadSelectedFiles = () => {
     const currentlySelectedFiles = rowSelection.selectedRows;
     if (currentlySelectedFiles.length === 1) {
-      const {
-        analysisSubmissionId,
-        analysisOutputFileId,
-        filename,
-      } = currentlySelectedFiles[0];
+      const { analysisSubmissionId, analysisOutputFileId, filename } =
+        currentlySelectedFiles[0];
 
       //Download the selected output file
       downloadIndividualOutputFile(

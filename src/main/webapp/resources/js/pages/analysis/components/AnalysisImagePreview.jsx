@@ -21,11 +21,13 @@ export default function AnalysisImagePreview({ output }) {
   const [imageExtension, setImageExtension] = useState(null);
 
   useEffect(() => {
-    getImageFile(output.analysisSubmissionId, output.filename).then(({data}) => {
-      setImageFile(data);
-      let tokens = output.filename.split(".");
-      setImageExtension(tokens[tokens.length-1]);
-    });
+    getImageFile(output.analysisSubmissionId, output.filename).then(
+      ({ data }) => {
+        setImageFile(data);
+        let tokens = output.filename.split(".");
+        setImageExtension(tokens[tokens.length - 1]);
+      }
+    );
   }, []);
 
   /*
@@ -34,21 +36,27 @@ export default function AnalysisImagePreview({ output }) {
    * the file. Currently supports jpeg and png images.
    */
   function displayImageOutput() {
-      return (
-        <div>
-          <OutputFileHeader output={output} />
-          <ImageOutputWrapper
-            id={`image-${output.filename.replace(".", "-")}`}
-          >
-            {imageExtension === "png" ?
-              <img src={`data:image/png;base64,${imageFile}`} alt="" style={{height: "auto", maxWidth: "100%"}}/>
-              :
-              <img src={`data:image/jpeg;base64,${imageFile}`} alt="" style={{height: "auto", maxWidth: "100%"}}/>
-            }
-          </ImageOutputWrapper>
-          <Divider />
-        </div>
-      );
+    return (
+      <div>
+        <OutputFileHeader output={output} />
+        <ImageOutputWrapper id={`image-${output.filename.replace(".", "-")}`}>
+          {imageExtension === "png" ? (
+            <img
+              src={`data:image/png;base64,${imageFile}`}
+              alt=""
+              style={{ height: "auto", maxWidth: "100%" }}
+            />
+          ) : (
+            <img
+              src={`data:image/jpeg;base64,${imageFile}`}
+              alt=""
+              style={{ height: "auto", maxWidth: "100%" }}
+            />
+          )}
+        </ImageOutputWrapper>
+        <Divider />
+      </div>
+    );
   }
   return <>{displayImageOutput()}</>;
 }

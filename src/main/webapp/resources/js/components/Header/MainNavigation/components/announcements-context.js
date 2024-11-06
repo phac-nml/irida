@@ -1,7 +1,5 @@
 import React from "react";
-import {
-  getUnreadAnnouncements
-} from "../../../../apis/announcements/announcements";
+import { getUnreadAnnouncements } from "../../../../apis/announcements/announcements";
 
 /**
  * The context provides access to shared announcement data and actions.

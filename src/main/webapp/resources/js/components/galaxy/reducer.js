@@ -8,7 +8,7 @@ export const types = {
   OAUTH_WINDOW_CLOSED: "GALAXY_OAUTH_WINDOW_CLOSED",
   SUBMITTABLE: "GALAXY/SUBMITTABLE",
   SUBMIT: "GALAXY/SUBMIT",
-  SUBMIT_ERROR: "GALAXY/SUBMIT_ERROR"
+  SUBMIT_ERROR: "GALAXY/SUBMIT_ERROR",
 };
 
 export const initialState = {
@@ -20,7 +20,7 @@ export const initialState = {
   includeAssemblies: false,
   includeFast5: false,
   submittable: true,
-  errored: false
+  errored: false,
 };
 
 export const reducer = (state, action) => {
@@ -29,23 +29,23 @@ export const reducer = (state, action) => {
       return {
         ...state,
         email: action.payload.email,
-        validEmail: validateEmail(action.payload.email)
+        validEmail: validateEmail(action.payload.email),
       };
     case types.MAKE_PAIRED_COLLECTION_UPDATED:
       return {
         ...state,
-        makepairedcollection: action.payload.makepairedcollection
+        makepairedcollection: action.payload.makepairedcollection,
       };
     case types.ASSEMBLIES_UPDATED:
       return {
         ...state,
-        includeAssemblies: action.payload.includeAssemblies
+        includeAssemblies: action.payload.includeAssemblies,
       };
-      case types.FAST5_UPDATED:
-        return {
-          ...state,
-          includeFast5: action.payload.includeFast5
-        };  
+    case types.FAST5_UPDATED:
+      return {
+        ...state,
+        includeFast5: action.payload.includeFast5,
+      };
     case types.OAUTH_WINDOW_CLOSED:
       return { ...state, submittable: true, submitted: false };
     case types.SUBMIT:
@@ -56,7 +56,7 @@ export const reducer = (state, action) => {
         fetchingSamples: false,
         submittable: true,
         submitted: false,
-        errored: true
+        errored: true,
       };
     default:
       return { ...state };
@@ -64,26 +64,26 @@ export const reducer = (state, action) => {
 };
 
 export const actions = {
-  setEmail: email => ({ type: types.EMAIL_UPDATED, payload: { email } }),
-  setMakePairedCollection: makepairedcollection => ({
+  setEmail: (email) => ({ type: types.EMAIL_UPDATED, payload: { email } }),
+  setMakePairedCollection: (makepairedcollection) => ({
     type: types.MAKE_PAIRED_COLLECTION_UPDATED,
-    payload: { makepairedcollection }
+    payload: { makepairedcollection },
   }),
-  setIncludeAssemblies: includeAssemblies => ({
+  setIncludeAssemblies: (includeAssemblies) => ({
     type: types.ASSEMBLIES_UPDATED,
-    payload: { includeAssemblies }
+    payload: { includeAssemblies },
   }),
-  setIncludeFast5: includeFast5 => ({
+  setIncludeFast5: (includeFast5) => ({
     type: types.FAST5_UPDATED,
-    payload: { includeFast5 }
+    payload: { includeFast5 },
   }),
   submit: () => ({
-    type: types.SUBMIT
+    type: types.SUBMIT,
   }),
   submitError: () => ({
-    type: types.SUBMIT_ERROR
+    type: types.SUBMIT_ERROR,
   }),
   oauthWindowClosed: () => ({
-    type: types.OAUTH_WINDOW_CLOSED
-  })
+    type: types.OAUTH_WINDOW_CLOSED,
+  }),
 };
