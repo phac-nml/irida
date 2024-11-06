@@ -62,6 +62,7 @@ export default class ColumnVisibility extends React.Component {
                 <ColumnItem
                   actions={[
                     <Switch
+                      key={item.field}
                       size="small"
                       className="t-field-switch"
                       checked={!item.hide}
