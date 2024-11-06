@@ -46,10 +46,7 @@ const template = (keys, entry) => `
  * @returns {boolean} request is valid and is local
  */
 const isValidLocalRequest = (request) => {
-  return (
-    typeof request !== "undefined" &&
-    request.match(/src\/main\/webapp\/resources\/js/)
-  );
+  return (typeof request !== "undefined" && request.match(/src\/main\/webapp\/resources\/js/));
 };
 
 class i18nThymeleafWebpackPlugin {

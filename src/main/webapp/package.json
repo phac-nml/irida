@@ -18,7 +18,7 @@
     "last 2 Opera versions"
   ],
   "dependencies": {
-    "@ag-grid-community/csv-export": "^29.3.5",
+    "@ag-grid-community/csv-export": "31.3.4",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/plots": "^1.0.9",
     "@antv/color-util": "^2.0.6",
@@ -35,8 +35,8 @@
     "@luma.gl/webgl": "^8.5.14",
     "@phylocanvas/phylocanvas.gl": "^1.43.0",
     "@reduxjs/toolkit": "1.8.5",
-    "ag-grid-community": "^29.3.5",
-    "ag-grid-react": "^29.3.5",
+    "ag-grid-community": "31.3.4",
+    "ag-grid-react": "31.3.4",
     "antd": "4.19.5",
     "axios": "^1.7.7",
     "clipboard": "^1.7.1",

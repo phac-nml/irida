@@ -1,1 +1,1 @@
-export searchOntology, { TAXONOMY } from "./query";
+export { default as searchOntology, TAXONOMY } from "./query";

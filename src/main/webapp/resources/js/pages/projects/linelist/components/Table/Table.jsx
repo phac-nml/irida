@@ -408,7 +408,6 @@ export class TableComponent extends React.Component {
           sortable: true,
           filter: true,
         }}
-        enableCellChangeFlash={true}
         onCellEditingStarted={this.onCellEditingStarted}
         onCellEditingStopped={this.onCellEditingStopped}
       />
