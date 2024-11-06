@@ -25,7 +25,7 @@ import { grey2 } from "../../../styles/colors";
  * @returns {*}
  * @constructor
  */
-export function AnnouncementsPage({}) {
+export function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState([]);
   const [filteredAnnouncements, setFilteredAnnouncements] = useState([]);
   const [filter, setFilter] = useState("all");
