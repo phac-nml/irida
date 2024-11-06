@@ -164,7 +164,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api")
     implementation("org.apache.logging.log4j:log4j-to-slf4j")
     implementation("com.google.guava:guava:33.3.1-jre")
-    implementation("commons-cli:commons-cli:1.5.0")
+    implementation("commons-cli:commons-cli:1.9.0")
     implementation("org.aspectj:aspectjweaver")
     implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("com.sksamuel.diff:diff:1.1.11")
