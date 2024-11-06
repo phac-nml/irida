@@ -10,7 +10,7 @@ const ScrollBodyModal = styled(Modal)`
   .ant-modal-body {
     padding: 15px 25px;
     overflow-y: auto;
-    max-height: ${(props) => `${props.maxHeight}px` || `600px`};
+    max-height: ${(props) => `${props.maxHeight || 600}px`};
   }
 `;
 
