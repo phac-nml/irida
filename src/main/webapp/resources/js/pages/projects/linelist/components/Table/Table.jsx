@@ -172,7 +172,7 @@ export class TableComponent extends React.Component {
     /*
     Resize the icons since no extra space is needed.
      */
-    this.columnApi.autoSizeColumns([FIELDS.icons]);
+    this.api.autoSizeColumns([FIELDS.icons]);
   };
 
   /**
@@ -180,7 +180,7 @@ export class TableComponent extends React.Component {
    * table.
    */
   onColumnDropped = () => {
-    const colOrder = [...this.columnApi.getColumnState()];
+    const colOrder = [...this.api.getColumnState()];
     // Remove sample name
     colOrder.shift();
 
@@ -386,6 +386,7 @@ export class TableComponent extends React.Component {
     return (
       <AgGridReact
         id="linelist-grid"
+        reactiveCustomComponents={true}
         rowSelection="multiple"
         onFilterChanged={this.setFilterCount}
         localeText={{
