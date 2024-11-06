@@ -92,3 +92,5 @@ export const MarkdownEditor = forwardRef(({ markdown }, ref) => {
     />
   );
 });
+
+MarkdownEditor.displayName = "MarkdownEditor";
