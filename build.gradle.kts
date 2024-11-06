@@ -149,7 +149,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-web-services")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
-    implementation("commons-io:commons-io:2.11.0")
+    implementation("commons-io:commons-io:2.17.0")
     implementation("commons-fileupload:commons-fileupload:1.4")
     implementation("org.apache.poi:poi-ooxml:5.2.2") {
         exclude(group = "stax", module = "stax-api")
