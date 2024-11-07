@@ -71,7 +71,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 	private Path outputFileBaseDirectory;
 
 	@BeforeEach
-	// Move file to the sequenceFileBaseDirectory from the test folder so it can be accessed by the tests
+	// Move file to the sequenceFileBaseDirectory from the test folder so it can be
+	// accessed by the tests
 	public void setFile() throws IOException {
 		for (String sFileName : singleFileNames) {
 			fileUtilities.copyFileToDirectory(sequenceFileBaseDirectory, "src/test/resources/files/" + sFileName);
@@ -107,7 +108,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
-		// Test that the add/remove buttons for the sample detail viewer are displayed correctly depending on if the sample is in the cart or not
+		// Test that the add/remove buttons for the sample detail viewer are displayed
+		// correctly depending on if the sample is in the cart or not
 		samplesPage.clickSampleName("sample5fg44");
 		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
 				"The add cart to sample button should be displayed");
@@ -147,7 +149,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.onPipelinesView(), "Should be directed to pipelines view");
 
 		/*
-		Test the sample details within the cart
+		 * Test the sample details within the cart
 		 */
 		final String sampleName = "sample554sg5";
 		final String projectName = "project";
@@ -172,7 +174,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Should be able to diplay the proper metadata");
 
 		sampleDetailsViewer.clickFilesTabLink();
-		// Check that the upload option is not available to a user on a project (only project owner should be able to view)
+		// Check that the upload option is not available to a user on a project (only
+		// project owner should be able to view)
 		assertFalse(sampleDetailsViewer.fileUploadVisible(), "Drag upload should not be visible to user");
 
 		// Check that correct file list items are displayed for the user
@@ -186,7 +189,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(9, sampleDetailsViewer.actionButtonsVisible(), "Should have 9 file action buttons");
 
 		// Launch fastqc modal
-		sampleDetailsViewer.clickSampleName();
+		sampleDetailsViewer.launchFastqcModal();
 
 		FastQCModal fastQCModal = FastQCModal.getFileFastQCDetails(driver());
 
@@ -200,7 +203,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		fastQCModal.closeFastqcModal();
 
-		// No files should be selected (no checkboxes available to select) and the concatenate button should not be visible
+		// No files should be selected (no checkboxes available to select) and the
+		// concatenate button should not be visible
 		sampleDetailsViewer.selectFilesToConcatenate(3);
 		assertFalse(sampleDetailsViewer.concatenationButtonVisible());
 
@@ -236,7 +240,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1L);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
-		// Test that the add/remove buttons for the sample detail viewer are displayed correctly depending on if the sample is in the cart or not
+		// Test that the add/remove buttons for the sample detail viewer are displayed
+		// correctly depending on if the sample is in the cart or not
 		samplesPage.clickSampleName("sample5fg44");
 		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
 				"The add cart to sample button should be displayed");
@@ -276,7 +281,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.onPipelinesView(), "Should be directed to pipelines view");
 
 		/*
-		Test the sample details within the cart
+		 * Test the sample details within the cart
 		 */
 		final String sampleName = "sample554sg5";
 		final String projectName = "project";
@@ -325,7 +330,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(9, sampleDetailsViewer.actionButtonsVisible(), "Should have 9 file action buttons");
 
 		// Launch fastqc modal
-		sampleDetailsViewer.clickSampleName();
+		sampleDetailsViewer.launchFastqcModal();
 
 		FastQCModal fastQCModal = FastQCModal.getFileFastQCDetails(driver());
 
@@ -348,11 +353,13 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		// Concatenation modal should list the files to concatenate
 		assertEquals(3, sampleDetailsViewer.singleEndFileCount(),
 				"Should have 3 single end files listed for concatenation");
-		assertFalse(sampleDetailsViewer.concatenationConfirmButtonEnabled(), "Concatenate button should be disabled since no file name is entered");
+		assertFalse(sampleDetailsViewer.concatenationConfirmButtonEnabled(),
+				"Concatenate button should be disabled since no file name is entered");
 		// Enter concatenation file name
 		sampleDetailsViewer.enterFileName();
 
-		assertTrue(sampleDetailsViewer.concatenationConfirmButtonEnabled(), "Concatenate button should not be disabled since a file name is entered");
+		assertTrue(sampleDetailsViewer.concatenationConfirmButtonEnabled(),
+				"Concatenate button should not be disabled since a file name is entered");
 		sampleDetailsViewer.clickConcatenateConfirmBtn();
 
 		// Check that correct file list items are displayed after concatenation
@@ -407,7 +414,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(2, sampleDetailsViewer.numberOfSetAsDefaultSeqObjsButtons(),
 				"There should be two set as default buttons for sequencing objects");
 
-		// Remove the 5 remaining files (1 single end sequencing object and 2 paired end sequencing objects containing 2 files each, and 2 assemblies)
+		// Remove the 5 remaining files (1 single end sequencing object and 2 paired end
+		// sequencing objects containing 2 files each, and 2 assemblies)
 		js.executeScript("document.getElementsByClassName('t-filelist-scroll')[0].scrollTop= 600");
 
 		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefault(),

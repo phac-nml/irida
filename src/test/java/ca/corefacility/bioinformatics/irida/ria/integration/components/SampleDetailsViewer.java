@@ -328,7 +328,7 @@ public class SampleDetailsViewer extends AbstractPage {
 		waitForTime(500);
 	}
 
-	public void clickSampleName() {
+	public void launchFastqcModal() {
 		WebElement ele = driver.findElement(By.className("t-file-label"));
 		ele.click();
 	}

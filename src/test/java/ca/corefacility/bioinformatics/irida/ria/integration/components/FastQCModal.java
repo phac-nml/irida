@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -7,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -14,15 +17,8 @@ public class FastQCModal extends AbstractPage {
 	@FindBy(className = "t-fastqc-modal-charts-tab")
 	private WebElement fastQCModalChartsTab;
 
-	@FindBy(className = "t-fastqc-modal-overrepresented-tab")
-	private WebElement fastQCModalOverrepresentedSequencesTab;
-
-	@FindBy(className = "t-fastqc-modal-details-tab")
-	private WebElement fastQCModalDetailsTab;
-
 	@FindBy(className = "t-fastqc-modal")
 	private WebElement fastqcModal;
-
 
 
 	public FastQCModal(WebDriver driver) {
@@ -51,11 +47,15 @@ public class FastQCModal extends AbstractPage {
 	}
 
 	public void clickFastQCOverrepresentedSequencesLink() {
+		WebElement fastQCModalOverrepresentedSequencesTab = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+				.until(ExpectedConditions.elementToBeClickable(By.id("rc-tabs-0-tab-overrepresented")));
 		fastQCModalOverrepresentedSequencesTab.click();
 		waitForTime(300);
 	}
 
 	public void clickFastQCDetailsLink() {
+		WebElement fastQCModalDetailsTab = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+				.until(ExpectedConditions.elementToBeClickable(By.id("rc-tabs-0-tab-details")));
 		fastQCModalDetailsTab.click();
 		waitForTime(300);
 	}
