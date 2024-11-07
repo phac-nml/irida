@@ -70,7 +70,7 @@ function AnalysisOutputsProvider(props) {
       // Used by output file preview to only display
       // tabs that are required
 
-      if (data !== "") {
+      if (Array.isArray(data)) {
         data.find(function (el) {
           if (!hasJsonFile) {
             hasJsonFile = getPreviewForFileType(el.fileExt, "json");
