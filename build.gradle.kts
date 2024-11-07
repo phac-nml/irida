@@ -166,7 +166,7 @@ dependencies {
     implementation("com.google.guava:guava:33.3.1-jre")
     implementation("commons-cli:commons-cli:1.9.0")
     implementation("org.aspectj:aspectjweaver")
-    implementation("org.apache.commons:commons-csv:1.9.0")
+    implementation("org.apache.commons:commons-csv:1.12.0")
     implementation("com.sksamuel.diff:diff:1.1.11")
     implementation("org.pf4j:pf4j:2.4.0")
     implementation("org.biojava:biojava3-core:3.0")
