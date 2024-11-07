@@ -305,9 +305,6 @@ importers:
       run-z:
         specifier: ^1.10.1
         version: 1.11.1
-      speed-measure-webpack-plugin:
-        specifier: ^1.5.0
-        version: 1.5.0(webpack@5.96.1)
       terser-webpack-plugin:
         specifier: ^5.3.1
         version: 5.3.10(webpack@5.96.1)
@@ -4981,12 +4978,6 @@ packages:
 
   space-separated-tokens@2.0.2:
     resolution: {integrity: sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==}
-
-  speed-measure-webpack-plugin@1.5.0:
-    resolution: {integrity: sha512-Re0wX5CtM6gW7bZA64ONOfEPEhwbiSF/vz6e2GvadjuaPrQcHTQdRGsD8+BE7iUOysXH8tIenkPCQBEcspXsNg==}
-    engines: {node: '>=6.0.0'}
-    peerDependencies:
-      webpack: ^1 || ^2 || ^3 || ^4 || ^5
 
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
@@ -11391,11 +11382,6 @@ snapshots:
   source-map@0.7.4: {}
 
   space-separated-tokens@2.0.2: {}
-
-  speed-measure-webpack-plugin@1.5.0(webpack@5.96.1):
-    dependencies:
-      chalk: 4.1.2
-      webpack: 5.96.1(webpack-cli@4.10.0)
 
   sprintf-js@1.0.3: {}
 

@@ -10,9 +10,6 @@ const entries = require("./entries");
 const formatAntStyles = require("./styles");
 const os = require("os");
 
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
-const smp = new SpeedMeasurePlugin();
-
 const MINIMIZER_CORES = Math.min(8, Math.max(1, os.cpus().length - 1));
 
 /**
@@ -34,7 +31,7 @@ module.exports = (env, argv) => {
   // set babel env based on webpack mode
   process.env.BABEL_ENV = argv.mode;
 
-  const config = smp.wrap({
+  const config = {
     /*
     This option controls if and how source maps are generated.
     1. Development: "eval-source-map" - Recommended choice for development builds with high quality SourceMaps.
@@ -169,7 +166,7 @@ module.exports = (env, argv) => {
         writeToDisk: true,
       }),
     ],
-  });
+  };
 
   config.plugins.push(
     new MiniCssExtractPlugin({
