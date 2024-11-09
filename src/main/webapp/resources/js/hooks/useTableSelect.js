@@ -16,7 +16,7 @@ export function useTableSelect(list = []) {
       const set = new Set(selected);
       setSelectedItems(list.filter((item) => set.has(item.key)));
     }
-  }, [selected]);
+  }, [list, selected]);
 
   return [{ selected, selectedItems }, { setSelected }];
 }

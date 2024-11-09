@@ -13,15 +13,14 @@ const initialContext = {
   samples: null,
   singleEndSamples: null,
   referenceFile: [],
-  loading: true
+  loading: true,
 };
 
 const AnalysisSamplesContext = React.createContext(initialContext);
 
 function AnalysisSamplesProvider(props) {
-  const [analysisSamplesContext, setAnalysisSamplesContext] = useState(
-    initialContext
-  );
+  const [analysisSamplesContext, setAnalysisSamplesContext] =
+    useState(initialContext);
   const { analysisIdentifier } = useContext(AnalysisContext);
   const [sampleDisplayHeight, setSampleDisplayHeight] = useState(null);
 
@@ -29,13 +28,13 @@ function AnalysisSamplesProvider(props) {
     updateHeight();
     getAnalysisInputFiles(analysisIdentifier).then(
       ({ pairedEndSamples, singleEndSamples, referenceFile }) => {
-        setAnalysisSamplesContext(analysisSamplesContext => {
+        setAnalysisSamplesContext((analysisSamplesContext) => {
           return {
             ...analysisSamplesContext,
             samples: pairedEndSamples,
             singleEndSamples: singleEndSamples,
             referenceFile: referenceFile,
-            loading: false
+            loading: false,
           };
         });
       }
@@ -65,7 +64,7 @@ function AnalysisSamplesProvider(props) {
       value={{
         analysisSamplesContext,
         sampleDisplayHeight,
-        getAnalysisInputSamples
+        getAnalysisInputSamples,
       }}
     >
       {props.children}

@@ -21,7 +21,7 @@ export function PhylocanvasComponent({ data, className, style, treeType }) {
     tree.load(data);
     tree.setTreeType(treeType);
     setCurrentTree(tree);
-  }, [treeType]);
+  }, [currentTree, data, treeType]);
 
   // Renders the phylocanvas tree
   return <div id="phyloCanvasDiv" style={style} className={className} />;

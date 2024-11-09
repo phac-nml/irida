@@ -14,17 +14,19 @@ function SequencingRunsProvider({ children }) {
     order: "descend",
     column: "createdDate",
     total: undefined,
-    filters: {}
+    filters: {},
   });
 
-  useEffect(() => updateTable(), [
-    updateTable,
-    tableState.search,
-    tableState.current,
-    tableState.order,
-    tableState.column,
-    tableState.filters
-  ]);
+  useEffect(
+    () => updateTable(),
+    [
+      updateTable,
+      tableState.search,
+      tableState.order,
+      tableState.column,
+      tableState.filters,
+    ]
+  );
 
   /**
    * Called whenever the table needs to be re-rendered.
@@ -38,7 +40,7 @@ function SequencingRunsProvider({ children }) {
       sortColumn: tableState.column,
       sortDirection: tableState.order,
       search: tableState.search,
-      filters: tableState.filters
+      filters: tableState.filters,
     }).then(({ analyses, total }) => {
       setTableState({ ...tableState, ...{ total, analyses, loading: false } });
     });
@@ -50,5 +52,5 @@ function SequencingRunsProvider({ children }) {
 export {
   SequencingRunsProvider,
   Consumer as SequencingRunConsumer,
-  SequencingRunsContext
+  SequencingRunsContext,
 };

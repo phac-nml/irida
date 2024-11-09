@@ -6,21 +6,20 @@
 import React, { useState } from "react";
 
 const initialContext = {
-  sharedProjects: []
+  sharedProjects: [],
 };
 
 const AnalysisShareContext = React.createContext(initialContext);
 
 function AnalysisShareProvider(props) {
-  const [analysisShareContext, setAnalysisShareContext] = useState(
-    initialContext
-  );
+  const [analysisShareContext, setAnalysisShareContext] =
+    useState(initialContext);
 
   function storeSharedProjects(sharedProjectObject) {
-    setAnalysisShareContext(analysisShareContext => {
+    setAnalysisShareContext((analysisShareContext) => {
       return {
         ...analysisShareContext,
-        sharedProjects: sharedProjectObject.sharedProjects
+        sharedProjects: sharedProjectObject.sharedProjects,
       };
     });
   }
@@ -32,15 +31,16 @@ function AnalysisShareProvider(props) {
    * an analysis can be shared with
    */
   function updateSharedProjectShareStatus(sharedProjectObject) {
-    const indexOfProjectToUpdate = analysisShareContext.sharedProjects.findIndex(
-        sharedProj =>
-          sharedProj.project.identifier === sharedProjectObject.projectId
-      ),
+    const indexOfProjectToUpdate =
+        analysisShareContext.sharedProjects.findIndex(
+          (sharedProj) =>
+            sharedProj.project.identifier === sharedProjectObject.projectId
+        ),
       sharedProjects = [...analysisShareContext.sharedProjects];
     sharedProjects[indexOfProjectToUpdate].shared =
       sharedProjectObject.shareStatus;
 
-    setAnalysisShareContext(analysisShareContext => {
+    setAnalysisShareContext((analysisShareContext) => {
       return { ...analysisShareContext, sharedProjects: sharedProjects };
     });
   }
@@ -50,7 +50,7 @@ function AnalysisShareProvider(props) {
       value={{
         analysisShareContext,
         storeSharedProjects,
-        updateSharedProjectShareStatus
+        updateSharedProjectShareStatus,
       }}
     >
       {props.children}

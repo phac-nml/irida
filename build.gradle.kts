@@ -312,6 +312,11 @@ tasks.named<PnpmTask>("pnpmInstall") {
     finalizedBy(":pnpmCachePrune")
 }
 
+tasks.register<PnpmTask>("lintWebapp") {
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("lint"))
+}
+
 tasks.register<PnpmTask>("cleanWebapp") {
     dependsOn(":pnpmInstall")
     pnpmCommand.set(listOf("clean"))

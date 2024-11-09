@@ -14,7 +14,9 @@ export const defaultShowPageSizeChanger = true;
 /**
  * Set the common pagination options for the ant design tables
  */
-export function getPaginationOptions(totalEntries: number): TablePaginationConfig {
+export function getPaginationOptions(
+  totalEntries: number
+): TablePaginationConfig {
   const config = {
     total: totalEntries,
     hideOnSinglePage: totalEntries <= defaultPageSize,
@@ -34,7 +36,7 @@ export function getPaginationOptions(totalEntries: number): TablePaginationConfi
   } else {
     return {
       ...config,
-      pageSizeOptions: ["10", "20", "50", '100'],
+      pageSizeOptions: ["10", "20", "50", "100"],
     };
   }
 }
