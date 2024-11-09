@@ -287,7 +287,7 @@ tasks.war {
 node {
     download.set(true)
     version.set("20.14.0")
-    pnpmVersion.set("8.15.9")
+    pnpmVersion.set("9.12.3")
     workDir.set(file("${project.projectDir}/.gradle/nodejs"))
     nodeProjectDir.set(file("${project.projectDir}/src/main/webapp"))
 }
