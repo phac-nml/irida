@@ -35,7 +35,7 @@
     "@luma.gl/webgl": "8.5.14",
     "@phylocanvas/phylocanvas.gl": "1.43.0",
     "@reduxjs/toolkit": "1.8.5",
-    "ag-grid-community": "27.1.0",
+    "ag-grid-community": "31.3.4",
     "ag-grid-react": "27.1.0",
     "antd": "4.19.5",
     "axios": "0.28.0",
