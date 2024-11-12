@@ -2941,8 +2941,8 @@ packages:
   focus-outline-manager@1.0.2:
     resolution: {integrity: sha512-bHWEmjLsTjGP9gVs7P3Hyl+oY5NlMW8aTSPdTJ+X2GKt6glDctt9fUCLbRV+d/l8NDC40+FxMjp9WlTQXaQALw==}
 
-  follow-redirects@1.14.9:
-    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+  follow-redirects@1.15.9:
+    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -8182,7 +8182,7 @@ snapshots:
 
   axios@0.26.1:
     dependencies:
-      follow-redirects: 1.14.9
+      follow-redirects: 1.15.9
     transitivePeerDependencies:
       - debug
 
@@ -9229,7 +9229,7 @@ snapshots:
 
   focus-outline-manager@1.0.2: {}
 
-  follow-redirects@1.14.9: {}
+  follow-redirects@1.15.9: {}
 
   for-each@0.3.3:
     dependencies:
