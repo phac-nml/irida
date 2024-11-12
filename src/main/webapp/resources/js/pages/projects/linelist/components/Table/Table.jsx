@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { Button, notification, Spin } from "antd";
 import isEqual from "lodash/isEqual";
 import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-material.css";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-material.css";
 import { CsvExportModule } from "@ag-grid-community/csv-export";
 import LoadingOverlay from "./LoadingOverlay";
 import {
@@ -172,7 +172,7 @@ export class TableComponent extends React.Component {
     /*
     Resize the icons since no extra space is needed.
      */
-    this.columnApi.autoSizeColumns([FIELDS.icons]);
+    this.api.autoSizeColumns([FIELDS.icons]);
   };
 
   /**
@@ -180,7 +180,7 @@ export class TableComponent extends React.Component {
    * table.
    */
   onColumnDropped = () => {
-    const colOrder = [...this.columnApi.getColumnState()];
+    const colOrder = [...this.api.getColumnState()];
     // Remove sample name
     colOrder.shift();
 
@@ -245,7 +245,7 @@ export class TableComponent extends React.Component {
          * Get the visible columns.  Need to ignore the icon columns since
          * it does not contain any data that we want.
          */
-        const filteredColIds = this.columnApi
+        const filteredColIds = this.api
           .getColumnState()
           .filter((c) => !c.hide && c.colId !== "icons")
           .map((c) => c.colId);
@@ -386,6 +386,7 @@ export class TableComponent extends React.Component {
     return (
       <AgGridReact
         id="linelist-grid"
+        reactiveCustomComponents={true}
         rowSelection="multiple"
         onFilterChanged={this.setFilterCount}
         localeText={{
@@ -408,7 +409,6 @@ export class TableComponent extends React.Component {
           sortable: true,
           filter: true,
         }}
-        enableCellChangeFlash={true}
         onCellEditingStarted={this.onCellEditingStarted}
         onCellEditingStopped={this.onCellEditingStopped}
       />
