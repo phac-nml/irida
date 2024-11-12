@@ -87,7 +87,7 @@ function AnalysisDetailsProvider(props) {
     getVariablesForDetails(analysisIdentifier).then((data) => {
       dispatch({ type: TYPES.DETAILS, payload: data });
     });
-  }, [getVariablesForDetails]);
+  }, [analysisIdentifier]);
 
   useEffect(() => {
     dispatch({

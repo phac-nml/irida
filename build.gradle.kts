@@ -286,8 +286,8 @@ tasks.war {
 
 node {
     download.set(true)
-    version.set("16.15.1")
-    pnpmVersion.set("7.4.0")
+    version.set("20.14.0")
+    pnpmVersion.set("9.12.3")
     workDir.set(file("${project.projectDir}/.gradle/nodejs"))
     nodeProjectDir.set(file("${project.projectDir}/src/main/webapp"))
 }
@@ -310,6 +310,11 @@ tasks.register<PnpmTask>("pnpmCacheDir") {
 
 tasks.named<PnpmTask>("pnpmInstall") {
     finalizedBy(":pnpmCachePrune")
+}
+
+tasks.register<PnpmTask>("lintWebapp") {
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("lint"))
 }
 
 tasks.register<PnpmTask>("cleanWebapp") {

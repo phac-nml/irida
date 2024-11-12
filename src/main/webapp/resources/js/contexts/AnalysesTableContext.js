@@ -14,9 +14,8 @@ const initialContext = {
 const AnalysesTableContext = React.createContext(initialContext);
 
 function AnalysesTableProvider(props) {
-  const [analysesTableContext, setAnalysesTableContext] = useState(
-    initialContext
-  );
+  const [analysesTableContext, setAnalysesTableContext] =
+    useState(initialContext);
 
   /*
    * This function gets the analysis duration and state, and

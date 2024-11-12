@@ -28,7 +28,7 @@ const UPDATE_QUEUE_COUNT_DELAY = 60000;
  * @return {*}
  * @constructor
  */
-export function AnalysesQueue({}) {
+export function AnalysesQueue() {
   const [running, setRunning] = useState(null);
   const [queued, setQueued] = useState(null);
 
