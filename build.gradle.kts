@@ -136,7 +136,7 @@ dependencies {
     implementation("org.apache.commons:commons-dbcp2") {
         exclude(group = "commons-logging", module = "commons-logging")
     }
-    implementation("commons-net:commons-net:3.8.0")
+    implementation("commons-net:commons-net:3.11.1")
     implementation("org.apache.jena:jena-tdb:4.6.1") {
         exclude(group = "xml-apis")
         exclude(group = "org.slf4j")
