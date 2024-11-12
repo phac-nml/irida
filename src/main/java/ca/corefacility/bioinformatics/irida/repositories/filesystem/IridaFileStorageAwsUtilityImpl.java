@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -252,8 +254,12 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	@Override
 	public InputStream getFileInputStream(Path file) {
 		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			return s3Object.getObjectContent();
+			if (getFileSizeBytes(file) > 0L) {
+				S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+				return s3Object.getObjectContent();
+			} else {
+				return IOUtils.toInputStream("", Charset.defaultCharset());
+			}
 		} catch (AmazonServiceException e) {
 			logger.error("Couldn't read file from s3 bucket [" + e + "]");
 			throw new StorageException("Unable to locate file in s3 bucket", e);

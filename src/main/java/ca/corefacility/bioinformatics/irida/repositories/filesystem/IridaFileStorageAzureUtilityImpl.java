@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +54,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	}
 
 	/*
-	This instantiation method should only be used for testing. DO NOT USE IN PRODUCTION. USE THE SAS TOKEN METHOD ABOVE FOR PRODUCTION.
+	 * This instantiation method should only be used for testing. DO NOT USE IN
+	 * PRODUCTION. USE THE SAS TOKEN METHOD ABOVE FOR PRODUCTION.
 	 */
 	public IridaFileStorageAzureUtilityImpl(boolean deleteFromFilesystem, String url,
 			StorageSharedKeyCredential storageSharedKeyCredential, String containerName) {
@@ -152,8 +155,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try {
 			logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
 
-			// Upload the file in blocks rather than all at once to prevent a timeout if the file is large.
-			int blockSize = 2 * 1024 * 1024; //2MB
+			// Upload the file in blocks rather than all at once to prevent a timeout if the
+			// file is large.
+			int blockSize = 2 * 1024 * 1024; // 2MB
 			ParallelTransferOptions parallelTransferOptions = new ParallelTransferOptions(blockSize, 8, null);
 			blobClient.uploadFromFile(source.toString(), parallelTransferOptions, new BlobHttpHeaders(), null,
 					AccessTier.HOT, new BlobRequestConditions(), Duration.ofMinutes(10));
@@ -247,7 +251,11 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		logger.trace("Opening input stream to file on azure [" + file.toString() + "]");
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		try {
-			return blobClient.openInputStream();
+			if (getFileSizeBytes(file) > 0L) {
+				return blobClient.openInputStream();
+			} else {
+				return IOUtils.toInputStream("", Charset.defaultCharset());
+			}
 		} catch (BlobStorageException e) {
 			logger.error("Couldn't get file input stream from azure [" + e + "]");
 			throw new StorageException("Couldn't get file input stream from azure", e);
@@ -262,8 +270,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try (InputStream is = getFileInputStream(file)) {
 			byte[] bytes = new byte[2];
 			is.read(bytes);
-			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC
-					>> 8)));
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
 	}
 
@@ -347,7 +355,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * Removes the leading "/" from the absolute path returns the rest of the path.
 	 *
 	 * @param file The path to the file
-	 * @return the absolute file path with the preceding slash stripped off it path includes it
+	 * @return the absolute file path with the preceding slash stripped off it path
+	 *         includes it
 	 */
 	private String getAzureFileAbsolutePath(Path file) {
 		String absolutePath = file.toAbsolutePath().toString();
@@ -382,8 +391,10 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		/*
-		 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
-		 However a smaller amount of bytes may be read, so we set the file pointer accordingly
+		 * The range of bytes to read. Start at seek and get `chunk` amount of bytes
+		 * from seek point.
+		 * However a smaller amount of bytes may be read, so we set the file pointer
+		 * accordingly
 		 */
 		BlobRange blobRange = new BlobRange(seek, chunk);
 		try (BlobInputStream blobInputStream = blobClient.openInputStream(blobRange, null)) {
