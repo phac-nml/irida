@@ -7,7 +7,7 @@
     <changeSet id="update-oauth2-authorization-table" author="eric">
         <addColumn tableName="oauth2_authorization">
             <column name="authorized_scopes" type="varchar(255)" />
-            <column name"oidc_id_token_claims" type="varchar(2000)" />
+            <column name="oidc_id_token_claims" type="varchar(2000)" />
         </addColumn>
     </changeSet>
 </databaseChangeLog>
