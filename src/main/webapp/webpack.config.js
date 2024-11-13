@@ -53,6 +53,9 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: [".js", ".jsx", ".ts", ".tsx"],
       symlinks: false,
+      alias: {
+        "react-dom/server": "react-dom/server.browser.js",
+      },
     },
     output: {
       path: path.resolve(__dirname, "dist"),
