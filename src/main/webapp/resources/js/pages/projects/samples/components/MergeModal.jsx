@@ -153,7 +153,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                   <Form.Item
                     name="newName"
                     rules={[
-                      ({}) => ({
+                      () => ({
                         validator(_, value) {
                           return validateName(value);
                         },
