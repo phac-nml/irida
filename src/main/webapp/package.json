@@ -38,7 +38,7 @@
     "@reduxjs/toolkit": "1.8.5",
     "ag-grid-community": "31.3.4",
     "ag-grid-react": "31.3.4",
-    "antd": "4.19.5",
+    "antd": "4.24.16",
     "axios": "0.28.0",
     "clipboard": "1.7.1",
     "dayjs": "1.11.1",
