@@ -1,6 +1,6 @@
 import { Button, Result } from "antd";
 import React from "react";
-import {micromark} from 'micromark'
+import { micromark } from "micromark";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const BASE_URL = setBaseUrl(`/projects`);
@@ -12,11 +12,7 @@ function SingleMoved({ project, sample, extra }) {
       className="t-move-single"
       status="success"
       title={micromark(i18n("ShareSuccess.move.title.single"))}
-      subTitle={micromark(i18n(
-            "ShareSuccess.move.subTitle.single",
-            sample.name,
-            project.label))
-      }
+      subTitle={micromark(i18n("ShareSuccess.move.subTitle.single", sample.name, project.label))}
     />
   );
 }
@@ -28,18 +24,19 @@ function SingleShared({ project, sample, extra }) {
       className="t-share-single"
       status="success"
       title={
-        <ReactMarkdown className="t-success-title">
-          {i18n("ShareSuccess.share.title.single")}
-        </ReactMarkdown>
+        <div
+          className="t-success-title"
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.share.title.single")),
+          }}
+        />
       }
       subTitle={
-        <ReactMarkdown>
-          {i18n(
-            "ShareSuccess.share.subTitle.single",
-            sample.name,
-            project.label
-          )}
-        </ReactMarkdown>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.share.subTitle.single", sample.name, project.label)),
+          }}
+        />
       }
     />
   );
@@ -52,14 +49,19 @@ function MultipleMoved({ project, count, extra }) {
       className="t-move-multiple"
       status="success"
       title={
-        <ReactMarkdown className="t-success-title">
-          {i18n("ShareSuccess.move.title.plural")}
-        </ReactMarkdown>
+        <div
+          className="t-success-title"
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.move.title.plural")),
+          }}
+        />
       }
       subTitle={
-        <ReactMarkdown>
-          {i18n("ShareSuccess.move.subTitle.plural", count, project.label)}
-        </ReactMarkdown>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.move.subTitle.plural", count, project.label)),
+          }}
+        />
       }
     />
   );
@@ -72,14 +74,19 @@ function MultipleShared({ project, count, extra }) {
       className="t-share-multiple"
       status="success"
       title={
-        <ReactMarkdown className="t-success-title">
-          {i18n("ShareSuccess.share.title.plural")}
-        </ReactMarkdown>
+        <div
+          className="t-success-title"
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.share.title.plural")),
+          }}
+        />
       }
       subTitle={
-        <ReactMarkdown>
-          {i18n("ShareSuccess.share.subTitle.plural", count, project.label)}
-        </ReactMarkdown>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.share.subTitle.plural", count, project.label)),
+          }}
+        />
       }
     />
   );
@@ -99,29 +106,21 @@ export function ShareSuccess({ removed, project, samples, currentProject }) {
     <Button key="return" href={`${BASE_URL}/${currentProject}`}>
       {i18n("ShareSuccess.link.samples")}
     </Button>,
-    <Button
-      type="primary"
-      key="goto"
-      href={`${BASE_URL}/${project.identifier}`}
-    >
-      {i18n("ShareSuccess.link.goto", project.label)}
+    <Button key="project" href={`${BASE_URL}/${project.id}`}>
+      {i18n("ShareSuccess.link.project")}
     </Button>,
   ];
 
-  // Single samples
-  if (single && removed) {
-    return <SingleMoved project={project} sample={samples[0]} extra={extra} />;
-  } else if (single) {
-    return <SingleShared project={project} sample={samples[0]} extra={extra} />;
-  }
-
-  // Multiple Samples,
-  if (removed) {
-    return (
-      <MultipleMoved project={project} count={samples.length} extra={extra} />
+  if (single) {
+    return removed ? (
+      <SingleMoved project={project} sample={samples[0]} extra={extra} />
+    ) : (
+      <SingleShared project={project} sample={samples[0]} extra={extra} />
     );
   }
-  return (
+  return removed ? (
+    <MultipleMoved project={project} count={samples.length} extra={extra} />
+  ) : (
     <MultipleShared project={project} count={samples.length} extra={extra} />
   );
 }
