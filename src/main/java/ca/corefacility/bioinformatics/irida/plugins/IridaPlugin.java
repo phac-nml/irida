@@ -1,9 +1,15 @@
 package ca.corefacility.bioinformatics.irida.plugins;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -105,11 +111,26 @@ public interface IridaPlugin extends ExtensionPoint {
 	 */
 	public default Path getWorkflowsPath() throws IridaPluginException {
 		try {
-			return Paths.get(this.getClass()
-					.getResource("/workflows/")
-					.toURI());
+			URI uri = this.getClass().getResource("/workflows/").toURI();
+			String[] array = uri.toString().split("!");
+			if (uri.getScheme().equals("jar")) {
+				FileSystem fs = getFileSystem(new URI(array[0]));
+				return fs.getPath(array[1]);
+			} else {
+				return Paths.get(uri);
+			}
 		} catch (URISyntaxException e) {
 			throw new IridaPluginException("Error converting path to workflows", e);
+		} catch (IOException e) {
+			throw new IridaPluginException("Error converting path to workflows", e);
+		}
+	}
+
+	public default FileSystem getFileSystem(URI uri) throws IOException{
+		try {
+			return FileSystems.getFileSystem(uri);
+		} catch (FileSystemNotFoundException e) {
+			return FileSystems.newFileSystem(uri, Collections.<String, String>emptyMap());
 		}
 	}
 }
