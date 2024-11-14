@@ -18,8 +18,8 @@ version = "23.10.1"
 description = "irida"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
 }
@@ -196,7 +196,9 @@ dependencies {
 
     // Customized blend4j
     implementation("com.sun.jersey:jersey-client:1.19.4")
-    implementation("com.sun.jersey:jersey-json:1.19.4")
+    implementation("com.sun.jersey:jersey-json:1.19.4") {
+        exclude(group = "com.sun.xml.bind", module = "jaxb-impl")
+    }
     implementation("com.sun.jersey:jersey-core:1.19.4")
     implementation("com.sun.jersey.contribs:jersey-multipart:1.19.4")
     implementation("org.codehaus.jackson:jackson-core-asl:1.9.12")
