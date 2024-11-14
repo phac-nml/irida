@@ -1,7 +1,5 @@
 import React from "react";
-import {
-  getUnreadAnnouncements
-} from "../../../../apis/announcements/announcements";
+import { getUnreadAnnouncements } from "../../../../apis/announcements/announcements";
 
 /**
  * The context provides access to shared announcement data and actions.
@@ -25,7 +23,7 @@ export const TYPES = {
  */
 const reducer = (state, action) => {
   switch (action.type) {
-    case TYPES.LOADED:
+    case TYPES.LOADED: {
       const isPriority =
         action.payload.announcements.filter((a) => a.priority).length > 0;
       return {
@@ -35,6 +33,7 @@ const reducer = (state, action) => {
         index: 0,
         isPriority,
       };
+    }
     case TYPES.SHOW_ANNOUNCEMENT:
       return {
         ...state,
@@ -50,7 +49,7 @@ const reducer = (state, action) => {
         isPriority: null,
         announcements: state.announcements.filter((a) => !a.read),
       };
-    case TYPES.READ_AND_NEXT:
+    case TYPES.READ_AND_NEXT: {
       const newNextAnnouncements = [...state.announcements];
       newNextAnnouncements[state.index] = action.payload.announcement;
       return {
@@ -58,7 +57,8 @@ const reducer = (state, action) => {
         index: state.index + 1,
         announcements: newNextAnnouncements,
       };
-    case TYPES.READ_AND_PREVIOUS:
+    }
+    case TYPES.READ_AND_PREVIOUS: {
       const newPreviousAnnouncements = [...state.announcements];
       newPreviousAnnouncements[state.index] = action.payload.announcement;
       return {
@@ -66,7 +66,8 @@ const reducer = (state, action) => {
         index: state.index - 1,
         announcements: newPreviousAnnouncements,
       };
-    case TYPES.READ_AND_CLOSE:
+    }
+    case TYPES.READ_AND_CLOSE: {
       const newCloseAnnouncements = [...state.announcements];
       newCloseAnnouncements[state.index] = action.payload.announcement;
       return {
@@ -76,6 +77,7 @@ const reducer = (state, action) => {
         isPriority: null,
         announcements: newCloseAnnouncements.filter((a) => !a.read),
       };
+    }
     default:
       return { ...state };
   }

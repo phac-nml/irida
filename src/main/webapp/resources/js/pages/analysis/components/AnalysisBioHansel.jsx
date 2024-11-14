@@ -29,7 +29,7 @@ export default function AnalysisBioHansel() {
       if (analysisOutputsContext.outputs === null) {
         getAnalysisOutputs();
       }
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, 
     []
   );
 

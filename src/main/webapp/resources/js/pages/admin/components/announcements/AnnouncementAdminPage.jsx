@@ -19,7 +19,7 @@ import "../../../../../css/pages/announcements.css";
  * @returns {*}
  * @constructor
  */
-export default function AnnouncementAdminPage({}) {
+export default function AnnouncementAdminPage() {
   const tableRef = useRef(null);
 
   function addNewAnnouncement(title, message, priority) {

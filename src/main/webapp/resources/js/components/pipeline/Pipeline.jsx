@@ -63,6 +63,7 @@ export default class Pipeline extends React.Component {
           this.props.displaySelect
             ? [
                 <Button
+                  key={`button-${this.props.name.replace(/\s/g, "_")}`}
                   type="link"
                   className={`t-${this.props.name.replace(
                     /\s/g,

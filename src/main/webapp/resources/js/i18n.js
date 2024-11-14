@@ -17,7 +17,6 @@
  * expected.
  */
 
-
 /**
  * Get the translation for the key from the global window.translations
  * @param {string} key
@@ -53,5 +52,5 @@ function i18n(key, ...args) {
     return `__${key}__`;
   }
 }
-
+/* eslint-disable-next-line */
 module.exports = i18n;
