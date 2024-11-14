@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { Card, Col, Row } from "antd";
 import { SPACE_LG } from "../../styles/spacing";
 import { CreateRemoteProjectSyncForm } from "../../components/remote-api/CreateRemoteProjectSyncForm";
@@ -16,4 +16,6 @@ function NewRemoteProjectForm() {
   );
 }
 
-render(<NewRemoteProjectForm />, document.querySelector("#root"));
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<NewRemoteProjectForm />);

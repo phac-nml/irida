@@ -1,14 +1,15 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { LaunchProvider } from "./launch-context";
 import { LaunchPage } from "./LaunchPage";
 
 /**
  * Render page for launching workflow pipelines.
  */
-render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <LaunchProvider>
     <LaunchPage />
-  </LaunchProvider>,
-  document.querySelector("#root")
+  </LaunchProvider>
 );

@@ -1,4 +1,4 @@
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -32,7 +32,9 @@ __webpack_public_path__ = setBaseUrl(`/dist/`);
  * @returns {*}
  * @constructor
  */
-render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <Provider store={store}>
     <BrowserRouter basename={setBaseUrl("/users")}>
       <React.Suspense fallback={<ContentLoading />}>
@@ -46,6 +48,5 @@ render(
         </Routes>
       </React.Suspense>
     </BrowserRouter>
-  </Provider>,
-  document.querySelector("#user-account-root")
+  </Provider>
 );

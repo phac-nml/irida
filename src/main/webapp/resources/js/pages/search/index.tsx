@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -26,8 +26,9 @@ const router = createBrowserRouter(
   )
 );
 
-const element = document.querySelector("#root");
-render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <Layout
     style={{
       minHeight: `100%`,
@@ -37,5 +38,4 @@ render(
   >
     <RouterProvider router={router} />
   </Layout>,
-  element
 );

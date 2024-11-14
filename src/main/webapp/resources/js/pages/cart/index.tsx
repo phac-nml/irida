@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { Provider } from "react-redux";
 import { cartApi } from "../../apis/cart/cart";
 import { projectsApi } from "../../apis/projects/projects";
@@ -29,9 +29,10 @@ const store = configureStore({
     getDefaultMiddleware().concat(cartApi.middleware, projectsApi.middleware),
 });
 
-render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <Provider store={store}>
     <Cart />
-  </Provider>,
-  document.querySelector("#root")
+  </Provider>
 );

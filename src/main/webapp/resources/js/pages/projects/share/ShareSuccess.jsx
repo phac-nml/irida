@@ -1,6 +1,6 @@
 import { Button, Result } from "antd";
 import React from "react";
-import ReactMarkdown from "react-markdown";
+import {micromark} from 'micromark'
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const BASE_URL = setBaseUrl(`/projects`);
@@ -11,19 +11,11 @@ function SingleMoved({ project, sample, extra }) {
       extra={extra}
       className="t-move-single"
       status="success"
-      title={
-        <ReactMarkdown className="t-success-title">
-          {i18n("ShareSuccess.move.title.single")}
-        </ReactMarkdown>
-      }
-      subTitle={
-        <ReactMarkdown>
-          {i18n(
+      title={micromark(i18n("ShareSuccess.move.title.single"))}
+      subTitle={micromark(i18n(
             "ShareSuccess.move.subTitle.single",
             sample.name,
-            project.label
-          )}
-        </ReactMarkdown>
+            project.label))
       }
     />
   );

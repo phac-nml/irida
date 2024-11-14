@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { Session } from "../session/Session";
 import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
@@ -42,4 +42,6 @@ export function PageHeader() {
   );
 }
 
-render(<PageHeader />, document.querySelector(".js-page-header"));
+const container = document.querySelector(".js-page-header");
+const root = createRoot(container);
+root.render(<PageHeader />);

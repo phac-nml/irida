@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { Alert, Button, Col, Form, Input, List, Row, Typography } from "antd";
 import {
   EyeInvisibleOutlined,
@@ -216,4 +216,6 @@ export default function PasswordReset() {
   );
 }
 
-render(<PasswordReset />, document.querySelector("#root"));
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<PasswordReset />);

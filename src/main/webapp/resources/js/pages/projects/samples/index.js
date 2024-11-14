@@ -2,7 +2,7 @@
  * @file Base file for the project samples page.
  */
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import ProjectSamples from "./components/ProjectSamples";
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
@@ -41,9 +41,10 @@ export const store = configureStore({
 });
 setupListeners(store.dispatch);
 
-render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <Provider store={store}>
     <ProjectSamples />
-  </Provider>,
-  document.getElementById("root")
+  </Provider>
 );

@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -83,4 +83,6 @@ export default function ProjectSPA(): JSX.Element {
   return <RouterProvider router={router} />;
 }
 
-render(<ProjectSPA />, document.querySelector("#root"));
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<ProjectSPA />);
