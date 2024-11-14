@@ -89,7 +89,7 @@ export function AnalysisSampleRenderer() {
                     <div key={`file-${item.forward.identifier}`}>
                       <a
                         href={`${SEQ_FILES_BASE_URL}/${item.sequenceFilePairId}/file/${item.forward.identifier}/summary`}
-                        target="_blank"
+                        target="_blank" rel="noreferrer"
                       >
                         {item.forward.fileName}
                       </a>
@@ -97,7 +97,7 @@ export function AnalysisSampleRenderer() {
                     <div key={`file-${item.reverse.identifier}`}>
                       <a
                         href={`${SEQ_FILES_BASE_URL}/${item.sequenceFilePairId}/file/${item.reverse.identifier}/summary`}
-                        target="_blank"
+                        target="_blank" rel="noreferrer"
                       >
                         {item.reverse.fileName}
                       </a>
@@ -152,7 +152,7 @@ export function AnalysisSampleRenderer() {
                     <div key={`file-${item.fileId}`}>
                       <a
                         href={`${SEQ_FILES_BASE_URL}/${item.fileId}/file/${item.sequenceFile.identifier}/summary`}
-                        target="_blank"
+                        target="_blank" rel="noreferrer"
                       >
                         {item.sequenceFile.fileName}
                       </a>
