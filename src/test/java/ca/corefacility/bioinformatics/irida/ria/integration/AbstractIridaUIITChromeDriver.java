@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("IntegrationTest")
 @Tag("UI")
 @ActiveProfiles("it")
-@SpringBootTest(classes = { IridaApplication.class, IridaApiTestFilesystemConfig.class },
-		webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { IridaApplication.class,
+		IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 
 @Import(IridaIntegrationTestUriConfig.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
@@ -61,9 +61,6 @@ public class AbstractIridaUIITChromeDriver {
 	public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
 
 	private static boolean isSingleTest = false;
-
-	private static final String CHROMEDRIVER_PROP_KEY = "webdriver.chrome.driver";
-	private static final String CHROMEDRIVER_LOCATION = "src/main/webapp/chromedriver";
 
 	@RegisterExtension
 	public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
@@ -86,12 +83,8 @@ public class AbstractIridaUIITChromeDriver {
 	 */
 	public static WebDriver driver() {
 		if (IntegrationUITestListener.driver() == null) {
-			final String chromeDriverProp = System.getProperty(CHROMEDRIVER_PROP_KEY);
-			System.setProperty(CHROMEDRIVER_PROP_KEY,
-					Strings.isNullOrEmpty(chromeDriverProp) ? CHROMEDRIVER_LOCATION : chromeDriverProp);
 			logger.debug(
-					"Starting ChromeDriver for a single test class. Using `chromedriver` at '" + System.getProperty(
-							CHROMEDRIVER_PROP_KEY) + "'");
+					"Starting ChromeDriver for a single test class.");
 			isSingleTest = true;
 			IntegrationUITestListener.startWebDriver();
 		}
@@ -107,11 +100,7 @@ public class AbstractIridaUIITChromeDriver {
 	 */
 	public static WebDriver driver2() {
 		if (IntegrationUITestListener.driver2() == null) {
-			final String chromeDriverProp = System.getProperty(CHROMEDRIVER_PROP_KEY);
-			System.setProperty(CHROMEDRIVER_PROP_KEY,
-					Strings.isNullOrEmpty(chromeDriverProp) ? CHROMEDRIVER_LOCATION : chromeDriverProp);
-			logger.debug("Starting a second ChromeDriver for a single test class. Using `chromedriver` at '"
-					+ System.getProperty(CHROMEDRIVER_PROP_KEY) + "'");
+			logger.debug("Starting a second ChromeDriver for a single test class");
 			isSingleTest = true;
 			IntegrationUITestListener.startWebDriver();
 		}
@@ -121,12 +110,16 @@ public class AbstractIridaUIITChromeDriver {
 	}
 
 	/**
-	 * Method to use on any page to check to ensure that internationalization messages are being automatically loaded
+	 * Method to use on any page to check to ensure that internationalization
+	 * messages are being automatically loaded
 	 * onto the page.
 	 *
-	 * @param page    - the instance of {@link AbstractPage} to check for internationalization.
-	 * @param entries - a {@link List} of bundle names. This will correspond to the loaded webpack bundles.
-	 * @param header  - Expected text for the main heading on the page. Needs to have class name `t-main-heading`
+	 * @param page    - the instance of {@link AbstractPage} to check for
+	 *                internationalization.
+	 * @param entries - a {@link List} of bundle names. This will correspond to the
+	 *                loaded webpack bundles.
+	 * @param header  - Expected text for the main heading on the page. Needs to
+	 *                have class name `t-main-heading`
 	 */
 	public void checkTranslations(AbstractPage page, List<String> entries, String header) {
 		// Always check for app :)
@@ -158,7 +151,8 @@ public class AbstractIridaUIITChromeDriver {
 			try {
 				final Path destination = Files.createTempFile(
 						"irida-" + context.getRequiredTestClass().getSimpleName() + "#"
-								+ context.getRequiredTestMethod().getName(), ".png");
+								+ context.getRequiredTestMethod().getName(),
+						".png");
 				Files.move(screenshot, destination, StandardCopyOption.REPLACE_EXISTING);
 				logger.info("Screenshot deposited at: [" + destination.toString() + "]");
 			} catch (final IOException e) {

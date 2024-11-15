@@ -19,7 +19,6 @@ GALAXY_PORT=48889
 GALAXY_URL=http://localhost:$GALAXY_PORT
 GALAXY_INVALID_URL=http://localhost:48890
 GALAXY_INVALID_URL2=http://localhost:48891
-CHROME_DRIVER=$SCRIPT_DIR/src/main/webapp/chromedriver
 SELENIUM_DOCKER_NAME=irida-selenium
 SELENIUM_DOCKER_TAG=latest
 SELENIUM_URL=http://localhost:4444/wd/hub
@@ -126,28 +125,15 @@ test_rest() {
 
 test_ui() {
     SELENIUM_OPTS=""
-    if [ "$SELENIUM_DOCKER" = false ];
-    then
-		if [ -z ${CHROMEWEBDRIVER} ]
+    if [ "$SELENIUM_DOCKER" = true ];
 		then
-			# use default CHROME_DRIVER if CHROMEWEBDRIVER env var is not set
-        	SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROME_DRIVER"
-		else
-			if [ -d $CHROMEWEBDRIVER ] && [ -f "$CHROMEWEBDRIVER/chromedriver" ]
-			then
-				SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver"
-			else
-				SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROMEWEBDRIVER"
-			fi
-		fi
-    else
         # create the $TMP_DIRECTORY/irida folder before docker runs so that root doesn't create it
         mkdir -p $TMP_DIRECTORY/irida
         # reuse selenium docker image if it exists
         docker start $SELENIUM_DOCKER_NAME || docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:$SELENIUM_DOCKER_TAG
         SELENIUM_OPTS="-Dwebdriver.selenium_url=$SELENIUM_URL -Dserver.port=33333 -Dserver.base.url=http://$HOSTNAME:33333/irida -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
     fi
-    ./gradlew clean check uiITest $SELENIUM_OPTS -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+    ./gradlew clean uiITest $SELENIUM_OPTS -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	if [[ "$DO_KILL_DOCKER" = true && "$SELENIUM_DOCKER" = true ]]; then docker rm -f -v $SELENIUM_DOCKER_NAME; fi
 	return $exit_code
@@ -169,7 +155,7 @@ test_galaxy_internal() {
 	task=$1
 	shift
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER && \
-    ./gradlew clean check $task -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+    ./gradlew clean $task -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	if [ "$DO_KILL_DOCKER" = true ]; then docker rm -f -v $GALAXY_DOCKER_NAME; fi
 	return $exit_code
