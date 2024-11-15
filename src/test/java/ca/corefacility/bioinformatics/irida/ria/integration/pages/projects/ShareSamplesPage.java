@@ -175,7 +175,7 @@ public class ShareSamplesPage extends AbstractPage {
 	}
 
 	public String getSuccessTitle() {
- 		return successTitle.getText();
+		return successTitle.getText();
 	}
 
 	public int getNumberOfSharedMetadataEntries() {
