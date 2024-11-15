@@ -106,9 +106,13 @@ export function ShareSuccess({ removed, project, samples, currentProject }) {
     <Button key="return" href={`${BASE_URL}/${currentProject}`}>
       {i18n("ShareSuccess.link.samples")}
     </Button>,
-    <Button key="project" href={`${BASE_URL}/${project.id}`}>
-      {i18n("ShareSuccess.link.project")}
-    </Button>,
+    <Button
+      type="primary"
+      key="goto"
+      href={`${BASE_URL}/${project.identifier}`}
+    >
+      {i18n("ShareSuccess.link.goto", project.label)}
+    </Button>
   ];
 
   if (single) {
