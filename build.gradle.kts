@@ -218,7 +218,7 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.rest-assured:json-path")
     testImplementation("com.github.springtestdbunit:spring-test-dbunit:1.3.0")
-    testImplementation("org.dbunit:dbunit:2.7.3") {
+    testImplementation("org.dbunit:dbunit:2.8.0") {
         exclude(group = "org.slf4j")
     }
     testImplementation("org.seleniumhq.selenium:selenium-support:4.4.0")
