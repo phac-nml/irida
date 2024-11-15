@@ -67,7 +67,7 @@ public class ShareSamplesPage extends AbstractPage {
 	@FindBy(className = "t-same-sample-names-warning")
 	private WebElement someSamplesSameNamesWarning;
 
-	@FindBy(className = "t-success-title")
+	@FindBy(css = ".t-success-title p")
 	private WebElement successTitle;
 
 	@FindBy(className = "t-field-label")
@@ -175,7 +175,7 @@ public class ShareSamplesPage extends AbstractPage {
 	}
 
 	public String getSuccessTitle() {
-		return successTitle.getText();
+ 		return successTitle.getText();
 	}
 
 	public int getNumberOfSharedMetadataEntries() {

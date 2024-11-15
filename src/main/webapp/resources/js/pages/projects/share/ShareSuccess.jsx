@@ -11,8 +11,8 @@ function SingleMoved({ project, sample, extra }) {
       extra={extra}
       className="t-move-single"
       status="success"
-      title={micromark(i18n("ShareSuccess.move.title.single"))}
-      subTitle={micromark(i18n("ShareSuccess.move.subTitle.single", sample.name, project.label))}
+      title={<div className="t-success-title" dangerouslySetInnerHTML={{ __html: micromark(i18n("ShareSuccess.move.title.single")) }} />}
+      subTitle={<div dangerouslySetInnerHTML={{ __html: micromark(i18n("ShareSuccess.move.subTitle.single", sample.name, project.label)) }} />}
     />
   );
 }
