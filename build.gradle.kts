@@ -151,7 +151,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("commons-io:commons-io:2.17.0")
     implementation("commons-fileupload:commons-fileupload:1.5")
-    implementation("org.apache.poi:poi-ooxml:5.2.2") {
+    implementation("org.apache.poi:poi-ooxml:5.3.0") {
         exclude(group = "stax", module = "stax-api")
         exclude(group = "org.apache.logging.log4j", module = "log4j-api")
     }
