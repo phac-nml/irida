@@ -184,7 +184,7 @@ dependencies {
     }
 
     // Amazon AWS
-    implementation("com.amazonaws:aws-java-sdk-s3:1.12.326") {
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.778") {
         exclude(group = "commons-logging", module = "commons-logging")
     }
 
