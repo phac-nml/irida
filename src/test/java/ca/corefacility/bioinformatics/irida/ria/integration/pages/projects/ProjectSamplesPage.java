@@ -361,7 +361,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		sampleNameFilterToggle.click();
 		nameFilterInput.sendKeys(name);
 		nameFilterInput.sendKeys(Keys.ENTER);
-		nameFilterInput.sendKeys(Keys.TAB);
 		waitForTableToUpdate(prevTotal);
 	}
 
@@ -369,10 +368,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 		int prevTotal = getTableSummary().getTotal();
 		sampleNameFilterToggle.click();
-		WebElement filter = wait.until(
-				ExpectedConditions.elementToBeClickable(By.cssSelector("[title=\"" + name + "\"]")));
-		filter.findElement(By.className("ant-select-selection-item-remove")).click();
-		sampleNameFilterToggle.sendKeys(Keys.TAB);
+		wait.until(ExpectedConditions.visibilityOf(nameFilterSelectedOptions));
+		WebElement filter = nameFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + name + "\"]"));
+		filter.findElement(By.tagName("svg")).click();
+		nameFilterInput.sendKeys(Keys.ESCAPE);
 		waitForTableToUpdate(prevTotal);
 	}
 
@@ -381,16 +380,19 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		organismFilterToggle.click();
 		organismSelectInput.sendKeys(organism);
 		organismSelectInput.sendKeys(Keys.ENTER);
-		organismFilterToggle.sendKeys(Keys.TAB);
 		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearIndividualOrganismFilter(String organism) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 		int prevTotal = getTableSummary().getTotal();
-		organismFilterToggle.click();
+		if(!organismFilterSelectedOptions.isDisplayed()) {
+			organismFilterToggle.click();
+		}
+		wait.until(ExpectedConditions.visibilityOf(organismFilterSelectedOptions));
 		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
-		filter.findElement(By.className("ant-select-selection-item-remove")).click();
-		organismFilterToggle.sendKeys(Keys.TAB);
+		filter.findElement(By.tagName("svg")).click();
+		organismFilterToggle.sendKeys(Keys.ESCAPE);
 		waitForTableToUpdate(prevTotal);
 	}
 
@@ -421,7 +423,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebElement endInput = driver.findElement(
 				By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
-		endInput.sendKeys(Keys.ENTER);
+		endInput.sendKeys(Keys.TAB);
 		createdDateFilter.findElement(By.className("t-search-btn")).click();
 		waitForTableToUpdate(prevTotal);
 	}
@@ -429,6 +431,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void clearFilterByCreatedDate() {
 		int prevTotal = getTableSummary().getTotal();
 		createdDateFilterToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+		wait.until(ExpectedConditions.visibilityOf(createdDateFilter));
 		createdDateFilter.findElement(By.className("t-clear-btn")).click();
 		createdDateFilterToggle.click();
 		waitForTableToUpdate(prevTotal);
@@ -450,6 +454,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void clearFilterByModifiedDate() {
 		int prevTotal = getTableSummary().getTotal();
 		modifiedDateFilterToggle.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+		wait.until(ExpectedConditions.visibilityOf(modifiedDateFilter));
 		modifiedDateFilter.findElement(By.className("t-clear-btn")).click();
 		waitForTableToUpdate(prevTotal);
 	}
@@ -523,8 +529,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void mergeSamplesWithOriginalName(String sampleName) {
 		toolsDropdownBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(toolsDropdown));
 		mergeBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		WebElement existing = null;
 		try {
