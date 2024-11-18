@@ -141,7 +141,7 @@ dependencies {
         exclude(group = "xml-apis")
         exclude(group = "org.slf4j")
     }
-    implementation("org.apache.jena:jena-text:4.6.1") {
+    implementation("org.apache.jena:jena-text:5.2.0") {
         exclude(group = "xml-apis")
         exclude(group = "org.slf4j")
         exclude(group = "log4j")
