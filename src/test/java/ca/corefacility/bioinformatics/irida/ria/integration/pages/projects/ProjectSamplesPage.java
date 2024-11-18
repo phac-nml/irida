@@ -386,7 +386,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void clearIndividualOrganismFilter(String organism) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 		int prevTotal = getTableSummary().getTotal();
-		if(!organismFilterSelectedOptions.isDisplayed()) {
+		if (!organismFilterSelectedOptions.isDisplayed()) {
 			organismFilterToggle.click();
 		}
 		wait.until(ExpectedConditions.visibilityOf(organismFilterSelectedOptions));
