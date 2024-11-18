@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
-import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
