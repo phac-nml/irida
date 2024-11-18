@@ -89,7 +89,7 @@ export default function CreateNewSample({
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onOk={createSample}
       onCancel={handleCancel}
       title={i18n("AddSample.title")}

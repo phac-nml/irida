@@ -25,7 +25,7 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   const navigate = useNavigate();
   const [createMetadataTemplate] = useCreateMetadataTemplateMutation();
   const [names, setNames] = React.useState(undefined);
-  const [visible, setVisible] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [fieldsState, setFieldsState] = React.useState([]);
   const [form] = Form.useForm();
   const { data: templates, refetch: refetchTemplates } =
@@ -61,7 +61,7 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
       .unwrap()
       .then((template) => {
         form.resetFields(Object.keys(values));
-        setVisible(false);
+        setOpen(false);
         refetchTemplates();
         navigate(
           setBaseUrl(
@@ -75,13 +75,13 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   return (
     <>
       {React.cloneElement(children, {
-        onClick: () => setVisible(true),
+        onClick: () => setOpen(true),
       })}
       <Modal
         className="t-create-modal"
         title={i18n("CreateMetadataTemplate.title")}
-        visible={visible}
-        onCancel={() => setVisible(false)}
+        open={open}
+        onCancel={() => setOpen(false)}
         okText={i18n("CreateMetadataTemplate.ok-text")}
         onOk={onOk}
         okButtonProps={{

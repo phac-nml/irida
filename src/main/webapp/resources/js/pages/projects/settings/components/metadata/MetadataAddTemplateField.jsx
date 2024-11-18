@@ -10,7 +10,7 @@ import React from "react";
  * @constructor
  */
 export function MetadataAddTemplateField({ fields = [], onAddFields }) {
-  const [visible, setVisible] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
 
@@ -31,17 +31,17 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
    * is successfully completed, close the modal.
    */
   const addFieldsToTemplate = () =>
-    onAddFields(selectedFields).then(() => setVisible(false));
+    onAddFields(selectedFields).then(() => setOpen(false));
 
   return (
     <>
-      <Button disabled={fields.length === 0} onClick={() => setVisible(true)}>
+      <Button disabled={fields.length === 0} onClick={() => setOpen(true)}>
         {i18n("MetadataAddTemplateField.button")}
       </Button>
       <Modal
         title={i18n("MetadataAddTemplateField.title")}
-        visible={visible}
-        onCancel={() => setVisible(false)}
+        open={open}
+        onCancel={() => setOpen(false)}
         onOk={addFieldsToTemplate}
         okText={i18n("MetadataAddTemplateField.ok-text")}
       >

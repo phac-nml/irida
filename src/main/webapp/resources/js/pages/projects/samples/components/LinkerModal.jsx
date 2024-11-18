@@ -67,7 +67,7 @@ export default function LinkerModal({
   return (
     <Modal
       className="t-linker-modal"
-      visible={visible}
+      open={visible}
       title={i18n("Linker.title")}
       onCancel={onFinish}
       footer={
