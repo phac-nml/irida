@@ -169,10 +169,6 @@ export class TableComponent extends React.Component {
   onGridReady = (params) => {
     this.api = params.api;
     this.columnApi = params.columnApi;
-    /*
-    Resize the icons since no extra space is needed.
-     */
-    this.api.autoSizeColumns([FIELDS.icons]);
   };
 
   /**
@@ -408,9 +404,13 @@ export class TableComponent extends React.Component {
           headerCheckboxSelectionFilteredOnly: true,
           sortable: true,
           filter: true,
+          width: 105,
         }}
         onCellEditingStarted={this.onCellEditingStarted}
         onCellEditingStopped={this.onCellEditingStopped}
+        autoSizeStrategy={{
+          type: "fitCellContents",
+        }}
       />
     );
   }
