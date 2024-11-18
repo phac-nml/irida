@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -9,6 +10,8 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class FastQCModal extends AbstractPage {
 	@FindBy(className = "t-fastqc-modal-charts-tab")
@@ -51,12 +54,12 @@ public class FastQCModal extends AbstractPage {
 	}
 
 	public void clickFastQCOverrepresentedSequencesLink() {
-		fastQCModalOverrepresentedSequencesTab.click();
+		driver.findElement(By.xpath("//*[@id=\"rc-tabs-0-tab-overrepresented\"]")).click();
 		waitForTime(300);
 	}
 
 	public void clickFastQCDetailsLink() {
-		fastQCModalDetailsTab.click();
+		driver.findElement(By.xpath("//*[@id=\"rc-tabs-0-tab-details\"]")).click();
 		waitForTime(300);
 	}
 
