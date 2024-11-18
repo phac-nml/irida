@@ -114,7 +114,7 @@ export function TargetMetadataRestriction({
     <Tooltip
       title={i18n("TargetMetadataRestriction.title")}
       placement="right"
-      visible={tooltipVisible}
+      open={tooltipVisible}
     >
       <Form.Item {...feedback} style={{ marginBottom: 0 }}>
         <Radio.Group

@@ -156,7 +156,7 @@ export function AddGroupButton({
       <Modal
         className="t-add-user-group-modal"
         onCancel={() => setVisible(false)}
-        visible={visible}
+        open={visible}
         onOk={addUserGroup}
         okText={i18n("AddGroupButton.group.okText")}
       >

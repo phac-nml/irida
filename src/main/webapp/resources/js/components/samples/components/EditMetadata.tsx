@@ -81,7 +81,7 @@ export function EditMetadata() {
           onCancel={() =>
             dispatch(setEditSampleMetadata({ editModalVisible: false }))
           }
-          visible={editModalVisible}
+          open={editModalVisible}
           onOk={updateMetadata}
           okText={i18n("SampleMetadata.modal.btn.update")}
           cancelText={i18n("SampleMetadata.modal.btn.cancel")}

@@ -100,7 +100,7 @@ export function AnnouncementsModal() {
           </Space>
         </Space>
       }
-      visible={visible}
+      open={visible}
       width="90ch"
       onCancel={() => dispatch({ type: TYPES.CLOSE_ANNOUNCEMENT })}
       footer={footer}

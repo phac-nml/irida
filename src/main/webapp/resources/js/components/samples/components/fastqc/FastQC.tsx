@@ -69,7 +69,7 @@ export function FastQC() {
           </Text>
         </Space>
       }
-      visible={fastQCModalVisible}
+      open={fastQCModalVisible}
       footer={null}
       width={900}
       closable={false}
