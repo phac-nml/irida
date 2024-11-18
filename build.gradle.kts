@@ -17,6 +17,14 @@ group = "ca.corefacility.bioinformatics"
 version = "23.10.1"
 description = "irida"
 
+sourceSets {
+    main {
+        resources {
+            exclude("**/jwk-key-store.jks")
+        }
+    }
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -25,8 +33,8 @@ java {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.4.2"
-    distributionSha256Sum = "29e49b10984e585d8118b7d0bc452f944e386458df27371b49b4ac1dec4b7fda"
+    gradleVersion = "7.6.2"
+    distributionSha256Sum = "a01b6587e15fe7ed120a0ee299c25982a1eee045abd6a9dd5e216b2f628ef9ac"
 }
 
 publishing {
