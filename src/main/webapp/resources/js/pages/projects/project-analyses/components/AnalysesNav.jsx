@@ -10,18 +10,19 @@ import { Link } from "react-router-dom";
  */
 export default function AnalysesNav({ path: key }) {
   return (
-    <Menu selectedKeys={[key]}>
-      <Menu.Item key="project-analyses">
-        <Link to="project-analyses">{i18n("AnalysesNav.projectAnalyses")}</Link>
-      </Menu.Item>
-      <Menu.Item key="shared-outputs">
-        <Link to="shared-outputs">{i18n("AnalysesNav.sharedOutputs")}</Link>
-      </Menu.Item>
-      <Menu.Item key="automated-outputs">
-        <Link to="automated-outputs">
-          {i18n("AnalysesNav.automatedOutputs")}
-        </Link>
-      </Menu.Item>
-    </Menu>
+    <Menu selectedKeys={[key]} items={[
+      {
+        key: "project-analyses",
+        label: <Link to="project-analyses">{i18n("AnalysesNav.projectAnalyses")}</Link>
+      },
+      {
+        key: "shared-outputs",
+        label: <Link to="shared-outputs">{i18n("AnalysesNav.sharedOutputs")}</Link>
+      },
+      {
+        key: "automated-outputs",
+        label: <Link to="automated-outputs">{i18n("AnalysesNav.automatedOutputs")}</Link>
+      }
+    ]} />
   );
 }
