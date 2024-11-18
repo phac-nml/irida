@@ -10,8 +10,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class FastQCModal extends AbstractPage {
 	@FindBy(className = "t-fastqc-modal-charts-tab")
