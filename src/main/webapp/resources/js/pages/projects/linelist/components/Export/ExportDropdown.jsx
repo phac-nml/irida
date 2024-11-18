@@ -19,7 +19,7 @@ export function ExportDropDown(props) {
     </Menu>
   );
   return (
-    <Dropdown overlay={menu}>
+    <Dropdown menu={menu}>
       <Button tour="tour-export">
         {i18n("linelist.toolbar.export")}
         <IconDropDown style={{ marginLeft: SPACE_XS }} />

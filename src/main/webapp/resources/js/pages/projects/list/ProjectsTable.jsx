@@ -201,7 +201,7 @@ export function ProjectsTable() {
             justifyContent: "space-between",
           }}
         >
-          <Dropdown overlay={exportMenu} key="export">
+          <Dropdown menu={exportMenu} key="export">
             <Button>
               {i18n("ProjectsTable_export")}
               <IconDropDown style={{ marginLeft: SPACE_XS }} />
