@@ -191,102 +191,97 @@ export default function SamplesMenu() {
     setFilterByFileVisible(false);
   };
 
-  const toolsMenu = (
-    <Menu className="t-tools-dropdown">
-      {!details.remote && (
-        <Menu.Item
-          disabled={selectedCount < 2}
-          key="merge-menu"
-          icon={<MergeCellsOutlined />}
-          onClick={() => validateAndOpenModalFor("merge")}
-          className="t-merge"
-        >
-          {i18n("SamplesMenu.merge")}
-        </Menu.Item>
-      )}
-      <Menu.Item
-        disabled={selectedCount === 0}
-        key="share-menu"
-        icon={<IconShare />}
-        onClick={shareSamples}
-        className="t-share"
-      >
-        {i18n("SamplesMenu.share")}
-      </Menu.Item>
-      <Menu.Item
-        disabled={selectedCount === 0}
-        key="remove-menu"
-        icon={<IconCloseSquare />}
-        onClick={() => validateAndOpenModalFor("remove")}
-        className="t-remove"
-      >
-        {i18n("SamplesMenu.remove")}
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="import-menu" icon={<IconCloudUpload />}>
-        <a
-          href={setBaseUrl(`projects/${projectId}/sample-metadata/upload/file`)}
-        >
-          {i18n("SamplesMenu.import")}
-        </a>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item
-        key="create-menu"
-        icon={<IconPlusSquare />}
-        onClick={() => setCreateSampleVisible(true)}
-        className="t-create-sample"
-      >
-        {i18n("SamplesMenu.createSample")}
-      </Menu.Item>
-    </Menu>
-  );
+  const toolsMenu = {
+    items: [
+      !details.remote && {
+        disabled: selectedCount < 2,
+        key: "merge-menu",
+        icon: <MergeCellsOutlined />,
+        onClick: () => validateAndOpenModalFor("merge"),
+        className: "t-merge",
+        label: i18n("SamplesMenu.merge"),
+      },
+      {
+        disabled: selectedCount === 0,
+        key: "share-menu",
+        icon: <IconShare />,
+        onClick: shareSamples,
+        className: "t-share",
+        label: i18n("SamplesMenu.share"),
+      },
+      {
+        disabled: selectedCount === 0,
+        key: "remove-menu",
+        icon: <IconCloseSquare />,
+        onClick: () => validateAndOpenModalFor("remove"),
+        className: "t-remove",
+        label: i18n("SamplesMenu.remove"),
+      },
+      { type: "divider" },
+      {
+        key: "import-menu",
+        icon: <IconCloudUpload />,
+        label: (
+          <a
+            href={setBaseUrl(
+              `projects/${projectId}/sample-metadata/upload/file`
+            )}
+          >
+            {i18n("SamplesMenu.import")}
+          </a>
+        ),
+      },
+      { type: "divider" },
+      {
+        key: "create-menu",
+        icon: <IconPlusSquare />,
+        onClick: () => setCreateSampleVisible(true),
+        className: "t-create-sample",
+        label: i18n("SamplesMenu.createSample"),
+      },
+    ].filter(Boolean),
+  };
 
-  const exportMenu = (
-    <Menu className="t-export-dropdown">
-      <Menu.Item
-        className="t-download"
-        disabled={selectedCount === 0}
-        key="download-menu"
-        icon={<IconCloudDownload />}
-        onClick={onDownload}
-      >
-        {i18n("SampleMenu.download")}
-      </Menu.Item>
-      <Menu.Item
-        key="linker-menu"
-        icon={<IconCode />}
-        onClick={() => validateAndOpenModalFor("linker")}
-        className="t-linker"
-      >
-        {i18n("SampleMenu.linker")}
-      </Menu.Item>
-      <Menu.Item
-        disabled={selectedCount === 0}
-        key="ncbi-menu"
-        icon={<IconCloudUpload />}
-        onClick={onNCBI}
-        className="t-ncbi"
-      >
-        {i18n("SampleMenu.ncbi")}
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item
-        key="menu-excel"
-        icon={<IconFileExcel />}
-        onClick={() => onExport("excel")}
-      >
-        {i18n("SampleMenu.excel")}
-      </Menu.Item>
-      <Menu.Item
-        key="menu-csv"
-        icon={<IconFile />}
-        onClick={() => onExport("csv")}
-      >
-        {i18n("SampleMenu.csv")}
-      </Menu.Item>
-    </Menu>
-  );
+  const exportMenu = {
+    items: [
+      {
+        className: "t-download",
+        disabled: selectedCount === 0,
+        key: "download-menu",
+        icon: <IconCloudDownload />,
+        onClick: onDownload,
+        label: i18n("SampleMenu.download"),
+      },
+      {
+        key: "linker-menu",
+        icon: <IconCode />,
+        onClick: () => validateAndOpenModalFor("linker"),
+        className: "t-linker",
+        label: i18n("SampleMenu.linker"),
+      },
+      {
+        disabled: selectedCount === 0,
+        key: "ncbi-menu",
+        icon: <IconCloudUpload />,
+        onClick: onNCBI,
+        className: "t-ncbi",
+        label: i18n("SampleMenu.ncbi"),
+      },
+      { type: "divider" },
+      {
+        key: "menu-excel",
+        icon: <IconFileExcel />,
+        onClick: () => onExport("excel"),
+        label: i18n("SampleMenu.excel"),
+      },
+      {
+        key: "menu-csv",
+        icon: <IconFile />,
+        onClick: () => onExport("csv"),
+        label: i18n("SampleMenu.csv"),
+      },
+    ],
+  };
 
   return (
     <>
