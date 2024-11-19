@@ -192,6 +192,7 @@ export default function SamplesMenu() {
   };
 
   const toolsMenu = {
+    className: "t-tools-dropdown",
     items: [
       !details.remote && {
         disabled: selectedCount < 2,
@@ -243,6 +244,7 @@ export default function SamplesMenu() {
   };
 
   const exportMenu = {
+    className: "t-export-dropdown",
     items: [
       {
         className: "t-download",

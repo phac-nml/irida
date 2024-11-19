@@ -530,8 +530,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void mergeSamplesWithOriginalName(String sampleName) {
 		toolsDropdownBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.visibilityOf(toolsDropdown));
-		mergeBtn.click();
+		WebElement mergeButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[(.//*|.)[contains(text(), 'Merge Samples')]]")));
+		mergeButton.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		WebElement existing = null;
 		try {
