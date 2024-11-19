@@ -7,15 +7,19 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 /**
  * Page object to represent the create new announcements modal
  */
 public class CreateAnnouncementComponent extends AbstractPage {
 	@FindBy(id = "title")
-	private WebElement input;
+	private WebElement titleInput;
 
-	@FindBy(className = "mde-text")
+	@FindBy(xpath = "//div/div[contains(@aria-label, 'editable markdown')]/p")
 	private WebElement textarea;
 
 	@FindBy(id = "priority")
@@ -33,8 +37,14 @@ public class CreateAnnouncementComponent extends AbstractPage {
 	}
 
 	public void enterAnnouncement(String title, String message, Boolean priority) {
-		input.sendKeys(title);
-		textarea.sendKeys(message);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		wait.until(ExpectedConditions.elementToBeClickable(titleInput));
+
+		titleInput.sendKeys(title);
+		// Send the message one character at a time to avoid issues with selenium
+		for (char c : message.toCharArray()) {
+			textarea.sendKeys(String.valueOf(c));
+		}
 
 		if (priority) {
 			checkbox.click();
