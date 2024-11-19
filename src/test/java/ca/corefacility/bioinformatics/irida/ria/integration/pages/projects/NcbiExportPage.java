@@ -146,20 +146,13 @@ public class NcbiExportPage extends AbstractPage {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
 		List<WebElement> cascaderMenus = wait.until(
 				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-cascader-menu")));
-		for (WebElement option : cascaderMenus.get(0).findElements(By.className("ant-cascader-menu-item"))) {
-			if (option.getText().equals(firstValue)) {
-				option.click();
-				break;
-			}
-		}
+		// /html/body/div[2]/div/div/div/div/ul/li[4]/div[1]
+		WebElement firstCascaderMenu = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//ul/li[4]/div[1][contains(text(), '" + firstValue + "')]")));
+		firstCascaderMenu.click();
 		// menus updated after selections, wait for more.
-		cascaderMenus = wait.until(ExpectedConditions.numberOfElementsToBe(By.className("ant-cascader-menu"), 2));
-		for (WebElement option : cascaderMenus.get(1).findElements(By.className("ant-cascader-menu-item"))) {
-			if (option.getText().equals(secondValue)) {
-				option.click();
-				break;
-			}
-		}
+		// /html/body/div[2]/div/div/div/div/ul[2]/li[4]/div
+		WebElement secondCascaderMenu = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//ul[2]/li[4]/div[contains(text(), '" + secondValue + "')]")));
+		secondCascaderMenu.click();
 	}
 
 	public void removeSample(String sampleName) {
