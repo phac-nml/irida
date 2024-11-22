@@ -14,7 +14,6 @@ import UserGroupMembersTable from "./UserGroupMembersTable";
 import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
 
 const { Paragraph, Title } = Typography;
-const { TabPane } = Tabs;
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -144,39 +143,56 @@ export default function UserGroupDetailsPage({ baseUrl }) {
     </div>
   );
 
+  const items = [
+    {
+      key: "details",
+      label: i18n("UserGroupDetailsPage.tab.details"),
+      children: (
+        <>
+          <Title level={4}>{i18n("UserGroupsDetailsPage.title.details")}</Title>
+          <BasicList dataSource={fields} />
+        </>
+      ),
+    },
+    {
+      key: "project",
+      label: i18n("UserGroupDetailsPage.tab.projects"),
+      children: (
+        <>
+          <Title level={4}>
+            {i18n("UserGroupsDetailsPage.title.projects")}
+          </Title>
+          <UserGroupProjectsTable groupId={id} />
+        </>
+      ),
+    },
+  ];
+
+  if (state.canManage) {
+    items.push({
+      key: "delete",
+      label: (
+        <span className="t-tab-delete">
+          {i18n("UserGroupDetailsPage.tab.delete")}
+        </span>
+      ),
+      children: (
+        <>
+          <Title level={4}>{i18n("UserGroupsDetailsPage.title.delete")}</Title>
+          <DeleteGroup />
+        </>
+      ),
+    });
+  }
+
   return (
     <PageWrapper title={"User Groups"} onBack={() => navigate(-1)}>
       <Tabs
         defaultActiveKey="details"
         tabPosition="left"
         tabBarStyle={{ width: 200 }}
-      >
-        <TabPane tab={i18n("UserGroupDetailsPage.tab.details")} key="details">
-          <Title level={4}>{i18n("UserGroupsDetailsPage.title.details")}</Title>
-          <BasicList dataSource={fields} />
-        </TabPane>
-        <TabPane tab={i18n("UserGroupDetailsPage.tab.projects")} key="project">
-          <Title level={4}>
-            {i18n("UserGroupsDetailsPage.title.projects")}
-          </Title>
-          <UserGroupProjectsTable groupId={id} />
-        </TabPane>
-        {state.canManage ? (
-          <TabPane
-            tab={
-              <span className="t-tab-delete">
-                {i18n("UserGroupDetailsPage.tab.delete")}
-              </span>
-            }
-            key="delete"
-          >
-            <Title level={4}>
-              {i18n("UserGroupsDetailsPage.title.delete")}
-            </Title>
-            <DeleteGroup />
-          </TabPane>
-        ) : null}
-      </Tabs>
+        items={items}
+      />
     </PageWrapper>
   );
 }
