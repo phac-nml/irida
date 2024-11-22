@@ -2,6 +2,7 @@ import { Button, Result } from "antd";
 import React from "react";
 import { micromark } from "micromark";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { gfm, gfmHtml } from "micromark-extension-gfm";
 
 const BASE_URL = setBaseUrl(`/projects`);
 
@@ -11,8 +12,27 @@ function SingleMoved({ project, sample, extra }) {
       extra={extra}
       className="t-move-single"
       status="success"
-      title={<div className="t-success-title" dangerouslySetInnerHTML={{ __html: micromark(i18n("ShareSuccess.move.title.single")) }} />}
-      subTitle={<div dangerouslySetInnerHTML={{ __html: micromark(i18n("ShareSuccess.move.subTitle.single", sample.name, project.label)) }} />}
+      title={
+        <div
+          className="t-success-title"
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.move.title.single")),
+          }}
+        />
+      }
+      subTitle={
+        <div
+          dangerouslySetInnerHTML={{
+            __html: micromark(
+              i18n(
+                "ShareSuccess.move.subTitle.single",
+                sample.name,
+                project.label
+              )
+            ),
+          }}
+        />
+      }
     />
   );
 }
@@ -27,14 +47,29 @@ function SingleShared({ project, sample, extra }) {
         <div
           className="t-success-title"
           dangerouslySetInnerHTML={{
-            __html: micromark(i18n("ShareSuccess.share.title.single")),
+            __html: micromark(i18n("ShareSuccess.share.title.single"), {
+              allowDangerousHtml: true,
+              extensions: [gfm()],
+              htmlExtensions: [gfmHtml()],
+            }),
           }}
         />
       }
       subTitle={
         <div
           dangerouslySetInnerHTML={{
-            __html: micromark(i18n("ShareSuccess.share.subTitle.single", sample.name, project.label)),
+            __html: micromark(
+              i18n(
+                "ShareSuccess.share.subTitle.single",
+                sample.name,
+                project.label
+              ),
+              {
+                allowDangerousHtml: true,
+                extensions: [gfm()],
+                htmlExtensions: [gfmHtml()],
+              }
+            ),
           }}
         />
       }
@@ -52,14 +87,25 @@ function MultipleMoved({ project, count, extra }) {
         <div
           className="t-success-title"
           dangerouslySetInnerHTML={{
-            __html: micromark(i18n("ShareSuccess.move.title.plural")),
+            __html: micromark(i18n("ShareSuccess.move.title.plural"), {
+              allowDangerousHtml: true,
+              extensions: [gfm()],
+              htmlExtensions: [gfmHtml()],
+            }),
           }}
         />
       }
       subTitle={
         <div
           dangerouslySetInnerHTML={{
-            __html: micromark(i18n("ShareSuccess.move.subTitle.plural", count, project.label)),
+            __html: micromark(
+              i18n("ShareSuccess.move.subTitle.plural", count, project.label),
+              {
+                allowDangerousHtml: true,
+                extensions: [gfm()],
+                htmlExtensions: [gfmHtml()],
+              }
+            ),
           }}
         />
       }
@@ -77,14 +123,25 @@ function MultipleShared({ project, count, extra }) {
         <div
           className="t-success-title"
           dangerouslySetInnerHTML={{
-            __html: micromark(i18n("ShareSuccess.share.title.plural")),
+            __html: micromark(i18n("ShareSuccess.share.title.plural"), {
+              allowDangerousHtml: true,
+              extensions: [gfm()],
+              htmlExtensions: [gfmHtml()],
+            }),
           }}
         />
       }
       subTitle={
         <div
           dangerouslySetInnerHTML={{
-            __html: micromark(i18n("ShareSuccess.share.subTitle.plural", count, project.label)),
+            __html: micromark(
+              i18n("ShareSuccess.share.subTitle.plural", count, project.label),
+              {
+                allowDangerousHtml: true,
+                extensions: [gfm()],
+                htmlExtensions: [gfmHtml()],
+              }
+            ),
           }}
         />
       }
@@ -112,7 +169,7 @@ export function ShareSuccess({ removed, project, samples, currentProject }) {
       href={`${BASE_URL}/${project.identifier}`}
     >
       {i18n("ShareSuccess.link.goto", project.label)}
-    </Button>
+    </Button>,
   ];
 
   if (single) {

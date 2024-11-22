@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, notification, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import { micromark } from "micromark";
+import { gfm, gfmHtml } from "micromark-extension-gfm";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
 import { getAnnouncement } from "../../../apis/announcements/announcements";
@@ -58,8 +59,16 @@ function ViewAnnouncementModal({
         </>
       ),
       content: (
-        <div style={{ overflowY: "auto", maxHeight: 600, paddingRight: 10 }} dangerouslySetInnerHTML={{ __html: micromark(announcement.message) }}>
-        </div>
+        <div
+          style={{ overflowY: "auto", maxHeight: 600, paddingRight: 10 }}
+          dangerouslySetInnerHTML={{
+            __html: micromark(announcement.message, {
+              allowDangerousHtml: true,
+              extensions: [gfm()],
+              htmlExtensions: [gfmHtml()],
+            }),
+          }}
+        ></div>
       ),
     });
   return (

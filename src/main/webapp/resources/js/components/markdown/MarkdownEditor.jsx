@@ -8,6 +8,7 @@ import {
     MDXEditor,
     UndoRedo,
     BoldItalicUnderlineToggles,
+    StrikeThroughSupSubToggles,
     CreateLink,
     Separator,
     ListsToggle,
@@ -19,7 +20,7 @@ import {
     linkPlugin,
     linkDialogPlugin,
     frontmatterPlugin,
-    listsPlugin
+    listsPlugin,
 } from "@mdxeditor/editor";
 
 import "@mdxeditor/editor/style.css";
@@ -63,6 +64,7 @@ export const MarkdownEditor = forwardRef(({ markdown }, ref) => {
                         <>
                             <UndoRedo />
                             <BoldItalicUnderlineToggles />
+                            <StrikeThroughSupSubToggles />
                             <CreateLink />
                             <Separator />
                             <ListsToggle />

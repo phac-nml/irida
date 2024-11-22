@@ -107,6 +107,7 @@
     "jest": "27.5.1",
     "less": "4.1.2",
     "less-loader": "10.2.0",
+    "micromark-extension-gfm": "^3.0.0",
     "mini-css-extract-plugin": "2.6.0",
     "postcss": "8.4.31",
     "postcss-import": "14.1.0",
