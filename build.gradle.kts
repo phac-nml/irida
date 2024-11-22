@@ -122,7 +122,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-ldap")
-    implementation("org.springframework.security:spring-security-oauth2-authorization-server:0.4.5")
+    implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.4.0")
     implementation("org.springframework.ldap:spring-ldap-core")
     implementation("org.springframework.security:spring-security-ldap")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:5.8.15")
