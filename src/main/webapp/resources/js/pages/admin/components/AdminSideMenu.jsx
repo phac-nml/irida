@@ -125,7 +125,7 @@ const AdminSideMenu = () => {
   ];
 
   return (
-    <Sider width={}>
+    <Sider width={220}>
       <section>
         <Link to={DEFAULT_URL}>
           <img
