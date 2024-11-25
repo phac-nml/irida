@@ -26,7 +26,7 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className = "t-admin-statistics-link")
 	private List<WebElement> adminStatisticsLink;
 
-	@FindBy(className = "t-admin-users-submenu")
+	@FindBy(xpath = "//aside/div/section/ul/li[2]/div")
 	private List<WebElement> adminUsersSubMenu;
 
 	@FindBy(className = "t-admin-users-link")
