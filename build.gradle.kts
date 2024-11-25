@@ -221,7 +221,7 @@ dependencies {
     testImplementation("org.dbunit:dbunit:2.8.0") {
         exclude(group = "org.slf4j")
     }
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.26.0")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.27.0")
     testImplementation("org.mockftpserver:MockFtpServer:3.2.0")
     testImplementation("org.springframework.ldap:spring-ldap-test")
     testImplementation("com.unboundid:unboundid-ldapsdk:7.0.1")
