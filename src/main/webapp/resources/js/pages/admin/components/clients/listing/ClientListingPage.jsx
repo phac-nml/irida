@@ -23,7 +23,7 @@ export function ClientListingLayout() {
     <PageWrapper
       title={i18n("ClientListingPage.title")}
       headerExtras={[
-        <AddClientModal onComplete={createNewClient}>
+        <AddClientModal key="add-client" onComplete={createNewClient}>
           <AddNewButton
             key="add-client"
             className={"t-add-client-btn"}

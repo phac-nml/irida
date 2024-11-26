@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { Alert, Button, Col, Form, Input, List, Row, Typography } from "antd";
 import {
   EyeInvisibleOutlined,
@@ -160,7 +160,7 @@ function PasswordResetForm() {
               <Item
                 name="password"
                 rules={[
-                  ({}) => ({
+                  () => ({
                     validator(_, value) {
                       let validationResult = validatePassword(value);
                       validationResult
@@ -216,4 +216,6 @@ export default function PasswordReset() {
   );
 }
 
-render(<PasswordReset />, document.querySelector("#root"));
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<PasswordReset />);

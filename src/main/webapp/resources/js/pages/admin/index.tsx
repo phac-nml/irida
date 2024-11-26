@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from "react-router-dom";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import Admin from "./components/Admin";
@@ -12,9 +12,10 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <BrowserRouter>
     <Admin />
-  </BrowserRouter>,
-  document.getElementById("root")
+  </BrowserRouter>
 );

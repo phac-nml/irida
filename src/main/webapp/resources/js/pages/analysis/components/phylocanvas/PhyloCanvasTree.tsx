@@ -21,7 +21,6 @@ export function PhyloCanvasTree({ height, width }: PhyloCanvasTreeProps) {
   const treeRef = React.useRef<null | PhyloCanvas>(null);
   const treeProps = useAppSelector(getTreeProps);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderTree = (treeProps: TreeProperties) => {
     treeRef.current = new phylocanvas.PhylocanvasGL(
       canvasRef.current,
@@ -53,7 +52,6 @@ export function PhyloCanvasTree({ height, width }: PhyloCanvasTreeProps) {
         treeRef.current.destroy();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

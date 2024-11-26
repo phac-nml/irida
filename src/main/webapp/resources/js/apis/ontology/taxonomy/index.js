@@ -1,1 +1,1 @@
-export searchOntology, { TAXONOMY } from "./query";
+export { searchOntology, TAXONOMY } from "./query";

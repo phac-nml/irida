@@ -12,13 +12,14 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { PageWrapper } from "../../../../components/page/PageWrapper";
 import { AnnouncementsTable } from "./AnnouncementsTable";
 import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
+import "../../../../../css/pages/announcements.css";
 
 /**
  * React component to render the administration announcements page.
  * @returns {*}
  * @constructor
  */
-export default function AnnouncementAdminPage({}) {
+export default function AnnouncementAdminPage() {
   const tableRef = useRef(null);
 
   function addNewAnnouncement(title, message, priority) {

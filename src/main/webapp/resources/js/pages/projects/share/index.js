@@ -10,7 +10,7 @@ import {
   Steps,
 } from "antd";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { Provider, useSelector } from "react-redux";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import {
@@ -294,9 +294,10 @@ function ShareApp() {
   );
 }
 
-render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <Provider store={store}>
     <ShareApp />
-  </Provider>,
-  document.querySelector("#root")
+  </Provider>
 );

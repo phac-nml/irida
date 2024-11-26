@@ -17,7 +17,7 @@ public class EditAnnouncementComponent extends AbstractPage {
 	@FindBy(css = "form.ant-form input#title")
 	private WebElement input;
 
-	@FindBy(css = "form.ant-form textarea.mde-text")
+	@FindBy(xpath = "//div/div[contains(@aria-label, 'editable markdown')]/p")
 	private WebElement textarea;
 
 	@FindBy(css = "form.ant-form input#priority")
@@ -53,7 +53,7 @@ public class EditAnnouncementComponent extends AbstractPage {
 		input.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		input.sendKeys(title);
 
-		textarea.clear();
+		textarea.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		textarea.sendKeys(message);
 
 		if (priority && !checkbox.isSelected()) {

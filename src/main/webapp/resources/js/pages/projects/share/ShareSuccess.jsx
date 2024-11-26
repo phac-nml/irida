@@ -1,7 +1,8 @@
 import { Button, Result } from "antd";
 import React from "react";
-import ReactMarkdown from "react-markdown";
+import { micromark } from "micromark";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { gfm, gfmHtml } from "micromark-extension-gfm";
 
 const BASE_URL = setBaseUrl(`/projects`);
 
@@ -12,18 +13,25 @@ function SingleMoved({ project, sample, extra }) {
       className="t-move-single"
       status="success"
       title={
-        <ReactMarkdown className="t-success-title">
-          {i18n("ShareSuccess.move.title.single")}
-        </ReactMarkdown>
+        <div
+          className="t-success-title"
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.move.title.single")),
+          }}
+        />
       }
       subTitle={
-        <ReactMarkdown>
-          {i18n(
-            "ShareSuccess.move.subTitle.single",
-            sample.name,
-            project.label
-          )}
-        </ReactMarkdown>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: micromark(
+              i18n(
+                "ShareSuccess.move.subTitle.single",
+                sample.name,
+                project.label
+              )
+            ),
+          }}
+        />
       }
     />
   );
@@ -36,18 +44,34 @@ function SingleShared({ project, sample, extra }) {
       className="t-share-single"
       status="success"
       title={
-        <ReactMarkdown className="t-success-title">
-          {i18n("ShareSuccess.share.title.single")}
-        </ReactMarkdown>
+        <div
+          className="t-success-title"
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.share.title.single"), {
+              allowDangerousHtml: true,
+              extensions: [gfm()],
+              htmlExtensions: [gfmHtml()],
+            }),
+          }}
+        />
       }
       subTitle={
-        <ReactMarkdown>
-          {i18n(
-            "ShareSuccess.share.subTitle.single",
-            sample.name,
-            project.label
-          )}
-        </ReactMarkdown>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: micromark(
+              i18n(
+                "ShareSuccess.share.subTitle.single",
+                sample.name,
+                project.label
+              ),
+              {
+                allowDangerousHtml: true,
+                extensions: [gfm()],
+                htmlExtensions: [gfmHtml()],
+              }
+            ),
+          }}
+        />
       }
     />
   );
@@ -60,14 +84,30 @@ function MultipleMoved({ project, count, extra }) {
       className="t-move-multiple"
       status="success"
       title={
-        <ReactMarkdown className="t-success-title">
-          {i18n("ShareSuccess.move.title.plural")}
-        </ReactMarkdown>
+        <div
+          className="t-success-title"
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.move.title.plural"), {
+              allowDangerousHtml: true,
+              extensions: [gfm()],
+              htmlExtensions: [gfmHtml()],
+            }),
+          }}
+        />
       }
       subTitle={
-        <ReactMarkdown>
-          {i18n("ShareSuccess.move.subTitle.plural", count, project.label)}
-        </ReactMarkdown>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: micromark(
+              i18n("ShareSuccess.move.subTitle.plural", count, project.label),
+              {
+                allowDangerousHtml: true,
+                extensions: [gfm()],
+                htmlExtensions: [gfmHtml()],
+              }
+            ),
+          }}
+        />
       }
     />
   );
@@ -80,14 +120,30 @@ function MultipleShared({ project, count, extra }) {
       className="t-share-multiple"
       status="success"
       title={
-        <ReactMarkdown className="t-success-title">
-          {i18n("ShareSuccess.share.title.plural")}
-        </ReactMarkdown>
+        <div
+          className="t-success-title"
+          dangerouslySetInnerHTML={{
+            __html: micromark(i18n("ShareSuccess.share.title.plural"), {
+              allowDangerousHtml: true,
+              extensions: [gfm()],
+              htmlExtensions: [gfmHtml()],
+            }),
+          }}
+        />
       }
       subTitle={
-        <ReactMarkdown>
-          {i18n("ShareSuccess.share.subTitle.plural", count, project.label)}
-        </ReactMarkdown>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: micromark(
+              i18n("ShareSuccess.share.subTitle.plural", count, project.label),
+              {
+                allowDangerousHtml: true,
+                extensions: [gfm()],
+                htmlExtensions: [gfmHtml()],
+              }
+            ),
+          }}
+        />
       }
     />
   );
@@ -116,20 +172,16 @@ export function ShareSuccess({ removed, project, samples, currentProject }) {
     </Button>,
   ];
 
-  // Single samples
-  if (single && removed) {
-    return <SingleMoved project={project} sample={samples[0]} extra={extra} />;
-  } else if (single) {
-    return <SingleShared project={project} sample={samples[0]} extra={extra} />;
-  }
-
-  // Multiple Samples,
-  if (removed) {
-    return (
-      <MultipleMoved project={project} count={samples.length} extra={extra} />
+  if (single) {
+    return removed ? (
+      <SingleMoved project={project} sample={samples[0]} extra={extra} />
+    ) : (
+      <SingleShared project={project} sample={samples[0]} extra={extra} />
     );
   }
-  return (
+  return removed ? (
+    <MultipleMoved project={project} count={samples.length} extra={extra} />
+  ) : (
     <MultipleShared project={project} count={samples.length} extra={extra} />
   );
 }

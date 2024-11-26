@@ -128,7 +128,7 @@ export class TableComponent extends React.Component {
     Get the current state of the table.  This hold critical information so we
     only want to modify the order and visible of the columns.
      */
-    const columnState = this.columnApi.getColumnState();
+    const columnState = this.api.getColumnState();
 
     // Keep the icons
     const defaults = columnState.splice(0, 2);
@@ -157,7 +157,7 @@ export class TableComponent extends React.Component {
     /*
     Combine back the sample name plus the new ordered state for the table.
      */
-    this.columnApi.applyColumnState({
+    this.api.applyColumnState({
       state: [...defaults, ...final],
       applyOrder: true,
     });
@@ -169,10 +169,6 @@ export class TableComponent extends React.Component {
   onGridReady = (params) => {
     this.api = params.api;
     this.columnApi = params.columnApi;
-    /*
-    Resize the icons since no extra space is needed.
-     */
-    this.api.autoSizeColumns([FIELDS.icons]);
   };
 
   /**
@@ -379,7 +375,7 @@ export class TableComponent extends React.Component {
     // Scroll to top
     this.api.ensureIndexVisible(0);
     // Ensure the column is scrolled all the way to the left.
-    this.api.ensureColumnVisible(this.columnApi.getColumnState()[1].colId);
+    this.api.ensureColumnVisible(this.api.getColumnState()[1].colId);
   };
 
   render() {
@@ -408,9 +404,13 @@ export class TableComponent extends React.Component {
           headerCheckboxSelectionFilteredOnly: true,
           sortable: true,
           filter: true,
+          width: 105,
         }}
         onCellEditingStarted={this.onCellEditingStarted}
         onCellEditingStopped={this.onCellEditingStopped}
+        autoSizeStrategy={{
+          type: "fitCellContents",
+        }}
       />
     );
   }

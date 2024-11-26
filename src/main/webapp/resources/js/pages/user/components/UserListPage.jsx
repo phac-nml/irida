@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -29,4 +29,6 @@ export function UserListPage() {
   );
 }
 
-render(<UserListPage />, document.querySelector("#react-root"));
+const container = document.getElementById('react-root');
+const root = createRoot(container);
+root.render(<UserListPage />);

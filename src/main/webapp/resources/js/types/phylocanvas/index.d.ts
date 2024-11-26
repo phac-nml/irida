@@ -2,7 +2,7 @@ import { Metadata } from "../../apis/analysis/analysis";
 
 export = PHYLOCANVAS;
 export as namespace PHYLOCANVAS;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+ 
 
 declare namespace PHYLOCANVAS {
   interface PhyloCanvas {

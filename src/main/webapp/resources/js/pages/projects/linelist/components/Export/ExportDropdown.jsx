@@ -12,14 +12,19 @@ export function ExportDropDown(props) {
     }
   };
 
-  const menu = (
-    <Menu onClick={onClick}>
-      <Menu.Item key="excel">{i18n("linelist.toolbar.exportExcel")}</Menu.Item>
-      <Menu.Item key="csv">{i18n("linelist.toolbar.exportCsv")}</Menu.Item>
-    </Menu>
-  );
+  const items = [
+    {
+      key: "excel",
+      label: i18n("linelist.toolbar.exportExcel"),
+    },
+    {
+      key: "csv",
+      label: i18n("linelist.toolbar.exportCsv"),
+    },
+  ];
+
   return (
-    <Dropdown overlay={menu}>
+    <Dropdown menu={{items}}>
       <Button tour="tour-export">
         {i18n("linelist.toolbar.export")}
         <IconDropDown style={{ marginLeft: SPACE_XS }} />

@@ -82,7 +82,7 @@ export function SaveTemplateModal({
   return (
     <Modal
       title={i18n("linelist.templates.saveModal.title")}
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       onOk={onOk}
       okButtonProps={{

@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
  */
 export function CreateProjectLayout({ children }) {
   const [form] = Form.useForm();
-  const [visible, setVisible] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [current, setCurrent] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
 
@@ -75,16 +75,16 @@ export function CreateProjectLayout({ children }) {
   const onCancel = () => {
     form.resetFields();
     setCurrent(0);
-    setVisible(false);
+    setOpen(false);
   };
 
   return (
     <>
       {React.cloneElement(children, {
-        onClick: () => setVisible(true),
+        onClick: () => setOpen(true),
       })}
       <Modal
-        visible={visible}
+        open={open}
         footer={
           <div
             style={{

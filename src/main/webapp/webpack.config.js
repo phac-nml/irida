@@ -11,6 +11,7 @@ const formatAntStyles = require("./styles");
 const os = require("os");
 
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const { aliases } = require("browserslist");
 const smp = new SpeedMeasurePlugin();
 
 const MINIMIZER_CORES = Math.min(8, Math.max(1, os.cpus().length - 1));
@@ -53,9 +54,6 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: [".js", ".jsx", ".ts", ".tsx"],
       symlinks: false,
-      alias: {
-        "react-dom/server": "react-dom/server.browser.js",
-      },
     },
     output: {
       path: path.resolve(__dirname, "dist"),

@@ -55,7 +55,7 @@ export const getPipelineDetails = ({ id }) =>
     .get(`${AJAX_URL}/${id}`)
     .then(({ data }) => data)
     .catch((error) => {
-      return Promise.reject(e.response.error.message);
+      return Promise.reject(error.response.error.message);
     });
 
 /**

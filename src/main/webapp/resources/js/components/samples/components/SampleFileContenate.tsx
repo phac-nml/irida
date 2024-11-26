@@ -137,7 +137,7 @@ export function SampleFileConcatenate({
             setConcatenateButtonDisabled(true);
             setVisible(false);
           }}
-          visible={visible}
+          open={visible}
           onOk={concatenateFiles}
           okText={i18n("SampleFilesConcatenate.okText")}
           cancelText={i18n("SampleFilesConcatenate.cancelText")}

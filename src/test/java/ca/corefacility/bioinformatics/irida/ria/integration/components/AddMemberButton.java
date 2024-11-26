@@ -34,6 +34,7 @@ public class AddMemberButton {
 	}
 
 	public void addMember(WebDriver driver, String name, String role) {
+		driver.findElement(By.tagName("body")).click();
 		wait.until(ExpectedConditions.elementToBeClickable(addMemberBtn));
 		addMemberBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(addMemberModal));

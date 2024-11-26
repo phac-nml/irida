@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { RemoteApiTable } from "../admin/components/remote-connections/RemoteApiTable";
 import { AddNewButton } from "../../components/Buttons/AddNewButton";
@@ -13,7 +13,7 @@ import { isAdmin } from "../../utilities/role-utilities";
  * @returns {*}
  * @constructor
  */
-export function RemoteApiPage({}) {
+export function RemoteApiPage() {
   return (
     <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
       <PageWrapper
@@ -32,4 +32,6 @@ export function RemoteApiPage({}) {
   );
 }
 
-render(<RemoteApiPage />, document.querySelector("#remote-api-list"));
+const container = document.getElementById('remote-api-list');
+const root = createRoot(container);
+root.render(<RemoteApiPage />);

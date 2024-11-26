@@ -335,6 +335,8 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public boolean isAddSampleToCartButtonVisible() {
 		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+			wait.until(ExpectedConditions.visibilityOf(addSampleToCartBtn));
 			return addSampleToCartBtn.isDisplayed();
 		} catch (Exception e) {
 			return false;

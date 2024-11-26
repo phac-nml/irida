@@ -114,7 +114,7 @@ export class ToolbarComponent extends Component {
                     {i18n("linelist.tour.popover")}
                   </strong>
                 }
-                visible={this.state.showTourPopover}
+                open={this.state.showTourPopover}
                 placement="topLeft"
                 arrowPointAtCenter
               >

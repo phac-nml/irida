@@ -77,7 +77,7 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
             </Button>
             <Modal
               title={i18n("ProcessingCoverage.modal.title")}
-              visible={visible}
+              open={visible}
               onCancel={() => setVisible(false)}
               onOk={update}
             >

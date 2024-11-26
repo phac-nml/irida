@@ -51,7 +51,7 @@ export default function SessionModal({
 
   return remainingTime > 0 ? (
     <Modal
-      visible={visibility}
+      open={visibility}
       onOk={keepSession}
       onCancel={logout}
       title={i18n("session_modal_title")}
@@ -97,7 +97,7 @@ export default function SessionModal({
     </Modal>
   ) : (
     <Modal
-      visible={visibility}
+      open={visibility}
       title={i18n("session_modal_title")}
       width={350}
       closable={false}

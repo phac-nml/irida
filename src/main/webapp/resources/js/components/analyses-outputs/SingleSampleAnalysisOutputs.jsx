@@ -100,7 +100,7 @@ export default function SingleSampleAnalysisOutputs({
         return (
           <a
             href={setBaseUrl(`/analysis/${record.analysisSubmissionId}`)}
-            target="_blank"
+            target="_blank" rel="noreferrer"
           >
             {analysisSubmissionName}
           </a>

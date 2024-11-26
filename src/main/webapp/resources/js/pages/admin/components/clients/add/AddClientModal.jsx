@@ -30,7 +30,7 @@ const { Paragraph } = Typography;
 export function AddClientModal({ children, onComplete, existing = null }) {
   const { updateTable } = useContext(PagedTableContext);
 
-  const [visible, setVisible] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const clientIdRef = useRef();
   const [grantType, setGrantType] = useState("password");
 
@@ -39,10 +39,10 @@ export function AddClientModal({ children, onComplete, existing = null }) {
   set keyboard focus onto the user name input.
    */
   useEffect(() => {
-    if (visible) {
+    if (open) {
       setTimeout(() => clientIdRef.current.focus(), 100);
     }
-  }, [visible]);
+  }, [open]);
 
   const [form] = Form.useForm();
 
@@ -82,8 +82,10 @@ export function AddClientModal({ children, onComplete, existing = null }) {
       const { message } = await onComplete(values);
       notification.success({ message });
       updateTable();
-      !existing && form.resetFields();
-      setVisible(false);
+      if (!existing) {
+        form.resetFields();
+      }
+      setOpen(false);
     } catch (errors) {
       // Re-enforce the error to the user
       errors.errorFields.forEach((error) =>
@@ -94,7 +96,7 @@ export function AddClientModal({ children, onComplete, existing = null }) {
 
   const closeModal = () => {
     form.resetFields();
-    setVisible(false);
+    setOpen(false);
   };
 
   const initialValues = {
@@ -108,11 +110,11 @@ export function AddClientModal({ children, onComplete, existing = null }) {
   return (
     <>
       {React.cloneElement(children, {
-        onClick: () => setVisible(true),
+        onClick: () => setOpen(true),
       })}
       <Modal
         className="t-client-modal"
-        visible={visible}
+        open={open}
         title={
           existing
             ? i18n("AddClientModal.title-edit")

@@ -92,7 +92,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     <Modal
       title={i18n("MergeModal.title")}
       className="t-merge-modal"
-      visible={visible}
+      open={visible}
       onOk={onSubmit}
       okText={i18n("MergeModal.okText")}
       okButtonProps={{
@@ -153,7 +153,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                   <Form.Item
                     name="newName"
                     rules={[
-                      ({}) => ({
+                      () => ({
                         validator(_, value) {
                           return validateName(value);
                         },

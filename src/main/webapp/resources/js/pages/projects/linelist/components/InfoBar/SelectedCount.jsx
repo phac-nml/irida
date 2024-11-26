@@ -5,6 +5,7 @@ import React from "react";
  */
 export function SelectedCount(props) {
   return (
+    // eslint-disable-next-line react/no-unknown-property
     <span tour="tour-counts">
       {props.count === 0
         ? i18n("linelist.selected.none")

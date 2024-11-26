@@ -14,12 +14,6 @@ public class FastQCModal extends AbstractPage {
 	@FindBy(className = "t-fastqc-modal-charts-tab")
 	private WebElement fastQCModalChartsTab;
 
-	@FindBy(className = "t-fastqc-modal-overrepresented-tab")
-	private WebElement fastQCModalOverrepresentedSequencesTab;
-
-	@FindBy(className = "t-fastqc-modal-details-tab")
-	private WebElement fastQCModalDetailsTab;
-
 	@FindBy(className = "t-fastqc-modal")
 	private WebElement fastqcModal;
 
@@ -51,12 +45,12 @@ public class FastQCModal extends AbstractPage {
 	}
 
 	public void clickFastQCOverrepresentedSequencesLink() {
-		fastQCModalOverrepresentedSequencesTab.click();
+		driver.findElement(By.xpath("//*[@id=\"rc-tabs-0-tab-overrepresented\"]")).click();
 		waitForTime(300);
 	}
 
 	public void clickFastQCDetailsLink() {
-		fastQCModalDetailsTab.click();
+		driver.findElement(By.xpath("//*[@id=\"rc-tabs-0-tab-details\"]")).click();
 		waitForTime(300);
 	}
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { Alert, Button, Col, Form, Input, InputRef, Row } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../utilities/url-utilities";
@@ -263,4 +263,6 @@ function LoginPage(): JSX.Element {
   );
 }
 
-render(<LoginPage />, document.querySelector("#login-root"));
+const container = document.querySelector("#login-root");
+const root = createRoot(container);
+root.render(<LoginPage />);

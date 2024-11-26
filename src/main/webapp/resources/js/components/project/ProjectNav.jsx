@@ -1,6 +1,6 @@
 import { Layout, Menu, PageHeader } from "antd";
-import React from "react";
-import { render } from "react-dom";
+import React from "react";  
+import { createRoot } from 'react-dom/client';
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
@@ -32,31 +32,37 @@ export function ProjectNav({ ...props }) {
       tags={[<RemoteProjectStatus key="remote" />].filter((f) => f !== null)}
     >
       <Content>
-        <Menu mode="horizontal" selectedKeys={[current]}>
-          <Item key="samples">
-            <a href={`${BASE_URL}/samples`}>{i18n("project.nav.samples")}</a>
-          </Item>
-          <Item key="linelist">
-            <a href={`${BASE_URL}/linelist`}>{i18n("project.nav.linelist")}</a>
-          </Item>
-          <Item key="analyses">
-            <a href={`${BASE_URL}/analyses/project-analyses`}>
-              {i18n("project.nav.analysis")}
-            </a>
-          </Item>
-          <Item key="export">
-            <a href={`${BASE_URL}/export`}>{i18n("project.nav.exports")}</a>
-          </Item>
-          <Item key="activity">
-            <a href={`${BASE_URL}/activity`}>{i18n("project.nav.activity")}</a>
-          </Item>
-          <Item key="settings">
-            <a href={`${BASE_URL}/settings`}>{i18n("project.nav.settings")}</a>
-          </Item>
-        </Menu>
+        <Menu mode="horizontal" selectedKeys={[current]} items={[
+          {
+            key: "samples",
+            label: <a href={`${BASE_URL}/samples`}>{i18n("project.nav.samples")}</a>
+          },
+          {
+            key: "linelist",
+            label: <a href={`${BASE_URL}/linelist`}>{i18n("project.nav.linelist")}</a>
+          },
+          {
+            key: "analyses",
+            label: <a href={`${BASE_URL}/analyses/project-analyses`}>{i18n("project.nav.analysis")}</a>
+          },
+          {
+            key: "export",
+            label: <a href={`${BASE_URL}/export`}>{i18n("project.nav.exports")}</a>
+          },
+          {
+            key: "activity",
+            label: <a href={`${BASE_URL}/activity`}>{i18n("project.nav.activity")}</a>
+          },
+          {
+            key: "settings",
+            label: <a href={`${BASE_URL}/settings`}>{i18n("project.nav.settings")}</a>
+          }
+        ]} />
       </Content>
     </PageHeader>
   );
 }
 
-render(<ProjectNav />, document.querySelector("#project-root"));
+const container = document.querySelector("#project-root");
+const root = createRoot(container);
+root.render(<ProjectNav />);

@@ -2,7 +2,7 @@
  * @file Base file for the project samples page.
  */
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import ProjectSamples from "./components/ProjectSamples";
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
@@ -25,6 +25,7 @@ __webpack_public_path__ = setBaseUrl(`/dist/`);
  * Redux store for project samples
  */
 export const store = configureStore({
+  /* eslint-disable */
   reducer: {
     samples: samplesReducer,
     [projectApi.reducerPath]: projectApi.reducer,
@@ -38,12 +39,14 @@ export const store = configureStore({
       associatedProjectsApi.middleware
     ),
   devTools: process.env.NODE_ENV !== "production",
+  /* eslint-enable */
 });
 setupListeners(store.dispatch);
 
-render(
+const container = document.getElementById("root");
+const root = createRoot(container);
+root.render(
   <Provider store={store}>
     <ProjectSamples />
-  </Provider>,
-  document.getElementById("root")
+  </Provider>
 );

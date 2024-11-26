@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { SampleMetadataImportComplete } from "./components/SampleMetadataImportComplete";
 import { SampleMetadataImportMapColumns } from "./components/SampleMetadataImportMapColumns";
 import { SampleMetadataImportReview } from "./components/SampleMetadataImportReview";
@@ -45,7 +45,8 @@ function SampleMetadataImport(): JSX.Element {
   );
 }
 
-render(
-  <SampleMetadataImport />,
-  document.querySelector("#samples-metadata-import-root")
+const container = document.getElementById('samples-metadata-import-root');
+const root = createRoot(container);
+root.render(
+  <SampleMetadataImport />
 );

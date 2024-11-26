@@ -89,3 +89,5 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
 
   return <PagedTable columns={columns} />;
 });
+
+AnnouncementsTable.displayName = "AnnouncementsTable";

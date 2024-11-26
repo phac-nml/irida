@@ -70,7 +70,7 @@ export default function SampleDetailsModal({
         display: "grid",
         gridTemplateRows: `${HEADER_HEIGHT}px auto`,
       }}
-      visible={visible}
+      open={visible}
       onCancel={() => setVisible(false)}
       footer={null}
       width={900}

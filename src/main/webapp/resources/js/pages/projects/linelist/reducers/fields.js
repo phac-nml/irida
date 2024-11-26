@@ -48,10 +48,9 @@ function getColumnDefinition(col) {
 
   if (field === FIELDS.icons) {
     Object.assign(col, {
-      filter: undefined,
-      suppressMenu: true,
-      floatingFilterComponentParams: { suppressFilterButton: true },
-      width: 105,
+      width: '105px',
+      sortable: false,
+      filter: false,
       cellRenderer: "IconCellRenderer",
     });
   } else if (type === TYPES.date) {

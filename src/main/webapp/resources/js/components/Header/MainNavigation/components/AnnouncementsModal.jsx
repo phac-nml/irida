@@ -3,7 +3,8 @@ import { ScrollableModal } from "../../../ant.design/ScrollableModal";
 import { Button, Space, Tag, Typography } from "antd";
 import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
 import { formatDate } from "../../../../utilities/date-utilities";
-import ReactMarkdown from "react-markdown";
+import { micromark } from "micromark";
+import { gfm, gfmHtml } from "micromark-extension-gfm";
 import { TYPES, useAnnouncements } from "./announcements-context";
 import {
   readAndCloseAnnouncement,
@@ -100,14 +101,21 @@ export function AnnouncementsModal() {
           </Space>
         </Space>
       }
-      visible={visible}
+      open={visible}
       width="90ch"
       onCancel={() => dispatch({ type: TYPES.CLOSE_ANNOUNCEMENT })}
       footer={footer}
     >
-      <div style={{ marginLeft: "25px" }}>
-        <ReactMarkdown>{newAnnouncements[index].message}</ReactMarkdown>
-      </div>
+      <div
+        style={{ marginLeft: "25px" }}
+        dangerouslySetInnerHTML={{
+          __html: micromark(newAnnouncements[index].message, {
+            allowDangerousHtml: true,
+            extensions: [gfm()],
+            htmlExtensions: [gfmHtml()],
+          }),
+        }}
+      />
     </ScrollableModal>
   ) : null;
 }

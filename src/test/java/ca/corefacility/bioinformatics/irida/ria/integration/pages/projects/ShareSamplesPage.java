@@ -67,7 +67,7 @@ public class ShareSamplesPage extends AbstractPage {
 	@FindBy(className = "t-same-sample-names-warning")
 	private WebElement someSamplesSameNamesWarning;
 
-	@FindBy(className = "t-success-title")
+	@FindBy(css = ".t-success-title p")
 	private WebElement successTitle;
 
 	@FindBy(className = "t-field-label")

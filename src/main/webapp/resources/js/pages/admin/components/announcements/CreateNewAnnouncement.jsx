@@ -33,7 +33,7 @@ function CreateNewAnnouncementButton({ createAnnouncement }) {
           </Space>
         }
         onCancel={() => setVisibility(false)}
-        visible={visible}
+        open={visible}
         width={640}
         footer={null}
         maskClosable={false}

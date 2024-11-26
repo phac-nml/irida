@@ -4,46 +4,41 @@
  */
 
 import React, { forwardRef, useImperativeHandle } from "react";
-import ReactMde from "react-mde";
-import "react-mde/lib/styles/css/react-mde-all.css";
-import ReactMarkdown from "react-markdown";
-import styled from "styled-components";
-import { blue6, grey1, grey4, grey6 } from "../../styles/colors";
 import {
-  IconBold,
-  IconCode,
-  IconItalic,
-  IconLinkOut,
-  IconOrderedList,
-  IconStrikeThrough,
-  IconUnorderedList
-} from "../icons/Icons";
+    MDXEditor,
+    UndoRedo,
+    BoldItalicUnderlineToggles,
+    StrikeThroughSupSubToggles,
+    CreateLink,
+    Separator,
+    ListsToggle,
+    InsertCodeBlock,
+    codeBlockPlugin,
+    codeMirrorPlugin,
+    sandpackPlugin,
+    toolbarPlugin,
+    linkPlugin,
+    linkDialogPlugin,
+    frontmatterPlugin,
+    listsPlugin,
+} from "@mdxeditor/editor";
 
-const StyledMde = styled(ReactMde)`
-  border-color: ${grey4};
-  .mde-header {
-    background-color: ${grey1};
-    border-color: ${grey4};
-    height: 46px;
-  }
-  .mde-tabs button {
-    border-radius: 2px;
-    border: 1px solid ${grey1};
+import "@mdxeditor/editor/style.css";
 
-    &.selected {
-      color: ${blue6};
-      border: 1px solid ${blue6};
-    }
+const defaultSnippetContent = `
+export default function App() {
+  return (
+    <div className="App">
+      <h1>Hello CodeSandbox</h1>
+      <h2>Start editing to see some magic happen!</h2>
+    </div>
+  );
+}
+`.trim()
+
+const reactSandpackConfig = {
+    defaultPreset: 'txt'
   }
-  .grip {
-    background-color: ${grey1};
-    border-top: 1px solid ${grey4};
-    height: 20px;
-    svg {
-      color: ${grey6};
-    }
-  }
-`;
 
 /**
  * Render a markdown editor to a react component.
@@ -51,44 +46,43 @@ const StyledMde = styled(ReactMde)`
  * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<{readonly markdown?: *}> & React.RefAttributes<unknown>>}
  */
 export const MarkdownEditor = forwardRef(({ markdown }, ref) => {
-  const [value, setValue] = React.useState(markdown || "");
-  const [selectedTab, setSelectedTab] = React.useState("write");
+    const [value, setValue] = React.useState(markdown || "");
 
-  useImperativeHandle(ref, () => ({
-    getMarkdown() {
-      return value;
-    }
-  }));
+    useImperativeHandle(ref, () => ({
+        getMarkdown() {
+            return value;
+        }
+    }));
 
-  function formatIcon(cmd) {
-    switch (cmd) {
-      case "bold":
-        return <IconBold />;
-      case "italic":
-        return <IconItalic />;
-      case "strikethrough":
-        return <IconStrikeThrough />;
-      case "link":
-        return <IconLinkOut />;
-      case "code":
-        return <IconCode />;
-      case "unordered-list":
-        return <IconUnorderedList />;
-      case "ordered-list":
-        return <IconOrderedList />;
-    }
-  }
-
-  return (
-    <StyledMde
-      value={value}
-      getIcon={formatIcon}
-      onChange={setValue}
-      selectedTab={selectedTab}
-      onTabChange={setSelectedTab}
-      generateMarkdownPreview={(markdown) =>
-        Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
-      }
-    />
-  );
+    return (
+        <MDXEditor
+            markdown={value}
+            onChange={setValue}
+            plugins={[
+                toolbarPlugin({
+                    toolbarContents: () => (
+                        <>
+                            <UndoRedo />
+                            <BoldItalicUnderlineToggles />
+                            <StrikeThroughSupSubToggles />
+                            <CreateLink />
+                            <Separator />
+                            <ListsToggle />
+                            <InsertCodeBlock />
+                        </>
+                    )
+                }),
+                codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
+                sandpackPlugin({ sandpackConfig: reactSandpackConfig }),
+                codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript' } }),
+                linkPlugin(),
+                linkDialogPlugin(),
+                listsPlugin(),
+                frontmatterPlugin()
+            ]}
+            ref={ref}
+        />
+    );
 });
+
+MarkdownEditor.displayName = "MarkdownEditor";
