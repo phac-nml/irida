@@ -32,6 +32,7 @@ export default function AnalysisTextPreview({ output }) {
   const [savedText, setSavedText] = useState("");
   const chunkSize = 8192;
   const [loading, setLoading] = useState(false);
+  const [fileSizePreview,setFileSizePreview] = useState("");
 
   /*
    * Get n bytes of text file output data on load and set
@@ -48,9 +49,7 @@ export default function AnalysisTextPreview({ output }) {
       setSavedText(data.text);
       setFilePointer(data.filePointer);
       setFileRows(data.text);
-      document.getElementById(
-        `${output.filename}-preview-status`
-      ).innerText = fileSizeLoaded(data.filePointer, output.fileSizeBytes);
+      setFileSizePreview(fileSizeLoaded(data.filePointer, output.fileSizeBytes))
       setLoading(false);
     });
   }, []);
@@ -81,9 +80,7 @@ export default function AnalysisTextPreview({ output }) {
           setSavedText(savedText + data.text);
           setFilePointer(data.filePointer);
           setFileRows(savedText + data.text);
-          document.getElementById(
-            `${output.filename}-preview-status`
-          ).innerText = fileSizeLoaded(data.filePointer, output.fileSizeBytes);
+          setFileSizePreview(fileSizeLoaded(data.filePointer, output.fileSizeBytes));
         }
         setLoading(false);
       });
@@ -108,7 +105,7 @@ export default function AnalysisTextPreview({ output }) {
           </TextOutputWrapper>
           <div>
             <Space direction={"horizontal"}>
-              <span id={`${output.filename}-preview-status`}></span>
+              <span id={`${output.filename}-preview-status`}>{fileSizePreview}</span>
               <span id={`${output.filename}-loading`}>
                 {loading ? (
                   <ContentLoading
