@@ -226,7 +226,7 @@ dependencies {
     testImplementation("org.seleniumhq.selenium:selenium-java:4.27.0")
     testImplementation("org.mockftpserver:MockFtpServer:3.2.0")
     testImplementation("org.springframework.ldap:spring-ldap-test")
-    testImplementation("com.unboundid:unboundid-ldapsdk:7.0.1")
+    testImplementation("com.unboundid:unboundid-ldapsdk:7.0.2")
 }
 
 tasks.register<Zip>("packageDistribution") {
