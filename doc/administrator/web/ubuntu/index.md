@@ -6,25 +6,58 @@ description: "Ubuntu-specific install guide for setting up IRIDA."
 
 Ubuntu Installation Guide
 =========================
-Starting with a fresh, completely up-to-date system (Ubuntu Server 18.04).
+Starting with a fresh, completely up-to-date system (Ubuntu 24.04).
 
 Installing Software with `apt`
 ------------------------------
-You can install the latest OpenJDK JDK on Ubuntu. The `apt` repositories also contain an up-to-date version of Tomcat 8, so no complex configuration needs to take place for Ubuntu.
 
-    #### Install OpenJDK Java 11 
-    apt-get install openjdk-11-jdk
+    #### Install OpenJDK Java 17
+    apt-get install openjdk-17-jdk
 
-    #### Install tomcat8 and mariadb-server
-    apt-get install --yes tomcat8 libtcnative-1 mariadb-server
+    #### Install mariadb-server
+    apt-get install --yes mariadb-server
+
+    #### Download and Install tomcat9
+    For security reasons, it's best not to run Tomcat as the root user so create a dedicated user and group
+    useradd -m -U -d /opt/tomcat -s /bin/false tomcat
+
+    Download [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
+    tar -xvf /PATH/TO/DOWNLOADED/apache-tomcat-9.0.98.tar.gz -C /opt/tomcat
+
+    Change ownership of Tomcat Directory
+    chown -R tomcat:tomcat /opt/tomcat
+
+    Configure Tomcat as a service
+    touch /etc/systemd/system/tomcat.service
+    nano /etc/systemd/system/tomcat.service
+
+    Add the following contents to the tomcat.service file above and then save.
+
+    [Unit]
+    Description=Tomcat Server
+    After=network.target
+
+    [Service]
+    Type=forking
+    User=tomcat
+    Group=tomcat
+    Environment="JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64"
+    WorkingDirectory=/opt/tomcat/apache-tomcat-9.0.98
+    ExecStart=/opt/tomcat/apache-tomcat-9.0.98/bin/startup.sh
+
+    [Install]
+    WantedBy=multi-user.target
+
+
+    Reload the systemd daemon
+    systemctl daemon-reload
 
 Starting Tomcat and MariaDB on startup
 --------------------------------------
 
 The last step is to make sure that Tomcat starts on startup:
 
-
     systemctl enable mysql # mysql is the service name for mariadb on Ubuntu
     systemctl start mysql
-    systemctl enable tomcat8
-    systemctl start tomcat8
+    systemctl enable tomcat.service
+    systemctl start tomcat.service

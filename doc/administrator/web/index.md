@@ -22,8 +22,8 @@ Prerequisites
 
 The following prerequisites are required for running the IRIDA web interfaces:
 
-* [Java](http://www.oracle.com/technetwork/java/index.html) 11 or higher.
-* A working servlet container supporting Servlet 3.1 ([Tomcat](https://tomcat.apache.org/), version 8 or higher, for example)
+* [Java](http://www.oracle.com/technetwork/java/index.html) 17 or higher.
+* A working servlet container supporting Servlet 3.1 ([Tomcat](https://tomcat.apache.org/), version 9 or higher, for example)
 * A working database server (the application is tested on [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/)).
 * A working install of Galaxy (we recommend that you run Galaxy and the IRIDA web interface on separate machines).
 The install guide assumes that you are using [Bash](https://www.gnu.org/software/bash/manual/bashref.html)
@@ -45,10 +45,15 @@ Servlet Container Configuration
 -------------------------------
 Two environment variables needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod` and `irida.db.profile=prod`.
 
-You can adjust these variables in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or `/etc/default/tomcat7` (Ubuntu), and finding the `JAVA_OPTS` variable and setting the variables as shown below:
+You can adjust these variables in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or creating a `setenv.sh` within `/opt/tomcat/bin` (Ubuntu). For CentOS you would find the `JAVA_OPTS` variable and for `Ubuntu` you would add the variables as shown below:
 
 ```
 JAVA_OPTS="-Dspring.profiles.active=prod -Dirida.db.profile=prod"
+```
+If these variables were added to `/opt/tomcat/bin/setenv.sh`, then you will need to make `setenv.sh` executable. This can be done by running the command below
+
+```
+chmod +X /opt/tomcat/bin/setenv.sh
 ```
 
 The `irida.db.profile=prod` option sets a number of recommended database settings for IRIDA such as JDBC, Hibernate, and Liquibase options.  See the [jdbc.prod.properties file](https://github.com/phac-nml/irida/blob/master/src/main/resources/ca/corefacility/bioinformatics/irida/config/jdbc.prod.properties) for what gets set.  All these options can be overridden in your `/etc/irida/irida.conf` file.
@@ -99,7 +104,7 @@ The main configuration parameters you will need to change are:
 5. **Security configuration**
  * `security.password.expiry` - The number of days a password is valid for in IRIDA.  After a password expires the user will be required to create a new one.  Passwords cannot be reused.
 6. **OAuth2 JWK security configuration** - IRIDA uses JWT (Json Web Tokens) for OAuth2 and as such requires a Java Key Store with an entry stored in PKCS12 format. The key pair entry can be in either RSA or EC (curves allowed are P-256, P-384, and P-121) format. The password for the keystore must be the same as the password for the key entry (This is default for PKCS12 format). (Note: these keys have nothing to do with SSL).
- * `oauth2.jwk.key-store=/etc/irida/jwk-key-store.jks` - The location of the Java Key Store 
+ * `oauth2.jwk.key-store=/etc/irida/jwk-key-store.jks` - The location of the Java Key Store
  * `oauth2.jwk.key-store-password=SECRET` - The Java Key Store password
 
 ### OAuth2 JWK Java Key Store generation
@@ -152,7 +157,7 @@ Once you have adjusted the configuration files to your environment, you can depl
 
 You can download the `WAR` file from: <https://github.com/phac-nml/irida/releases>
 
-Tomcat's deployment directory is typically some variation of `/var/lib/tomcat/webapps/`. Deploying the `WAR` file in Tomcat is as simple as moving the `WAR` file you downloaded into that directory.
+Tomcat's deployment directory is typically some variation of `/opt/tomcat/webapps/`. Deploying the `WAR` file in Tomcat is as simple as moving the `WAR` file you downloaded into that directory.
 
 On startup, IRIDA will:
 
@@ -182,7 +187,7 @@ Once you've logged in for the first time, you will probably want to create some 
 
 Multi Web Server Configuration
 -------------------------------
-When IRIDA is deployed in a higher load environment, it may be preferable to deploy multiple IRIDA web application servers to handle all web requests, processing, and scheduled tasks.  IRIDA has the ability to run in a multi-server mode which will distribute these tasks among multiple servers.  This is achieved through the use of Spring profiles.  Deploying IRIDA in this fashion allows IRIDA administrators to maintain good performance for users of the IRIDA web application, while offloading some of the more resource-hungry processing tasks to additional servers.  Multiple profiles may be applied to individual servers to group some of the tasks onto one machine.  
+When IRIDA is deployed in a higher load environment, it may be preferable to deploy multiple IRIDA web application servers to handle all web requests, processing, and scheduled tasks.  IRIDA has the ability to run in a multi-server mode which will distribute these tasks among multiple servers.  This is achieved through the use of Spring profiles.  Deploying IRIDA in this fashion allows IRIDA administrators to maintain good performance for users of the IRIDA web application, while offloading some of the more resource-hungry processing tasks to additional servers.  Multiple profiles may be applied to individual servers to group some of the tasks onto one machine.
 
 Note: The `prod`, `dev` profiles and multi server configuration profiles below **cannot be used at the same time**.  Doing so may result in corrupt analysis data sets.
 
