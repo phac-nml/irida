@@ -27,6 +27,8 @@ Installing Software with `apt`
     Change ownership of Tomcat Directory
     chown -R tomcat:tomcat /opt/tomcat
 
+    Update the ownership for the data directories that you have set in `/etc/irida/irida.conf`
+
     Configure Tomcat as a service
     touch /etc/systemd/system/tomcat.service
     nano /etc/systemd/system/tomcat.service
