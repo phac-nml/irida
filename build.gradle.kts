@@ -163,7 +163,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.apache.logging.log4j:log4j-api")
     implementation("org.apache.logging.log4j:log4j-to-slf4j")
-    implementation("com.google.guava:guava:33.3.1-jre")
+    implementation("com.google.guava:guava:33.4.0-jre")
     implementation("commons-cli:commons-cli:1.9.0")
     implementation("org.aspectj:aspectjweaver")
     implementation("org.apache.commons:commons-csv:1.12.0")
