@@ -12,29 +12,34 @@ Installing Software with `apt`
 ------------------------------
 
     #### Install OpenJDK Java 17
-    apt-get install openjdk-17-jdk
+    sudo apt-get install openjdk-17-jdk
 
     #### Install mariadb-server
-    apt-get install --yes mariadb-server
+    sudo apt-get install --yes mariadb-server
 
     #### Download and Install tomcat9
+    sudo mkdir /opt/tomcat
+
     For security reasons, it's best not to run Tomcat as the root user so create a dedicated user and group
-    useradd -m -U -d /opt/tomcat -s /bin/false tomcat
+    sudo useradd -m -U -d /opt/tomcat -s /bin/false tomcat
 
     Download [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
     tar -xvf /PATH/TO/DOWNLOADED/apache-tomcat-9.0.98.tar.gz -C /opt/tomcat
 
     Change ownership of Tomcat Directory
-    chown -R tomcat:tomcat /opt/tomcat
+    sudo groupadd tomcat
+    sudo usermod -a -G tomcat tomcat
+    sudo chown -R tomcat:tomcat /opt/tomcat
 
     Update the ownership for the data directories that you have set in `/etc/irida/irida.conf`
 
     Configure Tomcat as a service
-    touch /etc/systemd/system/tomcat.service
+    sudo touch /etc/systemd/system/tomcat.service
     nano /etc/systemd/system/tomcat.service
 
     Add the following contents to the tomcat.service file above and then save.
 
+    ```
     [Unit]
     Description=Tomcat Server
     After=network.target
@@ -49,17 +54,17 @@ Installing Software with `apt`
 
     [Install]
     WantedBy=multi-user.target
-
+    ```
 
     Reload the systemd daemon
-    systemctl daemon-reload
+    sudo systemctl daemon-reload
 
 Starting Tomcat and MariaDB on startup
 --------------------------------------
 
 The last step is to make sure that Tomcat starts on startup:
 
-    systemctl enable mysql # mysql is the service name for mariadb on Ubuntu
-    systemctl start mysql
-    systemctl enable tomcat.service
-    systemctl start tomcat.service
+    sudo systemctl enable mysql # mysql is the service name for mariadb on Ubuntu
+    sudo systemctl start mysql
+    sudo systemctl enable tomcat.service
+    sudo systemctl start tomcat.service
