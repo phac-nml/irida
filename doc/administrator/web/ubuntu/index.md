@@ -31,11 +31,22 @@ Installing Software with `apt`
     sudo usermod -a -G tomcat tomcat
     sudo chown -R tomcat:tomcat /opt/tomcat
 
-    Update the ownership for the data directories that you have set in `/etc/irida/irida.conf`
+    ##Update the ownership for the data directories that you have set in `/etc/irida/irida.conf`
+
+    Depending on your setup there are different ways to do this.
+
+    If you will only be launching IRIDA via tomcat:
+    sudo chown -R tomcat:tomcat /path/to/irida_data_directory
+
+    If you will be launching IRIDA via tomcat or IDE such an Intellij:
+    sudo addgroup GROUP_NAME
+    sudo adduser root GROUP_NAME
+    sudo adduser tomcat GROUP_NAME
+    sudo chown -R root:GROUP_NAME /path/to/irida_data_directory
 
     Configure Tomcat as a service
     sudo touch /etc/systemd/system/tomcat.service
-    nano /etc/systemd/system/tomcat.service
+    sudo nano /etc/systemd/system/tomcat.service
 
     Add the following contents to the tomcat.service file above and then save.
 
