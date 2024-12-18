@@ -24,7 +24,7 @@ Installing Software with `apt`
     sudo useradd -m -U -d /opt/tomcat -s /bin/false tomcat
 
     Download [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
-    tar -xvf /PATH/TO/DOWNLOADED/apache-tomcat-9.0.98.tar.gz -C /opt/tomcat
+    sudo tar -xvf /PATH/TO/DOWNLOADED/apache-tomcat-9.0.98.tar.gz -C /opt/tomcat
 
     Change ownership of Tomcat Directory
     sudo groupadd tomcat
