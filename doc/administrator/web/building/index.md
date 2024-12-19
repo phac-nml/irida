@@ -17,7 +17,7 @@ Prerequisites
 
 The following software is required to build IRIDA from source:
 
-* Java 11 JDK (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* Java 17 JDK (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 * Git (http://git-scm.com/)
 * Node (http://nodejs.org/)
 * Pnpm (https://pnpm.io/)
