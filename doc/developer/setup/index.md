@@ -13,7 +13,7 @@ General Requirements
 You're required to install a few different pieces of software on your machine before you can get started on hacking IRIDA:
 
 1. DB: A MySQL or MariaDB server,
-2. Languages: Java 11 (we have a hard requirement on Java 11), Python, Node
+2. Languages: Java 17 (we have a hard requirement on Java 17), Python, Node
 4. SCM: Git
 5. IDE: Eclipse, Netbeans, IntelliJ, vim... (whatever you want, really).
 
@@ -241,7 +241,7 @@ This will run all the integration test profiles using Gradle, and print out repo
 
 #### Memory requirements
 
-Your environment may throw java heap size errors when running tests. 
+Your environment may throw java heap size errors when running tests.
 
 You can increase the heap size by editing the `gradle.properties` file in the project directory and adding the following line:
 
