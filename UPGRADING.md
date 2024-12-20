@@ -4,8 +4,12 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
-Unreleased
-----------
+22.09 to 23.10
+--------------
+* This upgrade changes the Java version to Java 17.  To upgrade, follow the install instructions for your system in <https://phac-nml.github.io/irida-documentation/administrator/web/#prerequisite-install-instructions>.
+
+22.09 to 23.10
+--------------
 * This upgrade deletes sequence files from the file system when they are removed from IRIDA. To clean up all previously removed sequence files, a script can be found under the `src/main/resources/scripts/sequence-files` folder in the IRIDA repo.
 
 22.05 to 22.09
