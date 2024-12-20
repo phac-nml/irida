@@ -1,10 +1,18 @@
 # Changelog
 
+# [24.12] - 2024/12/20
+* [Documentation]: Developer installation documentation updated with new instructions for Java 17. See [PR 1563](https://github.com/phac-nml/irida/pull/1563)
+* [UI]: Fixed bug in AnalysisTextPreview component which prevented the loaded file size from being displayed in file preview. See [PR 1560](https://github.com/phac-nml/irida/pull/1560)
+* [Developer]: Updated to use Java 17. See [PR 1538](https://github.com/phac-nml/irida/pull/1538)
+* [Developer/UI]: Updated to React 18, Ant Design 4.24.16, and switched over to use mdxeditor markdown editor. See [PR 1537](https://github.com/phac-nml/irida/pull/1537)
+* [Developer]: Updated node (20.14.0), pnpm (9.12.3), and eslint (9.14.0). See [PR 1524](https://github.com/phac-nml/irida/pull/1524)
+
+
 # [23.10.1] - 2023/12/07
 * [UI]: Fixed issue where filter inputs required focus when they are opened on the project samples page. See [PR 1503](https://github.com/phac-nml/irida/pull/1503)
 * [UI]: Fixed bug preventing sorting and paging on the project members page. See [PR 1504](https://github.com/phac-nml/irida/pull/1504)
 * [Developer]: Fixed race condition where FastQC file processor would start on incomplete file by filtering out files on non complete sequencing runs. [PR 1506](https://github.com/phac-nml/irida/pull/1506)
- 
+
 ## [23.10] - 2023/10/15
 * [Developer]: Added functionality to delete sequence files from file system when a sequence run is removed. [See PR 1468](https://github.com/phac-nml/irida/pull/1468)
 * [Developer]: Added script to do initial cleanup of sequence files from file system. [See PR 1469](https://github.com/phac-nml/irida/pull/1469)
