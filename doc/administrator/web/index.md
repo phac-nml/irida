@@ -53,7 +53,7 @@ JAVA_OPTS="-Dspring.profiles.active=prod -Dirida.db.profile=prod"
 If these variables were added to `/opt/tomcat/bin/setenv.sh`, then you will need to make `setenv.sh` executable. This can be done by running the command below
 
 ```
-chmod +X /opt/tomcat/bin/setenv.sh
+sudo chmod +X /opt/tomcat/bin/setenv.sh
 ```
 
 The `irida.db.profile=prod` option sets a number of recommended database settings for IRIDA such as JDBC, Hibernate, and Liquibase options.  See the [jdbc.prod.properties file](https://github.com/phac-nml/irida/blob/master/src/main/resources/ca/corefacility/bioinformatics/irida/config/jdbc.prod.properties) for what gets set.  All these options can be overridden in your `/etc/irida/irida.conf` file.
