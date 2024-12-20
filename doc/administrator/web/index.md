@@ -23,7 +23,7 @@ Prerequisites
 The following prerequisites are required for running the IRIDA web interfaces:
 
 * [Java](http://www.oracle.com/technetwork/java/index.html) 17 or higher.
-* A working servlet container supporting Servlet 3.1 ([Tomcat](https://tomcat.apache.org/), version 9 or higher, for example)
+* A working servlet container supporting Servlet 3.1 ([Tomcat](https://tomcat.apache.org/), up to version 9, for example)
 * A working database server (the application is tested on [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/)).
 * A working install of Galaxy (we recommend that you run Galaxy and the IRIDA web interface on separate machines).
 The install guide assumes that you are using [Bash](https://www.gnu.org/software/bash/manual/bashref.html)
@@ -49,7 +49,12 @@ You can adjust these variables in Tomcat by editing (depending on your distribut
 
 ```
 JAVA_OPTS="-Dspring.profiles.active=prod -Dirida.db.profile=prod"
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+
 ```
+
+The JAVA_HOME path above will be something like `/usr/lib/jvm/java-17-openjdk-amd64/`
+
 If these variables were added to `/opt/tomcat/bin/setenv.sh`, then you will need to make `setenv.sh` executable. This can be done by running the command below
 
 ```
