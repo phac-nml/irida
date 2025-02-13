@@ -159,7 +159,7 @@ dependencies {
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5")
     implementation("com.github.mxab.thymeleaf.extras:thymeleaf-extras-data-attribute")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
-    implementation("commons-beanutils:commons-beanutils:1.9.4")
+    implementation("commons-beanutils:commons-beanutils:1.10.1")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.apache.logging.log4j:log4j-api")
     implementation("org.apache.logging.log4j:log4j-to-slf4j")
