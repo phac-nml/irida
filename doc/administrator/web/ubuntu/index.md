@@ -34,6 +34,32 @@ Installing Software with `apt`
     ##Update the ownership for the data directories that you have set in `/etc/irida/irida.conf`
     sudo chown -R tomcat:tomcat /path/to/irida_data_directory
 
+    **Note for Ubuntu/Debian Tomcat9 package users:** If you installed Tomcat9 via `apt` (e.g. `sudo apt-get install tomcat9`), it is sandboxed by systemd and only has write access to a few default directories. IRIDA needs write access to `sequence-files`, `output-files`, `reference-files`, and `assembly-files` as configured in `irida.conf`. To grant access, create an override file:
+
+    ```
+    sudo mkdir -p /etc/systemd/system/tomcat9.service.d
+    sudo nano /etc/systemd/system/tomcat9.service.d/override.conf
+    ```
+
+    Add the following (adjust paths to match your `irida.conf`):
+
+    ```
+    [Service]
+    ReadWritePaths=/path/to/irida/sequence-files
+    ReadWritePaths=/path/to/irida/output-files
+    ReadWritePaths=/path/to/irida/reference-files
+    ReadWritePaths=/path/to/irida/assembly-files
+    ```
+
+    Then reload and restart:
+
+    ```
+    sudo systemctl daemon-reload
+    sudo systemctl restart tomcat9
+    ```
+
+    See also: https://stackoverflow.com/a/56835997
+
     Configure Tomcat as a service
     sudo touch /etc/systemd/system/tomcat.service
     sudo nano /etc/systemd/system/tomcat.service
